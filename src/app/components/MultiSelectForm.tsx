@@ -13,6 +13,8 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Anthropic from "@anthropic-ai/sdk";
+import React from "react";
 
 const generateAIText = (technologies: string[]): string => {
   if (technologies.length === 0)
@@ -144,9 +146,40 @@ export default function Component() {
     setAiText("");
     setAdditionalInfoSections([]);
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    // await new Promise((resolve) => setTimeout(resolve, 500));
+    const anthropic = new Anthropic({
+      // defaults to process.env["ANTHROPIC_API_KEY"]
+      apiKey:
+        "",
+      dangerouslyAllowBrowser: true,
+    });
 
-    const newAiText = generateAIText(selectedOptions);
+    const prompt = `Generate a short memo to a tech recruiter. 
+    The memo should promote the skillset of a fictional male candidate called Romilly. 
+    The memo should be technical, give specific examples of how the candidate can help the company and should not exceed 100 words. 
+    It should reference the technologies ${selectedOptions.join(", ")}. 
+    Do not use a subject or greeting or a sign off. 
+    Do not say that Romilly is a developer, as this is already implied. 
+    Focus on the technologies mentioned. 
+    Separate the response into paragraphs that are maximum 3 sentences each. 
+    Please respond in multiple paragraphs, with each main point in its own paragraph. 
+    The first paragraph should be one line and be a witty 1-line, attention grabbing tagline.`;
+
+    const msg = await anthropic.messages.create({
+      model: "claude-3-5-sonnet-20240620",
+      max_tokens: 1000,
+      temperature: 0,
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+    });
+    console.log(msg);
+
+    // const newAiText = generateAIText(selectedOptions);
+    const newAiText = msg.content[0].type === "text" ? msg.content[0].text : "";
     setAiText(newAiText);
     setIsLoading(false);
   };
@@ -326,7 +359,7 @@ export default function Component() {
               </form>
             </CardContent>
           </Card>
-          <Card className="lg:w-1/2 shadow-lg flex flex-col h-[600px]">
+          <Card className="lg:w-1/2 shadow-lg flex flex-col h-[700px]">
             <CardHeader>
               <CardTitle>AI-Generated Project Description</CardTitle>
             </CardHeader>
@@ -344,7 +377,12 @@ export default function Component() {
                           Project Description:
                         </h3>
                         <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                          {aiText}
+                          {aiText.split("\n").map((line, index) => (
+                            <React.Fragment key={index}>
+                              {line}
+                              <br />
+                            </React.Fragment>
+                          ))}
                         </p>
                       </div>
                       {additionalInfoSections.map((info, index) => (
