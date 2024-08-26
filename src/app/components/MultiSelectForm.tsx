@@ -148,9 +148,7 @@ export default function Component() {
 
     // await new Promise((resolve) => setTimeout(resolve, 500));
     const anthropic = new Anthropic({
-      // defaults to process.env["ANTHROPIC_API_KEY"]
-      apiKey:
-        "",
+      apiKey: process.env["NEXT_PUBLIC_API_KEY"],
       dangerouslyAllowBrowser: true,
     });
 
@@ -160,13 +158,14 @@ export default function Component() {
     It should reference the technologies ${selectedOptions.join(", ")}. 
     Do not use a subject or greeting or a sign off. 
     Do not say that Romilly is a developer, as this is already implied. 
-    Focus on the technologies mentioned. 
+    Focus on the technologies mentioned and his leadership skills. 
     Separate the response into paragraphs that are maximum 3 sentences each. 
     Please respond in multiple paragraphs, with each main point in its own paragraph. 
-    The first paragraph should be one line and be a witty 1-line, attention grabbing tagline.`;
+    The first paragraph should be one line and be a witty 1-line, attention grabbing tagline (but don't use the name Romilly in the tagline). Don't wrap the tagline in quotes.
+    Bold the mentions of the technologies referenced.`;
 
     const msg = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-20240620",
+      model: "claude-3-haiku-20240307",
       max_tokens: 1000,
       temperature: 0,
       messages: [
@@ -228,7 +227,7 @@ export default function Component() {
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
           Enterprise Tech Stack Configurator
         </h1>
-        <div className="flex flex-col lg:flex-row gap-6 flex-grow">
+        <div className="flex flex-col lg:flex-row gap-6 flex-grow h-[700px]">
           <Card className="lg:w-1/2 shadow-lg">
             <CardHeader>
               <CardTitle>Select Technologies</CardTitle>
@@ -359,7 +358,7 @@ export default function Component() {
               </form>
             </CardContent>
           </Card>
-          <Card className="lg:w-1/2 shadow-lg flex flex-col h-[700px]">
+          <Card className="lg:w-1/2 shadow-lg flex flex-col">
             <CardHeader>
               <CardTitle>AI-Generated Project Description</CardTitle>
             </CardHeader>
@@ -374,15 +373,27 @@ export default function Component() {
                     <>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                          Project Description:
+                          {aiText.split("\n")[0].replace(/\*\*/g, "")}
                         </h3>
                         <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                          {aiText.split("\n").map((line, index) => (
-                            <React.Fragment key={index}>
-                              {line}
-                              <br />
-                            </React.Fragment>
-                          ))}
+                          {aiText
+                            .split("\n")
+                            .slice(1)
+                            .map((line, index) => (
+                              <React.Fragment key={index}>
+                                {line.split(" ").map((word, index) =>
+                                  // match when the word starts and ends with **
+                                  word.match(/^\*\*|\*\*$/) ? (
+                                    <span className="font-semibold" key={index}>
+                                      {word.replace(/\*\*/g, "")}{" "}
+                                    </span>
+                                  ) : (
+                                    `${word} `
+                                  )
+                                )}
+                                <br />
+                              </React.Fragment>
+                            ))}
                         </p>
                       </div>
                       {additionalInfoSections.map((info, index) => (
@@ -413,7 +424,7 @@ export default function Component() {
                 </div>
               </ScrollArea>
             </CardContent>
-            <CardFooter className="border-t border-gray-200 dark:border-gray-700">
+            <CardFooter className="border-t border-gray-200 dark:border-gray-700 p-4">
               {aiText && (
                 <Button
                   onClick={handleMoreClick}
