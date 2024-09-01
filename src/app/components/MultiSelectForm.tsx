@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { X, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { X, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -14,24 +14,9 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Anthropic from "@anthropic-ai/sdk";
-import React from "react";
 
-const generateAIText = (technologies: string[]): string => {
-  if (technologies.length === 0)
-    return "Please select some technologies to generate a description.";
-
-  return `Based on the selected technologies (${technologies.join(
-    ", "
-  )}), here's a possible project description:
-
-A cutting-edge application leveraging ${technologies[0]} and ${
-    technologies[technologies.length - 1]
-  } to create a robust and scalable solution. The project utilizes ${technologies
-    .slice(1, -1)
-    .join(
-      ", "
-    )} to ensure optimal performance and user experience. This tech stack allows for efficient development and maintenance, making it an ideal choice for modern software projects.`;
-};
+import { capitalizeFirstLetter, generatePrompt } from "../utils";
+import { OPTION_GROUPS } from "../utils/constants";
 
 const generateAdditionalInfo = (technologies: string[]): string => {
   return `Additional information about the selected technologies:
@@ -59,64 +44,25 @@ export default function Component() {
   >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isGeneratingMore, setIsGeneratingMore] = useState(false);
+  const [customOptions, setCustomOptions] = useState<
+    { id: string; label: string }[]
+  >([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const lastAddedSectionRef = useRef<HTMLDivElement>(null);
 
-  const optionGroups = [
-    {
-      name: "Key Tech",
-      options: [
-        { id: "javascript", label: "JavaScript" },
-        { id: "typescript", label: "TypeScript" },
-        { id: "python", label: "Python" },
-        { id: "java", label: "Java" },
-        { id: "csharp", label: "C#" },
-        { id: "golang", label: "Go" },
-      ],
-    },
-    {
-      name: "Front End",
-      options: [
-        { id: "react", label: "React" },
-        { id: "vue", label: "Vue.js" },
-        { id: "angular", label: "Angular" },
-        { id: "svelte", label: "Svelte" },
-        { id: "nextjs", label: "Next.js" },
-        { id: "tailwindcss", label: "Tailwind CSS" },
-      ],
-    },
-    {
-      name: "Full Stack",
-      options: [
-        { id: "nodejs", label: "Node.js" },
-        { id: "django", label: "Django" },
-        { id: "rails", label: "Ruby on Rails" },
-        { id: "aspnet", label: "ASP.NET" },
-        { id: "laravel", label: "Laravel" },
-        { id: "spring", label: "Spring Boot" },
-      ],
-    },
-    {
-      name: "Databases",
-      options: [
-        { id: "postgresql", label: "PostgreSQL" },
-        { id: "mysql", label: "MySQL" },
-        { id: "mongodb", label: "MongoDB" },
-        { id: "redis", label: "Redis" },
-        { id: "elasticsearch", label: "Elasticsearch" },
-        { id: "cassandra", label: "Cassandra" },
-      ],
-    },
-  ];
-
-  const allOptions = optionGroups.flatMap((group) => group.options);
+  const allOptions = OPTION_GROUPS.flatMap((group) => group.options);
 
   const filteredOptions = allOptions.filter(
     (option) =>
       option.label.toLowerCase().includes(inputValue.toLowerCase()) &&
       !selectedOptions.includes(option.label)
   );
+
+  const handleOnFocus = (e: React.FocusEvent) => {
+    e.preventDefault();
+    setIsDropdownOpen(true);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -128,9 +74,23 @@ export default function Component() {
       const newOptions = prev.includes(optionLabel)
         ? prev.filter((option) => option !== optionLabel)
         : [...prev, optionLabel];
-      setInputValue(newOptions.join(", "));
+      setInputValue("");
       return newOptions;
     });
+    setIsDropdownOpen(false);
+  };
+
+  const handleAddCustomOption = (customOption: string) => {
+    setCustomOptions((prev) => [
+      ...prev,
+      { id: customOption, label: capitalizeFirstLetter(customOption) },
+    ]);
+    setSelectedOptions((prev) => {
+      const newOptions = [...prev, customOption];
+      setInputValue("");
+      return newOptions;
+    });
+
     setIsDropdownOpen(false);
   };
 
@@ -146,28 +106,21 @@ export default function Component() {
     setAiText("");
     setAdditionalInfoSections([]);
 
-    // await new Promise((resolve) => setTimeout(resolve, 500));
     const anthropic = new Anthropic({
       apiKey: process.env["NEXT_PUBLIC_API_KEY"],
       dangerouslyAllowBrowser: true,
     });
+    console.log(selectedOptions);
 
-    const prompt = `Generate a short memo to a tech recruiter. 
-    The memo should promote the skillset of a fictional male candidate called Romilly. 
-    The memo should be technical, give specific examples of how the candidate can help the company and should not exceed 100 words. 
-    It should reference the technologies ${selectedOptions.join(", ")}. 
-    Do not use a subject or greeting or a sign off. 
-    Do not say that Romilly is a developer, as this is already implied. 
-    Focus on the technologies mentioned and his leadership skills. 
-    Separate the response into paragraphs that are maximum 3 sentences each. 
-    Please respond in multiple paragraphs, with each main point in its own paragraph. 
-    The first paragraph should be one line and be a witty 1-line, attention grabbing tagline (but don't use the name Romilly in the tagline). Don't wrap the tagline in quotes.
-    Bold the mentions of the technologies referenced.`;
+    const prompt = generatePrompt(
+      process.env["NEXT_PUBLIC_CV_TEXT"],
+      selectedOptions
+    );
 
     const msg = await anthropic.messages.create({
       model: "claude-3-haiku-20240307",
       max_tokens: 1000,
-      temperature: 0,
+      temperature: 0.5,
       messages: [
         {
           role: "user",
@@ -175,9 +128,7 @@ export default function Component() {
         },
       ],
     });
-    console.log(msg);
 
-    // const newAiText = generateAIText(selectedOptions);
     const newAiText = msg.content[0].type === "text" ? msg.content[0].text : "";
     setAiText(newAiText);
     setIsLoading(false);
@@ -239,7 +190,13 @@ export default function Component() {
                     htmlFor="options-input"
                     className="text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
-                    Search and select technologies:
+                    <div className="flex flex-row justify-between">
+                      <span>What technologies are you most interested in?</span>
+                      {/* TODO: animate the text change */}
+                      <span className="text-xs text-gray-500 font-bold">
+                        {selectedOptions.length} selected
+                      </span>
+                    </div>
                   </Label>
                   <div className="relative" ref={dropdownRef}>
                     <div className="relative">
@@ -247,11 +204,15 @@ export default function Component() {
                         id="options-input"
                         value={inputValue}
                         onChange={handleInputChange}
-                        placeholder="Type to search or click buttons to select technologies"
+                        onFocus={handleOnFocus}
+                        placeholder={
+                          "Type and select technologies, or choose from below"
+                        }
                         className="pr-10"
                         aria-expanded={isDropdownOpen}
                         aria-autocomplete="list"
                         aria-controls="options-list"
+                        autoComplete="off"
                       />
                       {inputValue && (
                         <Button
@@ -272,7 +233,22 @@ export default function Component() {
                         className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg max-h-60 overflow-auto"
                         role="listbox"
                       >
-                        {filteredOptions.length > 0 ? (
+                        {!filteredOptions.find(
+                          (option) =>
+                            option.label.toLowerCase() ===
+                            inputValue.toLowerCase()
+                        ) && (
+                          <li
+                            key={inputValue}
+                            onClick={() => handleAddCustomOption(inputValue)}
+                            className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-gray-800 dark:text-gray-200"
+                            role="option"
+                            aria-selected={selectedOptions.includes(inputValue)}
+                          >
+                            {capitalizeFirstLetter(inputValue)}
+                          </li>
+                        )}
+                        {filteredOptions.length > 0 &&
                           filteredOptions.map((option) => (
                             <li
                               key={option.id}
@@ -285,65 +261,77 @@ export default function Component() {
                             >
                               {option.label}
                             </li>
-                          ))
-                        ) : (
-                          <li className="px-3 py-2 text-gray-500 dark:text-gray-400">
-                            No technologies found
-                          </li>
-                        )}
+                          ))}
+                        {/* {!inputValue &&
+                          filteredOptions.length === 0 && (
+                            <li className="px-3 py-2 text-gray-500 dark:text-gray-400">
+                              No technologies found
+                            </li>
+                          )} */}
                       </ul>
                     )}
                   </div>
                 </div>
-                <div className="space-y-6">
+                <div className="space-y-4">
                   <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Available technologies:
                   </Label>
-                  {optionGroups.map((group) => (
-                    <div key={group.name} className="space-y-2">
-                      <Label className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                        {group.name}
-                      </Label>
-                      <div className="flex flex-wrap gap-2">
-                        {group.options
-                          .slice(
-                            0,
-                            expandedGroups.includes(group.name) ? undefined : 3
-                          )
-                          .map((option) => (
+                  <div className="space-y-4 max-h-[475px] overflow-y-auto">
+                    {[
+                      ...OPTION_GROUPS,
+                      ...(customOptions.length > 0
+                        ? [{ name: "Custom", options: customOptions }]
+                        : []),
+                    ].map((group) => (
+                      <div key={group.name} className="space-y-2">
+                        <Label className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                          {group.name}
+                        </Label>
+                        <div className="flex flex-wrap gap-2">
+                          {group.options
+                            .slice(
+                              0,
+                              expandedGroups.includes(group.name)
+                                ? undefined
+                                : 3
+                            )
+                            .map((option) => (
+                              <Button
+                                key={option.id}
+                                type="button"
+                                variant={
+                                  selectedOptions.includes(option.label)
+                                    ? "default"
+                                    : "outline"
+                                }
+                                onClick={() => handleOptionToggle(option.label)}
+                                className="text-xs "
+                                aria-pressed={selectedOptions.includes(
+                                  option.label
+                                )}
+                              >
+                                {option.label}
+                              </Button>
+                            ))}
+                          {group.options.length > 3 && (
                             <Button
-                              key={option.id}
                               type="button"
-                              variant={
-                                selectedOptions.includes(option.label)
-                                  ? "default"
-                                  : "outline"
-                              }
-                              onClick={() => handleOptionToggle(option.label)}
+                              variant="secondary"
+                              onClick={() => toggleGroupExpansion(group.name)}
                               className="text-xs"
-                              aria-pressed={selectedOptions.includes(
-                                option.label
+                              aria-expanded={expandedGroups.includes(
+                                group.name
                               )}
                             >
-                              {option.label}
+                              {expandedGroups.includes(group.name)
+                                ? "less"
+                                : "more"}
                             </Button>
-                          ))}
-                        {group.options.length > 3 && (
-                          <Button
-                            type="button"
-                            variant="secondary"
-                            onClick={() => toggleGroupExpansion(group.name)}
-                            className="text-xs"
-                            aria-expanded={expandedGroups.includes(group.name)}
-                          >
-                            {expandedGroups.includes(group.name)
-                              ? "less"
-                              : "more"}
-                          </Button>
-                        )}
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? (
@@ -388,7 +376,7 @@ export default function Component() {
                                       {word.replace(/\*\*/g, "")}{" "}
                                     </span>
                                   ) : (
-                                    `${word} `
+                                    `${word.replace(/\*\*/g, "")} `
                                   )
                                 )}
                                 <br />
@@ -438,7 +426,7 @@ export default function Component() {
                       Generating More...
                     </>
                   ) : (
-                    "More"
+                    "Read more"
                   )}
                 </Button>
               )}
