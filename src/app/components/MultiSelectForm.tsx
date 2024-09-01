@@ -15,8 +15,12 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Anthropic from "@anthropic-ai/sdk";
 
-import { capitalizeFirstLetter, generatePrompt } from "../utils";
-import { OPTION_GROUPS } from "../utils/constants";
+import {
+  OPTION_GROUPS,
+  capitalizeFirstLetter,
+  generatePrompt,
+  isNewOption,
+} from "../utils";
 
 const generateAdditionalInfo = (technologies: string[]): string => {
   return `Additional information about the selected technologies:
@@ -51,12 +55,22 @@ export default function Component() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const lastAddedSectionRef = useRef<HTMLDivElement>(null);
 
-  const allOptions = OPTION_GROUPS.flatMap((group) => group.options);
+  const allOptions = [
+    ...OPTION_GROUPS.flatMap((group) => group.options),
+    ...customOptions,
+  ];
+
+  const allGroups = [
+    ...OPTION_GROUPS,
+    ...(customOptions.length > 0
+      ? [{ name: "Custom", options: customOptions }]
+      : []),
+  ];
 
   const filteredOptions = allOptions.filter(
     (option) =>
-      option.label.toLowerCase().includes(inputValue.toLowerCase()) &&
-      !selectedOptions.includes(option.label)
+      option.label.toLowerCase().includes(inputValue.toLowerCase()) && // includes the input value string
+      !selectedOptions.includes(option.label) // is not already selected
   );
 
   const handleOnFocus = (e: React.FocusEvent) => {
@@ -70,23 +84,17 @@ export default function Component() {
   };
 
   const handleOptionToggle = (optionLabel: string) => {
+    if (isNewOption(optionLabel, allOptions)) {
+      setCustomOptions((prev) => [
+        ...prev,
+        { id: optionLabel, label: capitalizeFirstLetter(optionLabel) },
+      ]);
+    }
+
     setSelectedOptions((prev) => {
       const newOptions = prev.includes(optionLabel)
         ? prev.filter((option) => option !== optionLabel)
         : [...prev, optionLabel];
-      setInputValue("");
-      return newOptions;
-    });
-    setIsDropdownOpen(false);
-  };
-
-  const handleAddCustomOption = (customOption: string) => {
-    setCustomOptions((prev) => [
-      ...prev,
-      { id: customOption, label: capitalizeFirstLetter(customOption) },
-    ]);
-    setSelectedOptions((prev) => {
-      const newOptions = [...prev, customOption];
       setInputValue("");
       return newOptions;
     });
@@ -233,14 +241,10 @@ export default function Component() {
                         className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg max-h-60 overflow-auto"
                         role="listbox"
                       >
-                        {!filteredOptions.find(
-                          (option) =>
-                            option.label.toLowerCase() ===
-                            inputValue.toLowerCase()
-                        ) && (
+                        {isNewOption(inputValue, allOptions) && (
                           <li
                             key={inputValue}
-                            onClick={() => handleAddCustomOption(inputValue)}
+                            onClick={() => handleOptionToggle(inputValue)}
                             className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-gray-800 dark:text-gray-200"
                             role="option"
                             aria-selected={selectedOptions.includes(inputValue)}
@@ -262,12 +266,6 @@ export default function Component() {
                               {option.label}
                             </li>
                           ))}
-                        {/* {!inputValue &&
-                          filteredOptions.length === 0 && (
-                            <li className="px-3 py-2 text-gray-500 dark:text-gray-400">
-                              No technologies found
-                            </li>
-                          )} */}
                       </ul>
                     )}
                   </div>
@@ -277,12 +275,7 @@ export default function Component() {
                     Available technologies:
                   </Label>
                   <div className="space-y-4 max-h-[475px] overflow-y-auto">
-                    {[
-                      ...OPTION_GROUPS,
-                      ...(customOptions.length > 0
-                        ? [{ name: "Custom", options: customOptions }]
-                        : []),
-                    ].map((group) => (
+                    {allGroups.map((group) => (
                       <div key={group.name} className="space-y-2">
                         <Label className="text-xs font-medium text-gray-500 dark:text-gray-400">
                           {group.name}
