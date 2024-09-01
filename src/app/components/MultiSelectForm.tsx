@@ -21,6 +21,8 @@ import {
   generatePrompt,
   isNewOption,
 } from "../utils";
+import DotPattern from "@/components/magicui/dot-pattern";
+import { cn } from "@/lib/utils";
 
 const generateAdditionalInfo = (technologies: string[]): string => {
   return `Additional information about the selected technologies:
@@ -182,7 +184,12 @@ export default function Component() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      <div className="container mx-auto p-6 space-y-6 flex-grow flex flex-col">
+      <DotPattern
+        className={cn(
+          "[mask-image:radial-gradient(1300px_circle_at_center,white,transparent)]"
+        )}
+      ></DotPattern>
+      <div className="container mx-auto p-6 space-y-6 flex-grow flex flex-col opacity-90">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
           Enterprise Tech Stack Configurator
         </h1>
