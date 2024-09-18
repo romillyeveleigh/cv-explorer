@@ -21,8 +21,8 @@ import {
   generatePrompt,
   isNewOption,
 } from "../utils";
-import DotPattern from "@/components/magicui/dot-pattern";
-import { cn } from "@/lib/utils";
+import { generateFollowUpPrompt } from "../utils/promptUtils";
+import { ContentBlock } from "@anthropic-ai/sdk/resources/messages.mjs";
 
 const generateAdditionalInfo = (technologies: string[]): string => {
   return `Additional information about the selected technologies:
@@ -52,6 +52,12 @@ export default function Component() {
   const [isGeneratingMore, setIsGeneratingMore] = useState(false);
   const [customOptions, setCustomOptions] = useState<
     { id: string; label: string }[]
+  >([]);
+  const [conversationMessages, setConversationMessages] = useState<
+    {
+      role: "user" | "assistant";
+      content: string | ContentBlock[];
+    }[]
   >([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -116,7 +122,7 @@ export default function Component() {
     setAiText("");
     setAdditionalInfoSections([]);
 
-    const anthropic = new Anthropic({
+    const client = new Anthropic({
       apiKey: process.env["NEXT_PUBLIC_API_KEY"],
       dangerouslyAllowBrowser: true,
     });
@@ -127,29 +133,67 @@ export default function Component() {
       selectedOptions
     );
 
-    const msg = await anthropic.messages.create({
-      model: "claude-3-haiku-20240307",
-      max_tokens: 1000,
-      temperature: 0.5,
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-    });
+    try {
+      const response = await client.messages.create({
+        model: "claude-3-haiku-20240307",
+        max_tokens: 1000,
+        temperature: 0.5,
+        messages: [{ role: "user", content: prompt }],
+      });
 
-    const newAiText = msg.content[0].type === "text" ? msg.content[0].text : "";
-    setAiText(newAiText);
-    setIsLoading(false);
+      const newAiText =
+        response.content[0].type === "text" ? response.content[0].text : "";
+
+      setAiText(newAiText);
+      setConversationMessages([
+        { role: "user", content: prompt },
+        { role: "assistant", content: response.content },
+      ]);
+    } catch (error) {
+      console.error("Error generating content:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleMoreClick = async () => {
+    console.log("handleMoreClick");
     setIsGeneratingMore(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    const newAdditionalInfo = generateAdditionalInfo(selectedOptions);
-    setAdditionalInfoSections((prev) => [...prev, newAdditionalInfo]);
-    setIsGeneratingMore(false);
+
+    const anthropic = new Anthropic({
+      apiKey: process.env.NEXT_PUBLIC_API_KEY,
+      dangerouslyAllowBrowser: true,
+    });
+
+    try {
+      const followUpPrompt = generateFollowUpPrompt(selectedOptions);
+      console.log("🚀 ~ handleMoreClick ~ followUpPrompt:", followUpPrompt);
+
+      const updatedHistory = [
+        ...conversationMessages,
+        { role: "user", content: followUpPrompt },
+      ];
+
+      const response = await anthropic.messages.create({
+        model: "claude-3-haiku-20240307",
+        max_tokens: 1000,
+        temperature: 0.5,
+        messages: updatedHistory,
+      });
+
+      const newAiText =
+        response.content[0].type === "text" ? response.content[0].text : "";
+
+      setAdditionalInfoSections((prev) => [...prev, newAiText]);
+      setConversationHistory([
+        ...updatedHistory,
+        { role: "assistant", content: newAiText },
+      ]);
+    } catch (error) {
+      console.error("Error generating more content:", error);
+    } finally {
+      setIsGeneratingMore(false);
+    }
   };
 
   const toggleGroupExpansion = (groupName: string) => {
@@ -183,12 +227,7 @@ export default function Component() {
   }, [additionalInfoSections]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      <DotPattern
-        className={cn(
-          "[mask-image:radial-gradient(1300px_circle_at_center,white,transparent)]"
-        )}
-      ></DotPattern>
+    <div className="flex flex-col">
       <div className="container mx-auto p-6 space-y-6 flex-grow flex flex-col opacity-90">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
           Enterprise Tech Stack Configurator
@@ -305,7 +344,11 @@ export default function Component() {
                                     : "outline"
                                 }
                                 onClick={() => handleOptionToggle(option.label)}
-                                className="text-xs "
+                                className={`text-xs border ${
+                                  selectedOptions.includes(option.label)
+                                    ? "border-primary"
+                                    : "border-input"
+                                }`}
                                 aria-pressed={selectedOptions.includes(
                                   option.label
                                 )}
@@ -398,7 +441,27 @@ export default function Component() {
                             Additional Information {index + 1}:
                           </h3>
                           <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                            {info}
+                            {info
+                              .split("\n")
+                              .slice(1)
+                              .map((line, index) => (
+                                <React.Fragment key={index}>
+                                  {line.split(" ").map((word, index) =>
+                                    // match when the word starts and ends with **
+                                    word.match(/^\*\*|\*\*$/) ? (
+                                      <span
+                                        className="font-semibold"
+                                        key={index}
+                                      >
+                                        {word.replace(/\*\*/g, "")}{" "}
+                                      </span>
+                                    ) : (
+                                      `${word.replace(/\*\*/g, "")} `
+                                    )
+                                  )}
+                                  <br />
+                                </React.Fragment>
+                              ))}
                           </p>
                         </div>
                       ))}
