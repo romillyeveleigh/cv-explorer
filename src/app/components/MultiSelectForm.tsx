@@ -226,6 +226,10 @@ export default function Component() {
     }
   }, [additionalInfoSections]);
 
+  const isSelectedOption = (option: string) => {
+    return selectedOptions.includes(option);
+  };
+
   return (
     <div className="flex flex-col">
       <div className="container mx-auto p-6 space-y-6 flex-grow flex flex-col opacity-90">
@@ -339,19 +343,17 @@ export default function Component() {
                                 key={option.id}
                                 type="button"
                                 variant={
-                                  selectedOptions.includes(option.label)
+                                  isSelectedOption(option.label)
                                     ? "default"
                                     : "outline"
                                 }
                                 onClick={() => handleOptionToggle(option.label)}
                                 className={`text-xs border ${
-                                  selectedOptions.includes(option.label)
+                                  isSelectedOption(option.label)
                                     ? "border-primary"
                                     : "border-input"
                                 }`}
-                                aria-pressed={selectedOptions.includes(
-                                  option.label
-                                )}
+                                aria-pressed={isSelectedOption(option.label)}
                               >
                                 {option.label}
                               </Button>
