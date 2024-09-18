@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { X, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import * as SimpleIcons from "simple-icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,6 +38,24 @@ ${technologies
   .join("\n")}
 
 This combination of technologies provides a solid foundation for building scalable and maintainable applications.`;
+};
+
+const renderIcon = (slug: string) => {
+  // parsed slug should capitalize the first letter and precede it with si
+  const parsedSlug = `si${slug.charAt(0).toUpperCase()}${slug.slice(1)}`;
+  console.log("🚀 ~ renderIcon ~ parsedSlug:", parsedSlug);
+  const icon = SimpleIcons[parsedSlug as keyof typeof SimpleIcons];
+
+  return icon ? (
+    <svg
+      role="img"
+      viewBox="0 0 24 24"
+      className="h-4 w-4 mr-2"
+      fill="currentColor"
+    >
+      <path d={icon.path} />
+    </svg>
+  ) : null;
 };
 
 export default function Component() {
@@ -352,9 +371,10 @@ export default function Component() {
                                   isSelectedOption(option.label)
                                     ? "border-primary"
                                     : "border-input"
-                                }`}
+                                } flex items-center`}
                                 aria-pressed={isSelectedOption(option.label)}
                               >
+                                {renderIcon(option.id)}
                                 {option.label}
                               </Button>
                             ))}
