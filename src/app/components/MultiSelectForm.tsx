@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Anthropic from "@anthropic-ai/sdk";
+import { cn } from "@/lib/utils";
+import { AnimatedList } from "@/components/magicui/animated-list";
 
 import {
   OPTION_GROUPS,
@@ -43,7 +45,6 @@ This combination of technologies provides a solid foundation for building scalab
 const renderIcon = (slug: string) => {
   // parsed slug should capitalize the first letter and precede it with si
   const parsedSlug = `si${slug.charAt(0).toUpperCase()}${slug.slice(1)}`;
-  console.log("🚀 ~ renderIcon ~ parsedSlug:", parsedSlug);
   const icon = SimpleIcons[parsedSlug as keyof typeof SimpleIcons];
 
   return icon ? (
@@ -350,49 +351,56 @@ export default function Component() {
                           {group.name}
                         </Label>
                         <div className="flex flex-wrap gap-2">
-                          {group.options
-                            .slice(
-                              0,
-                              expandedGroups.includes(group.name)
-                                ? undefined
-                                : 3
-                            )
-                            .map((option) => (
+                          <AnimatedList delay={1}>
+                            {group.options
+                              .slice(
+                                0,
+                                expandedGroups.includes(group.name)
+                                  ? undefined
+                                  : 3
+                              )
+                              .map((option) => (
+                                <Button
+                                  key={option.id}
+                                  type="button"
+                                  variant={
+                                    isSelectedOption(option.label)
+                                      ? "default"
+                                      : "outline"
+                                  }
+                                  onClick={() =>
+                                    handleOptionToggle(option.label)
+                                  }
+                                  className={`text-xs border ${
+                                    isSelectedOption(option.label)
+                                      ? "border-primary"
+                                      : "border-input"
+                                  } flex items-center `}
+                                  aria-pressed={isSelectedOption(option.label)}
+                                >
+                                  {renderIcon(option.id)}
+                                  {option.label}
+                                </Button>
+                              ))}
+
+                              {group.options.length > 3 && (
                               <Button
-                                key={option.id}
                                 type="button"
-                                variant={
-                                  isSelectedOption(option.label)
-                                    ? "default"
-                                    : "outline"
-                                }
-                                onClick={() => handleOptionToggle(option.label)}
-                                className={`text-xs border ${
-                                  isSelectedOption(option.label)
-                                    ? "border-primary"
-                                    : "border-input"
-                                } flex items-center`}
-                                aria-pressed={isSelectedOption(option.label)}
+                                variant="secondary"
+                                onClick={() => toggleGroupExpansion(group.name)}
+                                className="text-xs"
+                                aria-expanded={expandedGroups.includes(
+                                  group.name
+                                )}
                               >
-                                {renderIcon(option.id)}
-                                {option.label}
+                                {expandedGroups.includes(group.name)
+                                  ? "less"
+                                  : "more"}
                               </Button>
-                            ))}
-                          {group.options.length > 3 && (
-                            <Button
-                              type="button"
-                              variant="secondary"
-                              onClick={() => toggleGroupExpansion(group.name)}
-                              className="text-xs"
-                              aria-expanded={expandedGroups.includes(
-                                group.name
-                              )}
-                            >
-                              {expandedGroups.includes(group.name)
-                                ? "less"
-                                : "more"}
-                            </Button>
-                          )}
+                            )}
+
+                            
+                          </AnimatedList>
                         </div>
                       </div>
                     ))}
