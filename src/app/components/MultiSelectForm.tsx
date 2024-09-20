@@ -6,18 +6,19 @@ import { ContentBlock } from "@anthropic-ai/sdk/resources/messages.mjs";
 import InputForm from "./InputForm";
 import GeneratedContent from "./GeneratedContent";
 
-type ConversationMessage = {
+export type ConversationMessage = {
   role: "user" | "assistant";
   content: string | ContentBlock[];
 };
 
 const TechStackConfigurator = () => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [aiText, setAiText] = useState("");
   const [additionalInfoSections, setAdditionalInfoSections] = useState<
     string[]
   >([]);
-  const [isLoading, setIsLoading] = useState(false);
+
   const [conversationMessages, setConversationMessages] = useState<
     ConversationMessage[]
   >([]);
@@ -44,6 +45,7 @@ const TechStackConfigurator = () => {
             selectedOptions={selectedOptions}
             aiText={aiText}
             conversationMessages={conversationMessages}
+            setConversationMessages={setConversationMessages}
             additionalInfoSections={additionalInfoSections}
             setAdditionalInfoSections={setAdditionalInfoSections}
           />

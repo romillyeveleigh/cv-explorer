@@ -1,8 +1,14 @@
 "use client";
 
-import React, { useState, useRef, useEffect, FC } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  FC,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { X, Loader2 } from "lucide-react";
-import * as SimpleIcons from "simple-icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,40 +20,19 @@ import {
   capitalizeFirstLetter,
   generatePrompt,
   isNewOption,
+  renderIcon,
 } from "../utils";
-import { ContentBlock } from "@anthropic-ai/sdk/resources/messages.mjs";
-
-const renderIcon = (slug: string) => {
-  // parsed slug should capitalize the first letter and precede it with si
-  const parsedSlug = `si${slug.charAt(0).toUpperCase()}${slug.slice(1)}`;
-  const icon = SimpleIcons[parsedSlug as keyof typeof SimpleIcons];
-
-  return icon ? (
-    <svg
-      role="img"
-      viewBox="0 0 24 24"
-      className="h-4 w-4 mr-2"
-      fill="currentColor"
-    >
-      <path d={icon.path} />
-    </svg>
-  ) : null;
-};
+import { ConversationMessage } from "./MultiSelectForm";
 
 interface InputFormProps {
   isLoading: boolean;
-  setIsLoading: (isLoading: boolean) => void;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
   selectedOptions: string[];
-  setSelectedOptions: (selectedOptions: string[]) => void;
+  setSelectedOptions: Dispatch<SetStateAction<string[]>>;
   setAiText: (aiText: string) => void;
-  setConversationMessages: (
-    conversationMessages: {
-      role: "user" | "assistant";
-      content: string | ContentBlock[];
-    }[]
-  ) => void;
+  setConversationMessages: Dispatch<SetStateAction<ConversationMessage[]>>;
   additionalInfoSections: string[];
-  setAdditionalInfoSections: (additionalInfoSections: string[]) => void;
+  setAdditionalInfoSections: Dispatch<SetStateAction<string[]>>;
 }
 
 const InputForm: FC<InputFormProps> = ({
@@ -57,17 +42,11 @@ const InputForm: FC<InputFormProps> = ({
   setSelectedOptions,
   setAiText,
   setConversationMessages,
-  additionalInfoSections,
   setAdditionalInfoSections,
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
-  // const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  // const [aiText, setAiText] = useState("");
-  // const [additionalInfoSections, setAdditionalInfoSections] = useState<
-  //   string[]
-  // >([]);
 
   const [customOptions, setCustomOptions] = useState<
     { id: string; label: string }[]
@@ -191,8 +170,6 @@ const InputForm: FC<InputFormProps> = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  
 
   const isSelectedOption = (option: string) => {
     return selectedOptions.includes(option);

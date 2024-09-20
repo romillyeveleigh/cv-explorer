@@ -1,6 +1,13 @@
 "use client";
 
-import React, { useState, useRef, FC, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  FC,
+  useEffect,
+  SetStateAction,
+  Dispatch,
+} from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,18 +21,16 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import Anthropic from "@anthropic-ai/sdk";
 
 import { generateFollowUpPrompt } from "../utils/promptUtils";
-import { ContentBlock } from "@anthropic-ai/sdk/resources/messages.mjs";
+import { ConversationMessage } from "./MultiSelectForm";
 
 interface GeneratedContentProps {
   isLoading: boolean;
   selectedOptions: string[];
   aiText: string;
-  conversationMessages: {
-    role: "user" | "assistant";
-    content: string | ContentBlock[];
-  }[];
+  conversationMessages: ConversationMessage[];
+  setConversationMessages: Dispatch<SetStateAction<ConversationMessage[]>>;
   additionalInfoSections: string[];
-  setAdditionalInfoSections: (additionalInfoSections: string[]) => void;
+  setAdditionalInfoSections: Dispatch<SetStateAction<string[]>>;
 }
 
 const GeneratedContent: FC<GeneratedContentProps> = ({
@@ -33,15 +38,10 @@ const GeneratedContent: FC<GeneratedContentProps> = ({
   selectedOptions,
   aiText,
   conversationMessages,
+  setConversationMessages,
   additionalInfoSections,
   setAdditionalInfoSections,
 }) => {
-  // const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  // const [aiText, setAiText] = useState("");
-  // const [additionalInfoSections, setAdditionalInfoSections] = useState<
-  //   string[]
-  // >([]);
-  // const [isLoading, setIsLoading] = useState(false);
   const [isGeneratingMore, setIsGeneratingMore] = useState(false);
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -54,7 +54,6 @@ const GeneratedContent: FC<GeneratedContentProps> = ({
   }, [additionalInfoSections]);
 
   const handleMoreClick = async () => {
-    console.log("handleMoreClick");
     setIsGeneratingMore(true);
 
     const anthropic = new Anthropic({
@@ -64,11 +63,10 @@ const GeneratedContent: FC<GeneratedContentProps> = ({
 
     try {
       const followUpPrompt = generateFollowUpPrompt(selectedOptions);
-      console.log("🚀 ~ handleMoreClick ~ followUpPrompt:", followUpPrompt);
 
       const updatedHistory = [
         ...conversationMessages,
-        { role: "user", content: followUpPrompt },
+        { role: "user", content: followUpPrompt } as ConversationMessage,
       ];
 
       const response = await anthropic.messages.create({
@@ -82,9 +80,13 @@ const GeneratedContent: FC<GeneratedContentProps> = ({
         response.content[0].type === "text" ? response.content[0].text : "";
 
       setAdditionalInfoSections((prev) => [...prev, newAiText]);
-      setConversationHistory([
+
+      setConversationMessages([
         ...updatedHistory,
-        { role: "assistant", content: newAiText },
+        {
+          role: "assistant",
+          content: newAiText,
+        },
       ]);
     } catch (error) {
       console.error("Error generating more content:", error);

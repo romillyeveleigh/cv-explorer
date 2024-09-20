@@ -1,5 +1,7 @@
 export * from "./constants";
 export * from "./promptUtils";
+export * from "./renderIcon";
+
 
 
 
