@@ -8,7 +8,7 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
-import { X, Loader2 } from "lucide-react";
+import { X, Loader2, ChevronRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,6 +27,8 @@ import {
   isNewOption,
   renderIcon,
 } from "../utils";
+
+const CV_TEXT = process.env["NEXT_PUBLIC_CV_TEXT"];
 
 type Option = {
   id: string;
@@ -57,6 +59,7 @@ const InputForm: FC<InputFormProps> = ({
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
   const [customOptions, setCustomOptions] = useState<Option[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const hasGeneratedContent = useRef(false);
 
   const allOptionGroups: OptionGroup[] = [
     ...OPTION_GROUPS,
@@ -87,19 +90,22 @@ const InputForm: FC<InputFormProps> = ({
 
   const handleOptionToggle = (optionLabel: string) => {
     if (isNewOption(optionLabel, allOptions)) {
-      setCustomOptions((prev) => [
-        ...prev,
-        { id: optionLabel, label: capitalizeFirstLetter(optionLabel) },
-      ]);
-    }
-    setSelectedOptions((prev) => {
-      const newOptions = prev.includes(optionLabel)
-        ? prev.filter((option) => option !== optionLabel)
-        : [...prev, optionLabel];
-      setInputValue("");
-      return newOptions;
-    });
+      const newOption = {
+        id: optionLabel,
+        label: capitalizeFirstLetter(optionLabel),
+      };
+      setCustomOptions((prev) => [...prev, newOption]);
+      setSelectedOptions((prev) => [...prev, newOption.label]);
+    } else {
+      setSelectedOptions((prev) => {
+        const newOptions = prev.includes(optionLabel)
+          ? prev.filter((option) => option !== optionLabel)
+          : [...prev, optionLabel];
 
+        return newOptions;
+      });
+    }
+    setInputValue("");
     setIsDropdownOpen(false);
   };
 
@@ -111,12 +117,10 @@ const InputForm: FC<InputFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // setIsLoading(true);
-    const prompt = generatePrompt(
-      process.env["NEXT_PUBLIC_CV_TEXT"],
-      selectedOptions
-    );
+    hasGeneratedContent.current = false;
+    const prompt = generatePrompt(CV_TEXT, selectedOptions);
     await updateThread(prompt, true);
+    hasGeneratedContent.current = true;
   };
 
   const toggleGroupExpansion = (groupName: string) => {
@@ -143,12 +147,10 @@ const InputForm: FC<InputFormProps> = ({
     };
   }, []);
 
-  const isSelectedOption = (option: string) => {
-    return selectedOptions.includes(option);
-  };
+  const isSelected = (option: string) => selectedOptions.includes(option);
 
   return (
-    <Card className="lg:w-1/2 shadow-lg flex flex-col" >
+    <Card className="lg:w-1/2 shadow-lg flex flex-col">
       <CardHeader>
         <CardTitle>Select Technologies</CardTitle>
       </CardHeader>
@@ -250,17 +252,15 @@ const InputForm: FC<InputFormProps> = ({
                           key={option.id}
                           type="button"
                           variant={
-                            isSelectedOption(option.label)
-                              ? "default"
-                              : "outline"
+                            isSelected(option.label) ? "default" : "outline"
                           }
                           onClick={() => handleOptionToggle(option.label)}
                           className={`text-xs border ${
-                            isSelectedOption(option.label)
+                            isSelected(option.label)
                               ? "border-primary"
                               : "border-input"
                           } flex items-center `}
-                          aria-pressed={isSelectedOption(option.label)}
+                          aria-pressed={isSelected(option.label)}
                         >
                           {renderIcon(option.id)}
                           {option.label}
@@ -289,16 +289,19 @@ const InputForm: FC<InputFormProps> = ({
         <Button
           type="submit"
           className="w-full"
-          disabled={isLoading}
+          disabled={isLoading && hasGeneratedContent.current === false}
           onClick={handleSubmit}
         >
-          {isLoading ? (
+          {isLoading && hasGeneratedContent.current === false ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Generating...
             </>
           ) : (
-            "Generate Description"
+            <span className="group inline-flex items-center">
+              Generate Description{" "}
+              <ChevronRightIcon className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </span>
           )}
         </Button>
       </CardFooter>
