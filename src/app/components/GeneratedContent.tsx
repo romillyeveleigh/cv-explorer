@@ -14,6 +14,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { generateFollowUpPrompt } from "../utils/promptUtils";
 import { AnimatePresence, motion } from "framer-motion";
+import WordFadeIn from "@/components/magicui/word-fade-in";
 
 function AnimatedListItem({ children }: { children: React.ReactNode }) {
   const animations = {
@@ -96,9 +97,9 @@ const GeneratedContent: FC<GeneratedContentProps> = ({
             ) : firstResponse ? (
               <>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                    {firstResponse.split("\n")[0].replace(/\*\*/g, "")}
-                  </h3>
+                  <WordFadeIn
+                    words={firstResponse.split("\n")[0].replace(/\*\*/g, "")}
+                  />
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                     {firstResponse
                       .split("\n")
