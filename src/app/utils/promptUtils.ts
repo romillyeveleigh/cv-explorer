@@ -24,13 +24,18 @@ export const generatePrompt = (
       The first paragraph should be one line and be a witty 1-line, attention grabbing tagline (but don't use the name Romilly in the tagline). Don't wrap the tagline in quotes.
       Bold the mentions of the skills referenced.
       Use a mixture of long and short sentences and an informal but informative tone.
-      Limit the response to 150 words or less.
+      Limit the response to 120 words or less.
       Follow the memo with a listing of the jobs where Romilly used those skills and approximately how long he has been using them`;
 };
 
 export const generateFollowUpPrompt = (selectedOptions: string[]): string => {
   const followUpPrompt = `Based on our previous discussion about ${selectedOptions.join(
     ", "
-  )}, please provide more in-depth information. Focus on advanced features, real-world applications, or how these technologies integrate with each other. If possible, include some practical examples or case studies. Limit the response to 150 words or less.`;
+  )}, please expand on the previous response. 
+  Focus on advanced features, real-world applications, or how these technologies integrate with each other. 
+  If possible, include some practical examples or case studies. 
+  Limit the response to 50 words or less.
+  Do not include the previous response in the new response.
+  Do not repeat the same information as in the previous response.`;
   return followUpPrompt;
 };

@@ -36,7 +36,7 @@ interface InputFormProps {
   isLoading: boolean;
   selectedOptions: string[];
   setSelectedOptions: Dispatch<SetStateAction<string[]>>;
-  updateThread: (prompt: string, isNewThread: boolean) => Promise<void>;
+  updateThread: (prompt: string, isNewThread?: boolean) => Promise<void>;
 }
 
 const InputForm: FC<InputFormProps> = ({
