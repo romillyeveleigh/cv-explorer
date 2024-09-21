@@ -12,7 +12,13 @@ import { X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 
 import {
   OPTION_GROUPS,
@@ -142,11 +148,11 @@ const InputForm: FC<InputFormProps> = ({
   };
 
   return (
-    <Card className="lg:w-1/2 shadow-lg">
+    <Card className="lg:w-1/2 shadow-lg flex flex-col" >
       <CardHeader>
         <CardTitle>Select Technologies</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-grow overflow-hidden">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             <Label
@@ -227,7 +233,7 @@ const InputForm: FC<InputFormProps> = ({
             <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Available technologies:
             </Label>
-            <div className="space-y-4 max-h-[475px] overflow-y-auto">
+            <div className="space-y-4 max-h-[390px] overflow-y-auto">
               {allOptionGroups.map((group) => (
                 <div key={group.name} className="space-y-2">
                   <Label className="text-xs font-medium text-gray-500 dark:text-gray-400">
@@ -277,18 +283,25 @@ const InputForm: FC<InputFormProps> = ({
               ))}
             </div>
           </div>
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              "Generate Description"
-            )}
-          </Button>
         </form>
       </CardContent>
+      <CardFooter className="border-t border-gray-200 dark:border-gray-700 p-4">
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isLoading}
+          onClick={handleSubmit}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            "Generate Description"
+          )}
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

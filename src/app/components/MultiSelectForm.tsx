@@ -9,7 +9,6 @@ import { useMessageThread } from "../hooks";
 const TechStackConfigurator = () => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const { responses, updateThread, isLoading } = useMessageThread();
-  console.log("🚀 ~ TechStackConfigurator ~ responses:", responses)
 
   return (
     <div className="flex flex-col">

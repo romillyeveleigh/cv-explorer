@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import Anthropic from "@anthropic-ai/sdk";
 
@@ -59,15 +59,17 @@ export const useMessageThread = () => {
     }
   };
 
-  const responses = messages
-    .filter((message) => message.role === "assistant")
-    .map((message) =>
-      typeof message.content[0] === "string"
-        ? message.content[0]
-        : "text" in message.content[0]
-        ? message.content[0].text
-        : ""
-    );
+  const responses = useMemo(() => {
+    return messages
+      .filter((message) => message.role === "assistant")
+      .map((message) =>
+        typeof message.content[0] === "string"
+          ? message.content[0]
+          : "text" in message.content[0]
+          ? message.content[0].text
+          : ""
+      );
+  }, [messages]);
 
   return {
     isLoading,

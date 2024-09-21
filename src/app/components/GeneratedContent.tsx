@@ -51,19 +51,15 @@ const GeneratedContent: FC<GeneratedContentProps> = ({
 }) => {
   const [isGeneratingMore, setIsGeneratingMore] = useState(false);
 
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const lastAddedSectionRef = useRef<HTMLDivElement>(null);
-
   const firstResponse = responses[0];
   const additionalInfoSections = useMemo(
     () => (responses.length > 1 ? responses.slice(1) : []),
     [responses]
   );
-  // console.log("🚀 ~ additionalInfoSections:", additionalInfoSections);
 
   useEffect(() => {
     if (lastAddedSectionRef.current) {
-      // animate the scroll
       lastAddedSectionRef.current.scrollIntoView({
         behavior: "smooth",
       });
@@ -85,10 +81,10 @@ const GeneratedContent: FC<GeneratedContentProps> = ({
   return (
     <Card className="lg:w-1/2 shadow-lg flex flex-col">
       <CardHeader>
-        <CardTitle>AI-Generated Project Description</CardTitle>
+        <CardTitle>AI-Generated CV Insights</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow overflow-hidden">
-        <ScrollArea className="h-full" ref={scrollAreaRef}>
+        <ScrollArea className="h-full">
           <div className="p-6 space-y-4">
             {isLoading && !isGeneratingMore ? (
               <div className="flex items-center justify-center h-full">
@@ -142,7 +138,6 @@ const GeneratedContent: FC<GeneratedContentProps> = ({
                             Additional info:
                           </h3> */}
                           <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-
                             {info
                               .split("\n")
                               // .slice(1)
