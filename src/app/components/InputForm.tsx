@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import Anthropic from "@anthropic-ai/sdk";
 
 import {
   OPTION_GROUPS,
@@ -22,49 +21,47 @@ import {
   isNewOption,
   renderIcon,
 } from "../utils";
-import { ConversationMessage } from "./MultiSelectForm";
+
+type Option = {
+  id: string;
+  label: string;
+};
+
+type OptionGroup = {
+  name: string;
+  options: Option[];
+};
 
 interface InputFormProps {
   isLoading: boolean;
-  setIsLoading: Dispatch<SetStateAction<boolean>>;
   selectedOptions: string[];
   setSelectedOptions: Dispatch<SetStateAction<string[]>>;
-  setAiText: (aiText: string) => void;
-  setConversationMessages: Dispatch<SetStateAction<ConversationMessage[]>>;
-  additionalInfoSections: string[];
-  setAdditionalInfoSections: Dispatch<SetStateAction<string[]>>;
+  updateThread: (prompt: string, isNewThread: boolean) => Promise<void>;
 }
 
 const InputForm: FC<InputFormProps> = ({
   isLoading,
-  setIsLoading,
   selectedOptions,
   setSelectedOptions,
-  setAiText,
-  setConversationMessages,
-  setAdditionalInfoSections,
+  updateThread,
 }) => {
   const [inputValue, setInputValue] = useState("");
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
-
-  const [customOptions, setCustomOptions] = useState<
-    { id: string; label: string }[]
-  >([]);
-
+  const [customOptions, setCustomOptions] = useState<Option[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const allOptions = [
-    ...OPTION_GROUPS.flatMap((group) => group.options),
-    ...customOptions,
-  ];
-
-  const allGroups = [
+  const allOptionGroups: OptionGroup[] = [
     ...OPTION_GROUPS,
     ...(customOptions.length > 0
       ? [{ name: "Custom", options: customOptions }]
       : []),
   ];
+
+  const allOptions = allOptionGroups
+    .flatMap((group) => group.options)
+    .sort((optionA, optionB) => optionA.label.localeCompare(optionB.label));
 
   const filteredOptions = allOptions.filter(
     (option) =>
@@ -89,7 +86,6 @@ const InputForm: FC<InputFormProps> = ({
         { id: optionLabel, label: capitalizeFirstLetter(optionLabel) },
       ]);
     }
-
     setSelectedOptions((prev) => {
       const newOptions = prev.includes(optionLabel)
         ? prev.filter((option) => option !== optionLabel)
@@ -109,42 +105,12 @@ const InputForm: FC<InputFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setAiText("");
-    setAdditionalInfoSections([]);
-
-    const client = new Anthropic({
-      apiKey: process.env["NEXT_PUBLIC_API_KEY"],
-      dangerouslyAllowBrowser: true,
-    });
-    console.log(selectedOptions);
-
+    // setIsLoading(true);
     const prompt = generatePrompt(
       process.env["NEXT_PUBLIC_CV_TEXT"],
       selectedOptions
     );
-
-    try {
-      const response = await client.messages.create({
-        model: "claude-3-haiku-20240307",
-        max_tokens: 1000,
-        temperature: 0.5,
-        messages: [{ role: "user", content: prompt }],
-      });
-
-      const newAiText =
-        response.content[0].type === "text" ? response.content[0].text : "";
-
-      setAiText(newAiText);
-      setConversationMessages([
-        { role: "user", content: prompt },
-        { role: "assistant", content: response.content },
-      ]);
-    } catch (error) {
-      console.error("Error generating content:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    await updateThread(prompt, true);
   };
 
   const toggleGroupExpansion = (groupName: string) => {
@@ -262,7 +228,7 @@ const InputForm: FC<InputFormProps> = ({
               Available technologies:
             </Label>
             <div className="space-y-4 max-h-[475px] overflow-y-auto">
-              {allGroups.map((group) => (
+              {allOptionGroups.map((group) => (
                 <div key={group.name} className="space-y-2">
                   <Label className="text-xs font-medium text-gray-500 dark:text-gray-400">
                     {group.name}

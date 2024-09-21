@@ -1,13 +1,6 @@
 "use client";
 
-import React, {
-  useState,
-  useRef,
-  FC,
-  useEffect,
-  SetStateAction,
-  Dispatch,
-} from "react";
+import React, { useState, useRef, FC, useEffect, useMemo } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,34 +11,32 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import Anthropic from "@anthropic-ai/sdk";
 
 import { generateFollowUpPrompt } from "../utils/promptUtils";
-import { ConversationMessage } from "./MultiSelectForm";
 
 interface GeneratedContentProps {
   isLoading: boolean;
   selectedOptions: string[];
-  aiText: string;
-  conversationMessages: ConversationMessage[];
-  setConversationMessages: Dispatch<SetStateAction<ConversationMessage[]>>;
-  additionalInfoSections: string[];
-  setAdditionalInfoSections: Dispatch<SetStateAction<string[]>>;
+  responses: string[];
+  updateThread: (prompt: string, isNewThread: boolean) => Promise<void>;
 }
 
 const GeneratedContent: FC<GeneratedContentProps> = ({
   isLoading,
   selectedOptions,
-  aiText,
-  conversationMessages,
-  setConversationMessages,
-  additionalInfoSections,
-  setAdditionalInfoSections,
+  responses,
+  updateThread,
 }) => {
   const [isGeneratingMore, setIsGeneratingMore] = useState(false);
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const lastAddedSectionRef = useRef<HTMLDivElement>(null);
+
+  const firstResponse = responses[0];
+  const additionalInfoSections = useMemo(
+    () => (responses.length > 1 ? responses.slice(1) : []),
+    [responses]
+  );
 
   useEffect(() => {
     if (lastAddedSectionRef.current) {
@@ -55,39 +46,9 @@ const GeneratedContent: FC<GeneratedContentProps> = ({
 
   const handleMoreClick = async () => {
     setIsGeneratingMore(true);
-
-    const anthropic = new Anthropic({
-      apiKey: process.env.NEXT_PUBLIC_API_KEY,
-      dangerouslyAllowBrowser: true,
-    });
-
     try {
       const followUpPrompt = generateFollowUpPrompt(selectedOptions);
-
-      const updatedHistory = [
-        ...conversationMessages,
-        { role: "user", content: followUpPrompt } as ConversationMessage,
-      ];
-
-      const response = await anthropic.messages.create({
-        model: "claude-3-haiku-20240307",
-        max_tokens: 1000,
-        temperature: 0.5,
-        messages: updatedHistory,
-      });
-
-      const newAiText =
-        response.content[0].type === "text" ? response.content[0].text : "";
-
-      setAdditionalInfoSections((prev) => [...prev, newAiText]);
-
-      setConversationMessages([
-        ...updatedHistory,
-        {
-          role: "assistant",
-          content: newAiText,
-        },
-      ]);
+      await updateThread(followUpPrompt);
     } catch (error) {
       console.error("Error generating more content:", error);
     } finally {
@@ -107,14 +68,14 @@ const GeneratedContent: FC<GeneratedContentProps> = ({
               <div className="flex items-center justify-center h-full">
                 <Loader2 className="h-8 w-8 animate-spin text-gray-500 dark:text-gray-400" />
               </div>
-            ) : aiText ? (
+            ) : firstResponse ? (
               <>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                    {aiText.split("\n")[0].replace(/\*\*/g, "")}
+                    {firstResponse.split("\n")[0].replace(/\*\*/g, "")}
                   </h3>
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    {aiText
+                    {firstResponse
                       .split("\n")
                       .slice(1)
                       .map((line, index) => (
@@ -180,7 +141,7 @@ const GeneratedContent: FC<GeneratedContentProps> = ({
         </ScrollArea>
       </CardContent>
       <CardFooter className="border-t border-gray-200 dark:border-gray-700 p-4">
-        {aiText && (
+        {firstResponse && (
           <Button
             onClick={handleMoreClick}
             variant="outline"

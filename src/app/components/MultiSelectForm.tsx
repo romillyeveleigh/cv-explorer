@@ -2,26 +2,13 @@
 
 import React, { useState } from "react";
 
-import { ContentBlock } from "@anthropic-ai/sdk/resources/messages.mjs";
 import InputForm from "./InputForm";
 import GeneratedContent from "./GeneratedContent";
-
-export type ConversationMessage = {
-  role: "user" | "assistant";
-  content: string | ContentBlock[];
-};
+import { useMessageThread } from "../hooks";
 
 const TechStackConfigurator = () => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [aiText, setAiText] = useState("");
-  const [additionalInfoSections, setAdditionalInfoSections] = useState<
-    string[]
-  >([]);
-
-  const [conversationMessages, setConversationMessages] = useState<
-    ConversationMessage[]
-  >([]);
+  const { responses, updateThread, isLoading } = useMessageThread();
 
   return (
     <div className="flex flex-col">
@@ -32,22 +19,15 @@ const TechStackConfigurator = () => {
         <div className="flex flex-col lg:flex-row gap-6 flex-grow h-[700px]">
           <InputForm
             isLoading={isLoading}
-            setIsLoading={setIsLoading}
             setSelectedOptions={setSelectedOptions}
-            setAiText={setAiText}
             selectedOptions={selectedOptions}
-            setConversationMessages={setConversationMessages}
-            additionalInfoSections={additionalInfoSections}
-            setAdditionalInfoSections={setAdditionalInfoSections}
+            updateThread={updateThread}
           />
           <GeneratedContent
             isLoading={isLoading}
             selectedOptions={selectedOptions}
-            aiText={aiText}
-            conversationMessages={conversationMessages}
-            setConversationMessages={setConversationMessages}
-            additionalInfoSections={additionalInfoSections}
-            setAdditionalInfoSections={setAdditionalInfoSections}
+            responses={responses}
+            updateThread={updateThread}
           />
         </div>
       </div>
