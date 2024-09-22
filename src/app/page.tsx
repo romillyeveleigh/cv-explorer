@@ -5,6 +5,7 @@ import PdfExtractor from "./components/PdfExtractor";
 
 import { cn } from "@/lib/utils";
 import DotPattern from "@/components/magicui/dot-pattern";
+import CvUploader from "./components/CvUploader";
 // import CvUploader from "./components/CvUploader";
 
 export default function Home() {
@@ -16,11 +17,11 @@ export default function Home() {
             "[mask-image:radial-gradient(1300px_circle_at_center,white,transparent)]"
           )}
         />
-        {/* <CvUploader /> */}
-        <div>
+        <CvUploader />
+        {/* <div>
           <h1>PDF Text Extractor</h1>
           <PdfExtractor />
-        </div>
+        </div> */}
         <MultiSelectForm />
       </div>
     </>
