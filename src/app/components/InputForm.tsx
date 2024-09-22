@@ -25,6 +25,7 @@ import {
   capitalizeFirstLetter,
   generatePrompt,
   isNewOption,
+  validateInput,
 } from "../utils";
 import ButtonGroup from "./ButtonGroup";
 
@@ -118,7 +119,14 @@ const InputForm: FC<InputFormProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     hasGeneratedContent.current = false;
+
+    if (!validateInput(CV_TEXT, selectedOptions)) {
+      console.error("Invalid input");
+      return;
+    }
+
     const prompt = generatePrompt(CV_TEXT, selectedOptions);
+
     await updateThread(prompt, true);
     hasGeneratedContent.current = true;
   };
@@ -146,8 +154,6 @@ const InputForm: FC<InputFormProps> = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  
 
   return (
     <Card className="lg:w-1/2 shadow-lg flex flex-col">

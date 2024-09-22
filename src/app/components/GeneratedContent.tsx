@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import { generateFollowUpPrompt } from "../utils/promptUtils";
+import { generateFollowUpPrompt, validateInput } from "../utils/promptUtils";
 import { AnimatePresence, motion } from "framer-motion";
 import WordFadeIn from "@/components/magicui/word-fade-in";
 
@@ -118,58 +118,39 @@ const GeneratedContent: FC<GeneratedContentProps> = ({
                   </p>
                 </div>
                 <AnimatePresence>
-                  {additionalInfoSections.map((info, index) => {
-                    console.log(
-                      "🚀 ~ {additionalInfoSections.map ~ info.split():",
-                      info.split("\n")
-                    );
-
-                    return (
-                      <AnimatedListItem key={index}>
-                        <div
-                          className="border-t border-gray-200 dark:border-gray-700 pt-4"
-                          ref={
-                            index === additionalInfoSections.length - 1
-                              ? lastAddedSectionRef
-                              : null
-                          }
-                        >
-                          {/* <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                  {additionalInfoSections.map((info, index) => (
+                    <AnimatedListItem key={index}>
+                      <div
+                        className="border-t border-gray-200 dark:border-gray-700 pt-4"
+                        ref={
+                          index === additionalInfoSections.length - 1
+                            ? lastAddedSectionRef
+                            : null
+                        }
+                      >
+                        {/* <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
                             Additional info:
                           </h3> */}
-                          <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                            {info
-                              .split("\n")
-                              // .slice(1)
-                              .map((line, index) => {
-                                console.log(
-                                  "🚀 ~ {additionalInfoSections.map ~ line:",
-                                  line
-                                );
-                                return (
-                                  <React.Fragment key={index}>
-                                    {line.split(" ").map((word, index) =>
-                                      // match when the word starts and ends with **
-                                      word.match(/^\*\*|\*\*$/) ? (
-                                        <span
-                                          className="font-semibold"
-                                          key={index}
-                                        >
-                                          {word.replace(/\*\*/g, "")}{" "}
-                                        </span>
-                                      ) : (
-                                        `${word.replace(/\*\*/g, "")} `
-                                      )
-                                    )}
-                                    <br />
-                                  </React.Fragment>
-                                );
-                              })}
-                          </p>
-                        </div>
-                      </AnimatedListItem>
-                    );
-                  })}
+                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                          {info.split("\n").map((line, index) => (
+                            <React.Fragment key={index}>
+                              {line.split(" ").map((word, index) =>
+                                // match when the word starts and ends with **
+                                word.match(/^\*\*|\*\*$/) ? (
+                                  <span className="font-semibold" key={index}>
+                                    {word.replace(/\*\*/g, "")}{" "}
+                                  </span>
+                                ) : (
+                                  `${word.replace(/\*\*/g, "")} `
+                                )
+                              )}
+                              <br />
+                            </React.Fragment>
+                          ))}
+                        </p>
+                      </div>
+                    </AnimatedListItem>
+                  ))}
                 </AnimatePresence>
               </>
             ) : (

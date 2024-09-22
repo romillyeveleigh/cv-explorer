@@ -16,8 +16,9 @@ export const useMessageThread = () => {
   const [messages, setMessages] = useState<Anthropic.Messages.MessageParam[]>(
     []
   );
-
+console.log("🚀 ~ useMessageThread ~ messages:", messages)
   const createRequestMessage: (
+    
     prompt: string
   ) => Anthropic.Messages.MessageParam = (prompt) => ({
     role: "user",
