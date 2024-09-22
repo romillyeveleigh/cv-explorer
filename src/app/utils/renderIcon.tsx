@@ -5,7 +5,10 @@ import * as SimpleIcons from "simple-icons";
 
 export const renderIcon = (slug: string) => {
   // parsed slug should capitalize the first letter and precede it with si
-  const parsedSlug = `si${slug.charAt(0).toUpperCase()}${slug.slice(1)}`;
+  let parsedSlug = slug.toLowerCase();
+  // convert "." to "dot"
+  parsedSlug = parsedSlug.replace(/\./g, "dot");
+  parsedSlug = `si${parsedSlug.charAt(0).toUpperCase()}${parsedSlug.slice(1)}`;
   const icon = SimpleIcons[parsedSlug as keyof typeof SimpleIcons];
 
   return icon ? (

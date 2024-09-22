@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import DotPattern from "@/components/magicui/dot-pattern";
 import CvUploader from "./components/CvUploader";
 // import CvUploader from "./components/CvUploader";
-import CvExplorer from "./components/CvExplorer";
+import CvExplorer from "./components/cv-explorer/CvExplorer";
 
 export default function Home() {
   return (
