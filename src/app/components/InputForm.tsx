@@ -25,8 +25,8 @@ import {
   capitalizeFirstLetter,
   generatePrompt,
   isNewOption,
-  renderIcon,
 } from "../utils";
+import ButtonGroup from "./ButtonGroup";
 
 const CV_TEXT = process.env["NEXT_PUBLIC_CV_TEXT"];
 
@@ -147,7 +147,7 @@ const InputForm: FC<InputFormProps> = ({
     };
   }, []);
 
-  const isSelected = (option: string) => selectedOptions.includes(option);
+  
 
   return (
     <Card className="lg:w-1/2 shadow-lg flex flex-col">
@@ -242,42 +242,13 @@ const InputForm: FC<InputFormProps> = ({
                     {group.name}
                   </Label>
                   <div className="flex flex-wrap gap-2">
-                    {group.options
-                      .slice(
-                        0,
-                        expandedGroups.includes(group.name) ? undefined : 3
-                      )
-                      .map((option) => (
-                        <Button
-                          key={option.id}
-                          type="button"
-                          variant={
-                            isSelected(option.label) ? "default" : "outline"
-                          }
-                          onClick={() => handleOptionToggle(option.label)}
-                          className={`text-xs border ${
-                            isSelected(option.label)
-                              ? "border-primary"
-                              : "border-input"
-                          } flex items-center `}
-                          aria-pressed={isSelected(option.label)}
-                        >
-                          {renderIcon(option.id)}
-                          {option.label}
-                        </Button>
-                      ))}
-
-                    {group.options.length > 3 && (
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={() => toggleGroupExpansion(group.name)}
-                        className="text-xs"
-                        aria-expanded={expandedGroups.includes(group.name)}
-                      >
-                        {expandedGroups.includes(group.name) ? "less" : "more"}
-                      </Button>
-                    )}
+                    <ButtonGroup
+                      group={group}
+                      selectedOptions={selectedOptions}
+                      handleOptionToggle={handleOptionToggle}
+                      toggleGroupExpansion={toggleGroupExpansion}
+                      isExpanded={expandedGroups.includes(group.name)}
+                    />
                   </div>
                 </div>
               ))}
