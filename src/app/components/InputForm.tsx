@@ -158,7 +158,7 @@ const InputForm: FC<InputFormProps> = ({
   return (
     <Card className="lg:w-1/2 shadow-lg flex flex-col">
       <CardHeader>
-        <CardTitle>Select Technologies</CardTitle>
+        <CardTitle>Select Technology Skills</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow overflow-hidden">
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -168,7 +168,7 @@ const InputForm: FC<InputFormProps> = ({
               className="text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               <div className="flex flex-row justify-between">
-                <span>What technologies are you most interested in?</span>
+                <span>What skills are you most interested in?</span>
                 {/* TODO: animate the text change */}
                 <span className="text-xs text-gray-500 font-bold">
                   {selectedOptions.length} selected
@@ -183,7 +183,7 @@ const InputForm: FC<InputFormProps> = ({
                   onChange={handleInputChange}
                   onFocus={handleOnFocus}
                   placeholder={
-                    "Type and select technologies, or choose from below"
+                    "Type and select skills, or choose from the categories below"
                   }
                   className="pr-10"
                   aria-expanded={isDropdownOpen}
@@ -238,9 +238,9 @@ const InputForm: FC<InputFormProps> = ({
             </div>
           </div>
           <div className="space-y-4">
-            <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {/* <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Available technologies:
-            </Label>
+            </Label> */}
             <div className="space-y-4 max-h-[390px] overflow-y-auto">
               {allOptionGroups.map((group) => (
                 <div key={group.name} className="space-y-2">

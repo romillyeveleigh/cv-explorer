@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import DotPattern from "@/components/magicui/dot-pattern";
 import CvUploader from "./components/CvUploader";
 // import CvUploader from "./components/CvUploader";
+import CvExplorer from "./components/CvExplorer";
 
 export default function Home() {
   return (
@@ -18,11 +19,8 @@ export default function Home() {
           )}
         />
         <CvUploader />
-        {/* <div>
-          <h1>PDF Text Extractor</h1>
-          <PdfExtractor />
-        </div> */}
-        <MultiSelectForm />
+        {/* <MultiSelectForm /> */}
+        <CvExplorer />
       </div>
     </>
   );
