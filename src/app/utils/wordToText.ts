@@ -2,7 +2,7 @@
 
 const wordToText = async (file: File) => {
   const formData = new FormData();
-  formData.append("pdf", file);
+  formData.append("word", file);
 
   try {
     const response = await fetch("/api/extract-word", {
@@ -26,7 +26,7 @@ const wordToText = async (file: File) => {
 
     return data.text;
   } catch (error) {
-    console.error("Error extracting PDF text:", error);
+    console.error("Error extracting Word text:", error);
     throw error;
   }
 };
