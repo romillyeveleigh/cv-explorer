@@ -4,6 +4,11 @@ import React, { useMemo, useState } from "react";
 
 import Anthropic from "@anthropic-ai/sdk";
 
+export const enum Model {
+  SONNET = "claude-3-sonnet-20240229",
+  HAIKU = "claude-3-haiku-20240307",
+}
+
 const getClient = () => {
   return new Anthropic({
     apiKey: process.env.NEXT_PUBLIC_API_KEY,
@@ -16,9 +21,7 @@ export const useMessageThread = () => {
   const [messages, setMessages] = useState<Anthropic.Messages.MessageParam[]>(
     []
   );
-console.log("🚀 ~ useMessageThread ~ messages:", messages)
   const createRequestMessage: (
-    
     prompt: string
   ) => Anthropic.Messages.MessageParam = (prompt) => ({
     role: "user",
@@ -26,10 +29,11 @@ console.log("🚀 ~ useMessageThread ~ messages:", messages)
   });
 
   const generateResponse = async (
-    messages: Anthropic.Messages.MessageParam[]
+    messages: Anthropic.Messages.MessageParam[],
+    model: Model
   ) => {
     return await getClient().messages.create({
-      model: "claude-3-haiku-20240307",
+      model: model,
       max_tokens: 1000,
       temperature: 1,
       messages,
@@ -41,7 +45,10 @@ console.log("🚀 ~ useMessageThread ~ messages:", messages)
     try {
       const request = createRequestMessage(prompt);
       const currentMessages = isNewThread ? [] : messages;
-      const response = await generateResponse([...currentMessages, request]);
+      const response = await generateResponse(
+        [...currentMessages, request],
+        isNewThread ? Model.HAIKU : Model.SONNET
+      );
 
       const responseMessage: Anthropic.Messages.MessageParam = {
         role: "assistant",

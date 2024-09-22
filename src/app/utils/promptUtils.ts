@@ -98,8 +98,7 @@ export const generatePrompt = (
     The first paragraph should be a witty, one-line, attention-grabbing tagline (don't use the name Romilly in the tagline). Don't wrap the tagline in quotes.
     Bold the mentions of the referenced skills.
     Use a mixture of long and short sentences and an informal but informative tone.
-    Limit the response to 150 words.
-    Include an estimate of how long Romilly has been using each skill based on the CV.
+    Limit the response to 110 words.
     
     Follow the memo with a listing of the jobs where Romilly used those skills and approximately how long he has been using them.
   `;
@@ -110,13 +109,20 @@ export const generateFollowUpPrompt = (selectedOptions: string[]): string => {
     ", "
   )}, please expand on your first response. 
   Focus on advanced features, real-world applications, or how these technologies integrate with each other. 
-  If possible, include some practical examples or case studies. 
-  Limit the response to 60 words or less.
+  If possible, include some practical examples or case studies.
+
+  Describe the advantages that having this person lead or mentor a team will bring. Address this point to the recruiter in the second-person
+  using words like "you", and "if you want", "hired", "choosing", "deciding", "trust", "you can rely on" or "deciding on", "looking for".
+  Tie in the advantage to one or more of the most relevant leadership skills from this list: ${leadershipSkills.topLeadershipSkills.join(
+    ", "
+  )}
+
+  Rules:
+  Do not repeat the same answer as before.
+  Use a mix of short and medium length sentences.
+  Strictly limit the response to 60 words or less.
   The response should be 2 paragraphs.
   Do not include the previous response in the new response.
-  Mention some advantage to having this person leading or mentoring a team. Address this point to the recruiter 
-  using words like "you", and "if you want", "hired", "choosing", "deciding", "trust", "rely on" or "deciding on", "looking for".
-  Do not repeat the same answer as before.
   `;
   return followUpPrompt;
 };
