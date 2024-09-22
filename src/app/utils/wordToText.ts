@@ -1,11 +1,11 @@
 "use client";
 
-const pdfToText = async (file: File) => {
+const wordToText = async (file: File) => {
   const formData = new FormData();
   formData.append("pdf", file);
 
   try {
-    const response = await fetch("/api/extract-pdf", {
+    const response = await fetch("/api/extract-word", {
       method: "POST",
       body: formData,
     });
@@ -31,4 +31,4 @@ const pdfToText = async (file: File) => {
   }
 };
 
-export default pdfToText;
+export default wordToText;
