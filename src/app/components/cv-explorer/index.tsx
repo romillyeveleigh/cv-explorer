@@ -60,9 +60,10 @@ export default function CVExplorer() {
         ===END OF TEXT===
         
         2) Decide on 3 most relevant categories that you would like to group the skills into. 
-        The last category should include mainly soft skills.
+        The last category should include mainly soft skills but don't name it "soft skills".
 
         3) Isolate skills from the CV that are trending and would match the categories.
+        Feel free to group closely related skills into one skill.
       
         4) Send the response in json format.
         The json should be an array of objects with the following structure:
@@ -72,7 +73,7 @@ export default function CVExplorer() {
         }]
         
         Your response should not contain any other text or formatting.
-        Technical skills category should have at least 8 skills and fewer than 10 skills.
+        The first 2 categories should have between 6 and 8 skills.
         The last category with mainly soft skills should have a maximum of 3 skills.
         No skills should be repeated across categories.
        

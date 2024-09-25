@@ -1,8 +1,4 @@
-import {
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -119,9 +115,13 @@ export default function CvAnalysis({
               variant={selectedSkills.includes(skill) ? "default" : "outline"}
               size="sm"
               onClick={() => handleSkillSelect(skill)}
+              // max width of 150px
+              // className="max-w-[150px] overflow-hidden text-ellipsis "
             >
               {renderIcon(skill)}
-              {skill}
+              <span className="max-w-[180px] overflow-hidden text-ellipsis">
+                {skill}
+              </span>
             </Button>
           ))}
         </div>
