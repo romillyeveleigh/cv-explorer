@@ -62,7 +62,7 @@ export default function CvInsight({
     <>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-left">CV Insight</CardTitle>
-        <div className="flex items-center">
+        <div className="flex items-center space-x-2">
           <Checkbox
             checked={showHeadline}
             onCheckedChange={(checked) => setShowHeadline(checked)}
@@ -73,7 +73,7 @@ export default function CvInsight({
           </label>
         </div>
       </CardHeader>
-      <CardContent className="flex-grow flex flex-col overflow-hidden p-4">
+      <CardContent className="flex-grow flex flex-col overflow-hidden pt-6">
         {isGeneratingInitialInsight ? (
           <div className="flex-grow flex flex-col justify-center items-center">
             <Loader2 className="h-12 w-12 animate-spin mb-4" />
@@ -97,15 +97,16 @@ export default function CvInsight({
           </div>
         ) : (
           <>
-            {showHeadline && headline && (
-              <div className="mt-4 ml-6 mr-6">
-                <WordFadeIn words={headline} />
-              </div>
-            )}
             <div
               ref={insightContentRef}
               className="flex-grow overflow-y-auto mb-4 mt-4 pr-4"
             >
+              {showHeadline && headline && (
+                <div className="ml-6 mr-6 mb-4">
+                  <WordFadeIn words={headline} />
+                </div>
+              )}
+
               <div className="relative">
                 <div className="absolute left-2 top-0 bottom-0 w-px bg-border"></div>
                 {insights.map((insight, index) => (

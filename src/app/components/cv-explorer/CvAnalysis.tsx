@@ -1,4 +1,9 @@
-import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +22,23 @@ type SkillGroup = {
   skills: string[];
 };
 
+const HeaderAndSubtitle = ({
+  header,
+  subtitle,
+}: {
+  header: string;
+  subtitle?: string;
+}) => {
+  return (
+    <>
+      <h2 className="text-xl font-semibold mb-2">{header}</h2>
+      {subtitle && (
+        <p className="text-sm text-muted-foreground mb-2">{subtitle}</p>
+      )}
+    </>
+  );
+};
+
 type CvAnalysisProps = {
   fileName: string;
   skillGroups: SkillGroup[];
@@ -25,7 +47,7 @@ type CvAnalysisProps = {
   handleFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   generateInsight: () => void;
   isGeneratingInitialInsight: boolean;
-  reset: () => void;  
+  reset: () => void;
 };
 
 export default function CvAnalysis({
@@ -86,6 +108,85 @@ export default function CvAnalysis({
     reset();
   };
 
+  const skillGroupsSection = (searchSkill ? filteredGroups : skillGroups).map(
+    (group, index) => (
+      <div key={index}>
+        <h3 className="font-semibold mb-2">{group.name}</h3>
+        <div className="flex flex-wrap gap-2">
+          {group.skills.map((skill) => (
+            <Button
+              key={skill}
+              variant={selectedSkills.includes(skill) ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleSkillSelect(skill)}
+            >
+              {renderIcon(skill)}
+              {skill}
+            </Button>
+          ))}
+        </div>
+      </div>
+    )
+  );
+
+  const selectedSkillsSection = selectedSkills.length > 0 && (
+    <>
+      <HeaderAndSubtitle
+        header="Selected Skills"
+        subtitle="Skills that will be used for CV analysis"
+      />
+      <div className="flex flex-wrap gap-2">
+        {selectedSkills.map((skill) => (
+          <Badge
+            key={skill}
+            variant="secondary"
+            className="text-sm cursor-pointer"
+            onClick={() => handleSkillSelect(skill)}
+          >
+            {skill} ✕
+          </Badge>
+        ))}
+      </div>
+    </>
+  );
+
+  const ctaRow = (
+    <>
+      <Button
+        onClick={generateInsight}
+        disabled={selectedSkills.length === 0 || isGeneratingInitialInsight}
+        className="flex-grow"
+      >
+        {isGeneratingInitialInsight ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Brewing insights...
+          </>
+        ) : (
+          "Generate Insight"
+        )}
+      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleReset}
+              disabled={selectedSkills.length === 0}
+            >
+              <RotateCcw className="h-4 w-4" />
+              <span className="sr-only">Reset</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Reset selected skills</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </>
+  );
+
   return (
     <>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -124,10 +225,10 @@ export default function CvAnalysis({
       </CardHeader>
       <CardContent className="flex-grow flex flex-col space-y-6 overflow-hidden pt-6">
         <div className="flex-grow flex flex-col min-h-0">
-          <h2 className="text-xl font-semibold mb-2">Skills</h2>
-          <p className="text-sm text-muted-foreground mb-2">
-            Search, select, or add new skills
-          </p>
+          <HeaderAndSubtitle
+            header="Skills"
+            subtitle="Search, select, or add new skills"
+          />
           <form onSubmit={handleSearchSkill} className="mb-4">
             <div className="flex gap-2">
               <Input
@@ -136,94 +237,20 @@ export default function CvAnalysis({
                 onChange={(e) => setSearchSkill(e.target.value)}
                 placeholder="Search or enter a new skill"
               />
-              <Button type="submit" disabled={!searchSkill}>Add</Button>
+              <Button type="submit" disabled={!searchSkill}>
+                Add
+              </Button>
             </div>
           </form>
+
           <div className="overflow-y-auto flex-grow">
-            <div className="space-y-4">
-              {(searchSkill ? filteredGroups : skillGroups).map(
-                (group, index) => (
-                  <div key={index}>
-                    <h3 className="font-semibold mb-2">{group.name}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {group.skills.map((skill) => (
-                        <Button
-                          key={skill}
-                          variant={
-                            selectedSkills.includes(skill)
-                              ? "default"
-                              : "outline"
-                          }
-                          size="sm"
-                          onClick={() => handleSkillSelect(skill)}
-                        >
-                          {renderIcon(skill)}
-                          {skill}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                )
-              )}
-            </div>
+            <div className="space-y-4">{skillGroupsSection}</div>
           </div>
         </div>
 
-        {selectedSkills.length > 0 && (
-          <div>
-            <h2 className="text-xl font-semibold mb-2">Selected Skills</h2>
-            <p className="text-sm text-muted-foreground mb-2">
-              Skills that will be used for CV analysis
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {selectedSkills.map((skill) => (
-                <Badge
-                  key={skill}
-                  variant="secondary"
-                  className="text-sm cursor-pointer"
-                  onClick={() => handleSkillSelect(skill)}
-                >
-                  {skill} ✕
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
+        <div>{selectedSkillsSection}</div>
 
-        <div className="flex gap-2">
-          <Button
-            onClick={generateInsight}
-            disabled={selectedSkills.length === 0 || isGeneratingInitialInsight}
-            className="flex-grow"
-          >
-            {isGeneratingInitialInsight ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Brewing insights...
-              </>
-            ) : (
-              "Generate Insight"
-            )}
-          </Button>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleReset}
-                  disabled={selectedSkills.length === 0}
-                >
-                  <RotateCcw className="h-4 w-4" />
-                  <span className="sr-only">Reset</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Reset selected skills</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+        <div className="flex gap-2">{ctaRow}</div>
       </CardContent>
     </>
   );
