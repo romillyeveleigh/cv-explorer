@@ -47,15 +47,39 @@ export default function CVExplorer() {
       }
 
       const getNewSkillGroups = async (text: string) => {
-        const prompt = `give me a list of skills extracted from this CV text: ${text}
-        The list should be in the following format:
-        - Skill 1
-        - Skill 2
-        - Skill 3
-        Give me the main 10 skills`;
-        const message = await getMessageFromPrompt(prompt, Model.HAIKU, 0.5);
+        const prompt = `
+        You are an expert in CV analysis and have hipster-level knowledge of trending technologies.
+        You always pick newer technologies (for example, typescript over javascript, Next.js over react, aws over azure, etc.)
+        and ignore out-dated or unimpressive technologies (for example, php, html, wordpress, etc.)
+        You are looking for the most impressive technologies and skills that the candidate has to offer.
 
-        const newSkillGroups: SkillGroup[] = [];
+        You will be given a CV and asked to group the skills into categories.
+        1) This is the text of the CV: 
+        ===START OF TEXT===
+        ${text}
+        ===END OF TEXT===
+        
+        2) Decide on 3 most relevant categories that you would like to group the skills into. 
+        The last category should include mainly soft skills.
+
+        3) Isolate skills from the CV that are trending and would match the categories.
+      
+        4) Send the response in json format.
+        The json should be an array of objects with the following structure:
+        [{
+          name: string; // The name of the skill category
+          skills: string[]; 
+        }]
+        
+        Your response should not contain any other text or formatting.
+        Technical skills category should have at least 8 skills and fewer than 10 skills.
+        The last category with mainly soft skills should have a maximum of 3 skills.
+        No skills should be repeated across categories.
+       
+        `;
+        const message = await getMessageFromPrompt(prompt, Model.HAIKU, 0.5);
+        console.log("🚀 ~ getNewSkillGroups ~ message:", message);
+        const newSkillGroups: SkillGroup[] = JSON.parse(message);
         return newSkillGroups;
       };
 
