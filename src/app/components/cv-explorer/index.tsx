@@ -59,11 +59,12 @@ export default function CVExplorer() {
         ${text}
         ===END OF TEXT===
         
-        2) Decide on 3 most relevant categories that you would like to group the skills into. 
+        2) Decide on 3 most relevant categories that you would like to group the skills into in the response . 
         The last category should include mainly soft skills but don't name it "soft skills".
 
-        3) Isolate skills from the CV that are trending and would match the categories.
-        Feel free to group closely related skills into one skill.
+        3) In the response, isolate skills from the CV that are trending and would match the categories.
+        If a skill is made by the same company as another skill, group them together in the format "Skill + Skill".
+        Count this as 1 skill and do not repeat those skills individually in the response.
       
         4) Send the response in json format.
         The json should be an array of objects with the following structure:
@@ -75,10 +76,10 @@ export default function CVExplorer() {
         Your response should not contain any other text or formatting.
         The first 2 categories should have between 6 and 8 skills.
         The last category with mainly soft skills should have a maximum of 3 skills.
-        No skills should be repeated across categories.
+        No skills should be repeated across categories in the response.
        
         `;
-        const message = await getMessageFromPrompt(prompt, Model.HAIKU, 0.5);
+        const message = await getMessageFromPrompt(prompt, Model.HAIKU, 0.8);
         console.log("🚀 ~ getNewSkillGroups ~ message:", message);
         const newSkillGroups: SkillGroup[] = JSON.parse(message);
         return newSkillGroups;

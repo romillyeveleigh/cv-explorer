@@ -115,8 +115,6 @@ export default function CvAnalysis({
               variant={selectedSkills.includes(skill) ? "default" : "outline"}
               size="sm"
               onClick={() => handleSkillSelect(skill)}
-              // max width of 150px
-              // className="max-w-[150px] overflow-hidden text-ellipsis "
             >
               {renderIcon(skill)}
               <span className="max-w-[180px] overflow-hidden text-ellipsis">
