@@ -1,13 +1,8 @@
-import Image from "next/image";
-
-import MultiSelectForm from "./components/MultiSelectForm";
-import PdfExtractor from "./components/PdfExtractor";
-
 import { cn } from "@/lib/utils";
 import DotPattern from "@/components/magicui/dot-pattern";
 import CvUploader from "./components/CvUploader";
-// import CvUploader from "./components/CvUploader";
-import CvExplorer from "./components/cv-explorer/CvExplorer";
+import CvExplorer from "./components/cv-explorer";
+import MultiSelectForm from "./components/MultiSelectForm";
 
 export default function Home() {
   return (
