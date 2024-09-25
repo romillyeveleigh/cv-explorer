@@ -1,6 +1,6 @@
 "use client";
 
-const wordToText = async (file: File) => {
+const wordToText = async (file: File): Promise<string> => {
   const formData = new FormData();
   formData.append("word", file);
 

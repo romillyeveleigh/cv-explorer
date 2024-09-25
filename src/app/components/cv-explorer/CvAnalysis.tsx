@@ -8,7 +8,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Upload, FileText, RotateCcw, Loader2 } from "lucide-react";
+import {
+  Upload,
+  FileText,
+  RotateCcw,
+  Loader2,
+  AlertTriangle,
+} from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { renderIcon } from "@/app/utils";
 const MAX_SKILLS = 3;
@@ -40,9 +46,13 @@ type CvAnalysisProps = {
   skillGroups: SkillGroup[];
   selectedSkills: string[];
   setSelectedSkills: React.Dispatch<React.SetStateAction<string[]>>;
-  handleFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleFileUpload: (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => Promise<void>;
   generateInsight: () => void;
   isGeneratingInitialInsight: boolean;
+  isLoading: boolean;
+  error: string | null;
   reset: () => void;
 };
 
@@ -54,6 +64,8 @@ export default function CvAnalysis({
   handleFileUpload,
   generateInsight,
   isGeneratingInitialInsight,
+  isLoading,
+  error,
   reset,
 }: CvAnalysisProps) {
   const [searchSkill, setSearchSkill] = useState("");
@@ -249,31 +261,49 @@ export default function CvAnalysis({
         />
       </CardHeader>
       <CardContent className="flex-grow flex flex-col space-y-6 overflow-hidden pt-6">
-        <div className="flex-grow flex flex-col min-h-0">
-          <HeaderAndSubtitle
-            header="Skills"
-            subtitle="Search, select, or add new skills"
-          />
-          <form onSubmit={handleSearchSkill} className="mb-4">
-            <div className="flex gap-2">
-              <Input
-                type="text"
-                value={searchSkill}
-                onChange={(e) => setSearchSkill(e.target.value)}
-                placeholder="Search or enter a new skill"
-              />
-              <Button type="submit" disabled={!searchSkill}>
-                Add
-              </Button>
-            </div>
-          </form>
-
-          <div className="overflow-y-auto flex-grow">
-            <div className="space-y-4">{skillGroupsSection}</div>
+        {isLoading ? (
+          <div className="flex-grow flex flex-col justify-center items-center">
+            <Loader2 className="h-12 w-12 animate-spin mb-4" />
+            <p className="text-lg font-medium text-muted-foreground">
+            Cooking up your CV magic...
+            </p>
           </div>
-        </div>
+        ) : error ? (
+          <div className="flex-grow flex flex-col justify-center items-center">
+            <AlertTriangle className="h-12 w-12 mb-4" />
+            <p className="text-lg font-medium text-muted-foreground text-center">
+              Uh oh! {error} <br />Please try again
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="flex-grow flex flex-col min-h-0">
+              <HeaderAndSubtitle
+                header="Skills"
+                subtitle="Search, select, or add new skills"
+              />
+              <form onSubmit={handleSearchSkill} className="mb-4">
+                <div className="flex gap-2">
+                  <Input
+                    type="text"
+                    value={searchSkill}
+                    onChange={(e) => setSearchSkill(e.target.value)}
+                    placeholder="Search or enter a new skill"
+                  />
+                  <Button type="submit" disabled={!searchSkill}>
+                    Add
+                  </Button>
+                </div>
+              </form>
 
-        <div>{selectedSkillsSection}</div>
+              <div className="overflow-y-auto flex-grow">
+                <div className="space-y-4">{skillGroupsSection}</div>
+              </div>
+            </div>
+
+            <div>{selectedSkillsSection}</div>
+          </>
+        )}
 
         <div className="flex gap-2">{ctaRow}</div>
       </CardContent>

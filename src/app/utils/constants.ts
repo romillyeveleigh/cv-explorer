@@ -1,3 +1,5 @@
+import { SkillGroup } from "./types";
+
 export const OPTION_GROUPS = [
   {
     name: "Key Tech",

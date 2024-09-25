@@ -13,7 +13,7 @@ export default function Home() {
             "[mask-image:radial-gradient(1300px_circle_at_center,white,transparent)]"
           )}
         />
-        <CvUploader />
+        {/* <CvUploader /> */}
         {/* <MultiSelectForm /> */}
         <CvExplorer />
       </div>

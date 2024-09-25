@@ -133,3 +133,35 @@ export const validateInput = (
 ): boolean => {
   return cvText.trim().length > 0 && selectedOptions.length > 0;
 };
+
+export const getSkillGroupsPrompt = (cvText: string): string => `
+        You are an expert in CV analysis and have hipster-level knowledge of trending technologies.
+        You always pick newer technologies (for example, typescript over javascript, Next.js over react, aws over azure, etc.)
+        and ignore out-dated or unimpressive technologies (for example, php, html, wordpress, etc.)
+        You are looking for the most impressive technologies and skills that the candidate has to offer.
+
+        You will be given a CV and asked to group the skills into categories.
+        1) This is the text of the CV: 
+        ===START OF TEXT===
+        ${cvText}
+        ===END OF TEXT===
+        
+        2) Decide on 3 most relevant categories that you would like to group the skills into in the response . 
+        The last category should include mainly soft skills but don't name it "soft skills".
+
+        3) In the response, isolate skills from the CV that are trending and would match the categories.
+        If a skill is made by the same company as another skill, group them together in the format "Skill + Skill".
+        Count this as 1 skill and do not repeat those skills individually in the response.
+      
+        4) Send the response in json format.
+        The json should be an array of objects with the following structure:
+        [{
+          name: string; // The name of the skill category
+          skills: string[]; 
+        }]
+        
+        Your response should not contain any other text or formatting.
+        The first 2 categories should have between 6 and 8 skills.
+        The last category with mainly soft skills should have a maximum of 3 skills.
+        No skills should be repeated across categories in the response.
+        `;
