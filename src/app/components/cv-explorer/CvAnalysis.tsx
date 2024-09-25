@@ -16,6 +16,7 @@ import {
 import { Upload, FileText, RotateCcw, Loader2 } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { renderIcon } from "@/app/utils";
+const MAX_SKILLS = 3;
 
 type SkillGroup = {
   name: string;
@@ -136,7 +137,7 @@ export default function CvAnalysis({
         subtitle="Skills that will be used for CV analysis"
       />
       <div className="flex flex-wrap gap-2">
-        {selectedSkills.map((skill) => (
+        {selectedSkills.slice(0, MAX_SKILLS).map((skill) => (
           <Badge
             key={skill}
             variant="secondary"
@@ -146,6 +147,33 @@ export default function CvAnalysis({
             {skill} ✕
           </Badge>
         ))}
+        {selectedSkills.length > MAX_SKILLS && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <Badge variant="secondary" className="text-sm cursor-pointer">
+                    + {selectedSkills.length - MAX_SKILLS} more
+                  </Badge>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="flex flex-col">
+                  {selectedSkills.slice(MAX_SKILLS).map((skill) => (
+                    <Button
+                      key={skill}
+                      variant="secondary"
+                      className="text-sm mb-1"
+                      onClick={() => handleSkillSelect(skill)} // Deselect skill on click
+                    >
+                      {skill} ✕
+                    </Button>
+                  ))}
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
       </div>
     </>
   );
@@ -190,7 +218,7 @@ export default function CvAnalysis({
   return (
     <>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle>CV Analysis</CardTitle>
+        <CardTitle>CV Analysis 2123</CardTitle>
         <div className="flex items-center space-x-2">
           <TooltipProvider>
             <Tooltip>
