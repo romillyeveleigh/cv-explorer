@@ -4,16 +4,16 @@ import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import CvAnalysis from "./CvAnalysis";
 import CvInsight from "./CvInsight";
-
-type SkillGroup = {
-  name: string;
-  skills: string[];
-};
-
-type Insight = {
-  content: string;
-  step: number;
-};
+import { fileIsSupported, SKILL_GROUPS } from "@/app/utils";
+import { Insight, SkillGroup } from "@/app/utils/types";
+import pdfToText from "@/app/utils/pdfToText";
+import wordToText from "@/app/utils/wordToText";
+import {
+  createRequestMessage,
+  generateResponse,
+  getMessageFromPrompt,
+  Model,
+} from "@/app/hooks/useMessageThread";
 
 export default function CVExplorer() {
   const [file, setFile] = useState<File | null>(null);
@@ -26,85 +26,84 @@ export default function CVExplorer() {
     useState(false);
   const [isFirstInsightGenerated, setIsFirstInsightGenerated] = useState(false);
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [cvText, setCvText] = useState<string | null>(null);
+
   useEffect(() => {
-    // Preload demo data
-    const initialSkillGroups: SkillGroup[] = [
-      {
-        name: "Web Development",
-        skills: ["JavaScript", "React", "Node.js", "HTML", "CSS"],
-      },
-      {
-        name: "Data Science",
-        skills: [
-          "Python",
-          "Data Analysis",
-          "Machine Learning",
-          "SQL",
-          "Statistics",
-        ],
-      },
-      {
-        name: "Project Management",
-        skills: [
-          "Agile",
-          "Scrum",
-          "Kanban",
-          "Risk Management",
-          "Stakeholder Management",
-        ],
-      },
-    ];
+    // Preload default data
+    const initialSkillGroups: SkillGroup[] = SKILL_GROUPS;
     setSkillGroups(initialSkillGroups);
   }, []);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setFile(file);
+      // setFile(file);
       setFileName(file.name);
-      // Simulate CV analysis
-      setTimeout(() => {
-        const newSkillGroups: SkillGroup[] = [
-          {
-            name: "Web Development",
-            skills: [
-              "JavaScript",
-              "React",
-              "Node.js",
-              "TypeScript",
-              "Vue.js",
-              "Angular",
-            ],
-          },
-          {
-            name: "Data Science",
-            skills: [
-              "Python",
-              "Data Analysis",
-              "Machine Learning",
-              "SQL",
-              "R",
-              "TensorFlow",
-            ],
-          },
-          {
-            name: "Project Management",
-            skills: [
-              "Agile",
-              "Scrum",
-              "Kanban",
-              "PRINCE2",
-              "Six Sigma",
-              "Team Leadership",
-            ],
-          },
-          {
-            name: "Cloud Technologies",
-            skills: ["AWS", "Azure", "Google Cloud", "Docker", "Kubernetes"],
-          },
-        ];
+      if (!fileIsSupported(file)) {
+        console.log("File is not supported");
+        setError("File type not supported");
+      }
+
+      const getNewSkillGroups = async (text: string) => {
+        const prompt = `give me a list of skills extracted from this CV text: ${text}
+        The list should be in the following format:
+        - Skill 1
+        - Skill 2
+        - Skill 3
+        Give me the main 10 skills`;
+        const message = await getMessageFromPrompt(prompt, Model.HAIKU, 0.5);
+
+        const newSkillGroups: SkillGroup[] = [];
+        return newSkillGroups;
+      };
+
+      const handleCvAnalysis = async (text: string) => {
+        const newSkillGroups = await getNewSkillGroups(text);
         setSkillGroups(newSkillGroups);
-      }, 1500);
+      };
+
+      const getCvText = async () => {
+        if (file.type === "application/pdf") {
+          console.log("PDF file detected");
+          setIsLoading(true);
+          const text = await pdfToText(file);
+          return text;
+        } else if (file.type === "text/plain") {
+          console.log("Plain text file detected");
+          setIsLoading(true);
+          const reader = new FileReader();
+          reader.onload = () => {
+            const text = reader.result as string;
+            return text;
+          };
+          reader.readAsText(file);
+        } else if (
+          file.type ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ) {
+          console.log("Word file detected");
+          setIsLoading(true);
+          const text = await wordToText(file);
+          return text;
+        }
+      };
+
+      setIsLoading(true);
+      getCvText().then((text: string) => {
+        console.log("CV text:", text.slice(0, 100));
+        setCvText(text);
+        handleCvAnalysis(text);
+      });
+      setIsLoading(false);
+
+      // const handleCvAnalysis = async () => {
+      //   // Simulate CV analysis
+      //   const newSkillGroups = await getNewSkillGroups(content);
+      //   setSkillGroups(newSkillGroups);
+      // };
+      // handleCvAnalysis();
     }
   };
 

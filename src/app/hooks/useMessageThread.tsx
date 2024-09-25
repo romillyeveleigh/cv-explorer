@@ -9,11 +9,49 @@ export const enum Model {
   HAIKU = "claude-3-haiku-20240307",
 }
 
-const getClient = () => {
+export const getClient = () => {
   return new Anthropic({
     apiKey: process.env.NEXT_PUBLIC_API_KEY,
     dangerouslyAllowBrowser: true,
   });
+};
+
+export const createRequestMessage: (
+  prompt: string
+) => Anthropic.Messages.MessageParam = (prompt) => ({
+  role: "user",
+  content: prompt,
+});
+
+export const generateResponse = async (
+  messages: Anthropic.Messages.MessageParam[],
+  model: Model,
+  temperature: number = 1
+) => {
+  return await getClient().messages.create({
+    model: model,
+    max_tokens: 1000,
+    temperature,
+    messages,
+  });
+};
+
+const getMesssageFromResponse = (response: Anthropic.Messages.MessageParam) => {
+  return typeof response.content[0] === "string"
+    ? response.content[0]
+    : "text" in response.content[0]
+    ? response.content[0].text
+    : "";
+};
+
+export const getMessageFromPrompt = async (
+  prompt: string,
+  model: Model = Model.HAIKU,
+  temperature: number = 1
+) => {
+  const request = createRequestMessage(prompt);
+  const response = await generateResponse([request], model, temperature);
+  return getMesssageFromResponse(response);
 };
 
 export const useMessageThread = () => {
@@ -21,24 +59,6 @@ export const useMessageThread = () => {
   const [messages, setMessages] = useState<Anthropic.Messages.MessageParam[]>(
     []
   );
-  const createRequestMessage: (
-    prompt: string
-  ) => Anthropic.Messages.MessageParam = (prompt) => ({
-    role: "user",
-    content: prompt,
-  });
-
-  const generateResponse = async (
-    messages: Anthropic.Messages.MessageParam[],
-    model: Model
-  ) => {
-    return await getClient().messages.create({
-      model: model,
-      max_tokens: 1000,
-      temperature: 1,
-      messages,
-    });
-  };
 
   const updateThread = async (prompt: string, isNewThread: boolean = false) => {
     setIsLoading(true);
