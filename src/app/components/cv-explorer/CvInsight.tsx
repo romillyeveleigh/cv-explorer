@@ -1,7 +1,8 @@
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, InfoIcon } from "lucide-react";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import WordFadeIn from "@/components/magicui/word-fade-in";
 
 type Insight = {
@@ -25,16 +26,20 @@ export default function CvInsight({
   setInsights,
 }: CvInsightProps) {
   const insightContentRef = useRef<HTMLDivElement>(null);
+  const [isLoadingMoreInsights, setIsLoadingMoreInsights] = useState(false);
+  const [showHeadline, setShowHeadline] = useState(true);
 
   useEffect(() => {
     if (insightContentRef.current) {
-      insightContentRef.current.scrollTop =
-        insightContentRef.current.scrollHeight;
+      insightContentRef.current.scrollTo({
+        top: insightContentRef.current.scrollHeight,
+        behavior: "smooth",
+      });
     }
   }, [insights]);
 
   const handleShowMore = () => {
-    // Simulate generating more content
+    setIsLoadingMoreInsights(true);
     setTimeout(() => {
       const newInsights = [
         "Additionally, the candidate shows potential for leadership roles, given their experience in team management and Scrum practices. Their diverse skill set suggests they could be a valuable asset in cross-functional teams, bridging the gap between technical and managerial roles.",
@@ -49,15 +54,26 @@ export default function CvInsight({
         step: nextStep,
       };
       setInsights([...insights, newInsight]);
+      setIsLoadingMoreInsights(false);
     }, 1500);
   };
 
   return (
     <>
-      <CardHeader>
-        <CardTitle>CV Insight</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-left">CV Insight</CardTitle>
+        <div className="flex items-center">
+          <Checkbox
+            checked={showHeadline}
+            onCheckedChange={(checked) => setShowHeadline(checked)}
+            id="toggle-headline"
+          />
+          <label htmlFor="toggle-headline" className="ml-2 text-sm">
+            Show Headline
+          </label>
+        </div>
       </CardHeader>
-      <CardContent className="flex-grow flex flex-col overflow-hidden">
+      <CardContent className="flex-grow flex flex-col overflow-hidden p-4">
         {isGeneratingInitialInsight ? (
           <div className="flex-grow flex flex-col justify-center items-center">
             <Loader2 className="h-12 w-12 animate-spin mb-4" />
@@ -81,11 +97,10 @@ export default function CvInsight({
           </div>
         ) : (
           <>
-            {headline && (
-              // <div className="mb-4">
-              //   <h2 className="text-2xl font-bold text-primary">{headline}</h2>
-              // </div>
-              <WordFadeIn words={headline} />
+            {showHeadline && headline && (
+              <div className="mt-4 ml-6 mr-6">
+                <WordFadeIn words={headline} />
+              </div>
             )}
             <div
               ref={insightContentRef}
@@ -96,7 +111,7 @@ export default function CvInsight({
                 {insights.map((insight, index) => (
                   <div key={index} className="mb-4 last:mb-0 relative pl-6">
                     {index > 0 && (
-                      <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full border-2 border-primary bg-background"></div>
+                      <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full border-2 border-gray-300 bg-background"></div>
                     )}
                     <p className="whitespace-pre-line">{insight.content}</p>
                   </div>
@@ -108,8 +123,13 @@ export default function CvInsight({
                 onClick={handleShowMore}
                 variant="outline"
                 className="w-full"
+                disabled={isLoadingMoreInsights}
               >
-                More Insights
+                {isLoadingMoreInsights ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  "More Insights"
+                )}
               </Button>
             )}
           </>

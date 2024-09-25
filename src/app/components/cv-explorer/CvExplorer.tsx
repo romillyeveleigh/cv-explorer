@@ -115,7 +115,9 @@ export default function CVExplorer() {
       const newInsight = {
         content: `Based on the selected skills (${selectedSkills.join(
           ", "
-        )}), the CV shows strong proficiency in web development and data science. The candidate has experience with modern JavaScript frameworks and Python-based data analysis tools. They also demonstrate project management skills, particularly in Agile methodologies.`,
+        )}), the CV shows strong proficiency in web development and data science. 
+        The candidate has experience with modern JavaScript frameworks and Python-based data analysis tools. 
+        They also demonstrate project management skills, particularly in Agile methodologies.`,
         step: 1,
       };
       setInsights([newInsight]);
@@ -138,7 +140,7 @@ export default function CVExplorer() {
   return (
     <div className="container mx-auto p-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-90">
-        <Card className="lg:h-[calc(80vh-2rem)] flex flex-col">
+        <Card className="lg:h-[calc(90vh-2rem)] flex flex-col">
           <CvAnalysis
             fileName={fileName}
             skillGroups={skillGroups}
@@ -151,7 +153,7 @@ export default function CVExplorer() {
           />
         </Card>
 
-        <Card className="lg:h-[calc(80vh-2rem)] flex flex-col">
+        <Card className="lg:h-[calc(90vh-2rem)] flex flex-col">
           <CvInsight
             isGeneratingInitialInsight={isGeneratingInitialInsight}
             insights={insights}
