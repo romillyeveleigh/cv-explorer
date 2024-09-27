@@ -6,4 +6,5 @@ export type SkillGroup = {
 export type Insight = {
     content: string;
     step: number;
+    headline?: string;
   };

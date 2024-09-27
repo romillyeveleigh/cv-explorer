@@ -2141,6 +2141,11 @@ json5@^1.0.2:
   dependencies:
     minimist "^1.2.0"
 
+jsonrepair@^3.8.1:
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/jsonrepair/-/jsonrepair-3.8.1.tgz#c0ce74205db43889de50d17c326da0224d10ffb5"
+  integrity sha512-5wnjaO53EJOhfLFY92nvBz2B9gqF9ql/D4HKUb1WOSBaqtVcAifFfmurblnhCJn/ySqKFA8U3n7nhGMAu/hEjQ==
+
 "jsx-ast-utils@^2.4.1 || ^3.0.0", jsx-ast-utils@^3.3.5:
   version "3.3.5"
   resolved "https://registry.yarnpkg.com/jsx-ast-utils/-/jsx-ast-utils-3.3.5.tgz#4766bd05a8e2a11af222becd19e15575e52a853a"

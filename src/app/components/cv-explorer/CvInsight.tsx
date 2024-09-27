@@ -16,6 +16,8 @@ type CvInsightProps = {
   headline: string;
   isFirstInsightGenerated: boolean;
   setInsights: React.Dispatch<React.SetStateAction<Insight[]>>;
+  handleShowMore: () => void;
+  isLoadingMoreInsights: boolean;
 };
 
 export default function CvInsight({
@@ -24,9 +26,11 @@ export default function CvInsight({
   headline,
   isFirstInsightGenerated,
   setInsights,
+  isLoadingMoreInsights,
+  handleShowMore,
 }: CvInsightProps) {
   const insightContentRef = useRef<HTMLDivElement>(null);
-  const [isLoadingMoreInsights, setIsLoadingMoreInsights] = useState(false);
+  // const [isLoadingMoreInsights, setIsLoadingMoreInsights] = useState(false);
   const [showHeadline, setShowHeadline] = useState(true);
 
   useEffect(() => {
@@ -38,25 +42,25 @@ export default function CvInsight({
     }
   }, [insights]);
 
-  const handleShowMore = () => {
-    setIsLoadingMoreInsights(true);
-    setTimeout(() => {
-      const newInsights = [
-        "Additionally, the candidate shows potential for leadership roles, given their experience in team management and Scrum practices. Their diverse skill set suggests they could be a valuable asset in cross-functional teams, bridging the gap between technical and managerial roles.",
-        "The CV indicates a strong foundation in both front-end and back-end technologies, making the candidate suitable for full-stack development positions. Their experience with TypeScript suggests an attention to code quality and type safety.",
-        "With skills in machine learning and data analysis, the candidate could contribute to data-driven decision-making processes. This combination of technical and analytical skills is highly valued in today's data-centric business environment.",
-        "The candidate's proficiency in SQL, coupled with their data analysis skills, indicates they could excel in roles involving database management and data warehousing. This skill set is crucial for maintaining and optimizing data infrastructure.",
-        "Given their diverse skill set, the candidate appears well-suited for roles in tech consulting or as a technical product manager. Their ability to understand both technical and business aspects could be invaluable in translating between technical and non-technical stakeholders.",
-      ];
-      const nextStep = insights.length + 1;
-      const newInsight = {
-        content: newInsights[(nextStep - 2) % newInsights.length],
-        step: nextStep,
-      };
-      setInsights([...insights, newInsight]);
-      setIsLoadingMoreInsights(false);
-    }, 1500);
-  };
+  // const handleShowMore = () => {
+  //   setIsLoadingMoreInsights(true);
+  //   setTimeout(() => {
+  //     const newInsights = [
+  //       "Additionally, the candidate shows potential for leadership roles, given their experience in team management and Scrum practices. Their diverse skill set suggests they could be a valuable asset in cross-functional teams, bridging the gap between technical and managerial roles.",
+  //       "The CV indicates a strong foundation in both front-end and back-end technologies, making the candidate suitable for full-stack development positions. Their experience with TypeScript suggests an attention to code quality and type safety.",
+  //       "With skills in machine learning and data analysis, the candidate could contribute to data-driven decision-making processes. This combination of technical and analytical skills is highly valued in today's data-centric business environment.",
+  //       "The candidate's proficiency in SQL, coupled with their data analysis skills, indicates they could excel in roles involving database management and data warehousing. This skill set is crucial for maintaining and optimizing data infrastructure.",
+  //       "Given their diverse skill set, the candidate appears well-suited for roles in tech consulting or as a technical product manager. Their ability to understand both technical and business aspects could be invaluable in translating between technical and non-technical stakeholders.",
+  //     ];
+  //     const nextStep = insights.length + 1;
+  //     const newInsight = {
+  //       content: newInsights[(nextStep - 2) % newInsights.length],
+  //       step: nextStep,
+  //     };
+  //     setInsights([...insights, newInsight]);
+  //     setIsLoadingMoreInsights(false);
+  //   }, 1500);
+  // };
 
   return (
     <>
@@ -65,7 +69,7 @@ export default function CvInsight({
         <div className="flex items-center space-x-2">
           <Checkbox
             checked={showHeadline}
-            onCheckedChange={(checked) => setShowHeadline(checked)}
+            onCheckedChange={(checked) => setShowHeadline(Boolean(checked))}
             id="toggle-headline"
           />
           <label htmlFor="toggle-headline" className="ml-2 text-sm">

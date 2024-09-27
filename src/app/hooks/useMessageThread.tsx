@@ -9,6 +9,13 @@ export const enum Model {
   HAIKU = "claude-3-haiku-20240307",
 }
 
+const DEFAULT_GENERATE_RESPONSE_PARAMS = {
+  model: Model.SONNET,
+  max_tokens: 1000,
+  temperature: 0.8,
+  messages: [],
+};
+
 export const getClient = () => {
   return new Anthropic({
     apiKey: process.env.NEXT_PUBLIC_API_KEY,
@@ -23,16 +30,15 @@ export const createRequestMessage: (
   content: prompt,
 });
 
-export const generateResponse = async (
-  messages: Anthropic.Messages.MessageParam[],
-  model: Model,
-  temperature: number = 1
+type GenerateResponseParams =
+  Partial<Anthropic.Messages.MessageCreateParamsNonStreaming>;
+
+export const generateResponseMessage = async (
+  params: GenerateResponseParams
 ) => {
   return await getClient().messages.create({
-    model: model,
-    max_tokens: 1000,
-    temperature,
-    messages,
+    ...DEFAULT_GENERATE_RESPONSE_PARAMS,
+    ...params,
   });
 };
 
@@ -44,14 +50,46 @@ const getMesssageFromResponse = (response: Anthropic.Messages.MessageParam) => {
     : "";
 };
 
+export const getObjectFromResponse = (
+  response: Anthropic.Messages.MessageParam
+) => {
+  const isTooluseBlockParam =
+    typeof response.content[0] === "object" &&
+    response.content[0] !== null &&
+    response.content[0].type === "tool_use";
+
+  if (!isTooluseBlockParam || typeof response.content[0] === "string") {
+    console.error("Response does not contain a tool use block");
+    return;
+  }
+
+  const object = response.content[0].input;
+  console.log("🚀 ~ getObjectFromResponse ~ object:", object);
+  return object as unknown;
+};
+
 export const getMessageFromPrompt = async (
   prompt: string,
-  model: Model = Model.HAIKU,
-  temperature: number = 1
+  options: GenerateResponseParams = {}
 ) => {
-  const request = createRequestMessage(prompt);
-  const response = await generateResponse([request], model, temperature);
+  const inputMessage = createRequestMessage(prompt);
+  const response = await generateResponseMessage({
+    ...options,
+    messages: [inputMessage],
+  });
   return getMesssageFromResponse(response);
+};
+
+export const getObjectFromPrompt = async (
+  prompt: string,
+  options: GenerateResponseParams = {}
+) => {
+  const inputMessage = createRequestMessage(prompt);
+  const response = await generateResponseMessage({
+    ...options,
+    messages: [inputMessage],
+  });
+  return getObjectFromResponse(response);
 };
 
 export const useMessageThread = () => {
@@ -65,10 +103,10 @@ export const useMessageThread = () => {
     try {
       const request = createRequestMessage(prompt);
       const currentMessages = isNewThread ? [] : messages;
-      const response = await generateResponse(
-        [...currentMessages, request],
-        isNewThread ? Model.HAIKU : Model.SONNET
-      );
+      const response = await generateResponseMessage({
+        messages: [...currentMessages, request],
+        model: isNewThread ? Model.HAIKU : Model.SONNET,
+      });
 
       const responseMessage: Anthropic.Messages.MessageParam = {
         role: "assistant",
