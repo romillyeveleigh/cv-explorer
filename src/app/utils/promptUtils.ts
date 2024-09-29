@@ -82,7 +82,7 @@ export const getInitialInsightMessageParams = (
 ) => {
   const system = `
   You are an expert in CV analysis with hipster-level knowledge of trending technologies.
-Write a short memo (strictly under 110 words) to a tech recruiter about a candidate.
+Write a short memo (strictly under 90 words) to a tech recruiter about a candidate.
 Focus on the given list of skills and CV.
 
 If skills are not tech-related, briefly describe them and ignore the CV.
@@ -97,7 +97,7 @@ End with a bullet list of jobs using those skills and experience duration.
 
 Provide a witty, one-line tagline (don't use the person's name).
 
-If your response exceeds 110 words, please retry with a more concise version.
+If your response exceeds 90 words, please retry with a more concise version.
   `;
 
   const tools: Anthropic.Messages.Tool[] = [
