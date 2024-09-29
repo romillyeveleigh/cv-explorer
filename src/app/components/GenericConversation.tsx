@@ -1,0 +1,97 @@
+"use client";
+
+import React, { useState } from "react";
+import { useClaudeConversation, Message } from "../hooks/useClaudeConversation";
+import Anthropic from "@anthropic-ai/sdk";
+
+interface Tool {
+  type: string;
+  function: {
+    name: string;
+    description: string;
+    parameters: any;
+  };
+}
+
+interface GenericConversationProps {
+  placeholder: string;
+  title: string;
+  systemMessage: Anthropic.MessageCreateParams["system"];
+  tools: Anthropic.Tool[];
+  modelParams?: Record<string, any>;
+}
+
+export default function GenericConversation({
+  placeholder,
+  title,
+  systemMessage,
+  tools,
+  modelParams,
+}: GenericConversationProps) {
+  const [input, setInput] = useState("");
+  const { messages, isLoading, sendMessage } = useClaudeConversation({
+    systemMessage,
+    tools,
+    modelParams,
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    await sendMessage(input);
+    setInput("");
+  };
+
+  const renderContent = (content: string | Record<string, any>) => {
+    if (typeof content === "string") {
+      return content;
+    } else {
+      return (
+        <pre className="whitespace-pre-wrap">
+          {JSON.stringify(content, null, 2)}
+        </pre>
+      );
+    }
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto p-4">
+      <h2 className="text-2xl font-bold mb-4">{title}</h2>
+      <div className="bg-gray-100 p-4 rounded-lg mb-4 h-96 overflow-y-auto">
+        {messages.map((message, index) => (
+          <div
+            key={index}
+            className={`mb-2 ${
+              message.role === "user" ? "text-right" : "text-left"
+            }`}
+          >
+            <span
+              className={`inline-block p-2 rounded-lg ${
+                message.role === "user" ? "bg-blue-500 text-white" : "bg-white"
+              }`}
+            >
+              {renderContent(message.content)}
+            </span>
+          </div>
+        ))}
+      </div>
+      <form onSubmit={handleSubmit} className="flex">
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          className="flex-grow p-2 border rounded-l"
+          placeholder={placeholder}
+          disabled={isLoading}
+        />
+        <button
+          type="submit"
+          className="bg-blue-500 text-white p-2 rounded-r"
+          disabled={isLoading}
+        >
+          {isLoading ? "Thinking..." : "Send"}
+        </button>
+      </form>
+    </div>
+  );
+}
