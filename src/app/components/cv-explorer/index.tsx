@@ -2,36 +2,24 @@
 
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { jsonrepair } from "jsonrepair";
 import CvAnalysis from "./CvAnalysis";
 import CvInsight from "./CvInsight";
 import {
   fileIsSupported,
-  generateInitialInsightPrompt,
-  getSkillGroupsPrompt,
-  getSkillGroupsPromptV2,
+  getInitialInsightMessageParams,
+  getSkillGroupsMessageParams,
   SKILL_GROUPS,
 } from "@/app/utils";
 import { Insight, SkillGroup } from "@/app/utils/types";
 import pdfToText from "@/app/utils/pdfToText";
 import wordToText from "@/app/utils/wordToText";
-import {
-  getMessageFromPrompt,
-  getObjectFromPrompt,
-  Model,
-} from "@/app/hooks/useMessageThread";
-
-const isValidJSON = (text: string) => {
-  try {
-    JSON.parse(text);
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
+import { getObjectFromPrompt, Model } from "@/app/hooks/useMessageThread";
+import { CV_TEXT } from "../InputForm";
 
 export default function CVExplorer() {
-  const [fileName, setFileName] = useState("Romilly_Eveleigh_CV.pdf");
+  const [name, setName] = useState<string>("");
+  const [professionalTitle, setProfessionalTitle] = useState<string>("");
+  const [fileName, setFileName] = useState("");
   const [skillGroups, setSkillGroups] = useState<SkillGroup[]>([]);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [insights, setInsights] = useState<Insight[]>([]);
@@ -47,28 +35,33 @@ export default function CVExplorer() {
 
   useEffect(() => {
     // Preload default data
-    const initialSkillGroups: SkillGroup[] = SKILL_GROUPS;
-    setSkillGroups(initialSkillGroups);
+    setSkillGroups(SKILL_GROUPS);
+    setName("Romilly Eveleigh");
+    setProfessionalTitle("Full Stack Developer");
+    setCvText(CV_TEXT || "");
+    setFileName("Romilly_Eveleigh_CV.pdf");
   }, []);
 
-  const getNewSkillGroups = async (text: string) => {
-    const {
-      system,
-      tools = [],
-      tool_choice,
-      prompt,
-    } = getSkillGroupsPromptV2(text);
+  const getCvAnalysis: (text: string) => Promise<{
+    categories: SkillGroup[];
+    name: string;
+    professional_title: string;
+  }> = async (text) => {
+    const { prompt, ...rest } = getSkillGroupsMessageParams(text);
+
     const response = await getObjectFromPrompt(prompt, {
+      ...rest,
       model: Model.HAIKU,
       temperature: 0.8,
-      system,
-      tools,
-      tool_choice,
     });
 
-    console.log("🚀 ~ getNewSkillGroups ~ response:", response);
+    const { categories, name, professional_title } = response;
 
-    return response.categories as SkillGroup[];
+    if (!categories || !name || !professional_title) {
+      throw new Error("CV analysis failed");
+    }
+
+    return response;
   };
 
   const getCvText: (file: File) => Promise<string> = async (file) => {
@@ -105,16 +98,21 @@ export default function CVExplorer() {
     if (!fileIsSupported(file)) {
       console.log("File is not supported");
       setError("File type not supported");
+      return;
     }
     try {
       setIsLoading(true);
       const cvText = await getCvText(file);
-      console.log("CV text:", cvText.slice(0, 100));
-      const newSkillGroups = await getNewSkillGroups(cvText);
+      console.log("CV text sample:", `"${cvText.slice(0, 100)}..." `);
+      const { categories, name, professional_title } = await getCvAnalysis(
+        cvText
+      );
       // throw new Error("Test error");
+      setName(name);
+      setProfessionalTitle(professional_title);
       setFileName(file.name);
       setCvText(cvText);
-      setSkillGroups(newSkillGroups);
+      setSkillGroups(categories);
       setSelectedSkills([]);
     } catch (error) {
       console.error("Error generating skill groups:", error);
@@ -150,17 +148,23 @@ export default function CVExplorer() {
     //   step: 1,
     // };
 
-    const newInsight = await getMessageFromPrompt(
-      generateInitialInsightPrompt(cvText, selectedSkills),
-      {
-        model: Model.HAIKU,
-        temperature: 0.8,
-      }
+    const { prompt, ...rest } = getInitialInsightMessageParams(
+      cvText,
+      selectedSkills,
     );
 
-    const repairedInsight = jsonrepair(newInsight);
-    const memo = JSON.parse(repairedInsight).memo;
-    const tagline = JSON.parse(repairedInsight).tagline;
+    const newInsight = await getObjectFromPrompt(prompt, {
+      ...rest,
+      model: Model.HAIKU,
+      temperature: 0.8,
+    });
+    console.log("🚀 ~ //setTimeout ~ newInsight:", newInsight);
+    if (!newInsight || !newInsight.memo || !newInsight.tagline) {
+      setError("No insight generated");
+      return;
+    }
+
+    const { memo, tagline } = newInsight;
 
     setInsights([{ content: memo, step: 1, headline: tagline }]);
     setHeadline(
@@ -197,6 +201,11 @@ export default function CVExplorer() {
     setHeadline("");
     setIsGeneratingInitialInsight(false);
     setIsFirstInsightGenerated(false);
+    setName("Romilly Eveleigh");
+    setProfessionalTitle("Full Stack Developer");
+    setFileName("Romilly_Eveleigh_CV.pdf");
+    setSkillGroups(SKILL_GROUPS);
+    setCvText(CV_TEXT);
   };
 
   return (
@@ -204,6 +213,8 @@ export default function CVExplorer() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-90">
         <Card className="lg:h-[calc(100vh-2rem)] flex flex-col">
           <CvAnalysis
+            name={name}
+            professionalTitle={professionalTitle}
             fileName={fileName}
             skillGroups={skillGroups}
             selectedSkills={selectedSkills}

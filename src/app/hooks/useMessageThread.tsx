@@ -58,14 +58,16 @@ export const getObjectFromResponse = (
     response.content[0] !== null &&
     response.content[0].type === "tool_use";
 
-  if (!isTooluseBlockParam || typeof response.content[0] === "string") {
+  if (!isTooluseBlockParam) {
     console.error("Response does not contain a tool use block");
     return;
   }
 
-  const object = response.content[0].input;
-  console.log("🚀 ~ getObjectFromResponse ~ object:", object);
-  return object as unknown;
+  const result = response.content[0].input;
+
+  if (typeof result !== "object" || result === null) return null;
+
+  return result;
 };
 
 export const getMessageFromPrompt = async (

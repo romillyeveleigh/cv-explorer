@@ -54,6 +54,8 @@ type CvAnalysisProps = {
   isLoading: boolean;
   error: string | null;
   reset: () => void;
+  name: string;
+  professionalTitle: string;
 };
 
 export default function CvAnalysis({
@@ -67,6 +69,8 @@ export default function CvAnalysis({
   isLoading,
   error,
   reset,
+  name,
+  professionalTitle,
 }: CvAnalysisProps) {
   const [searchSkill, setSearchSkill] = useState("");
   const [filteredGroups, setFilteredGroups] = useState<SkillGroup[]>([]);
@@ -265,18 +269,25 @@ export default function CvAnalysis({
           <div className="flex-grow flex flex-col justify-center items-center">
             <Loader2 className="h-12 w-12 animate-spin mb-4" />
             <p className="text-lg font-medium text-muted-foreground">
-            Cooking up your CV magic...
+              Cooking up your CV magic...
             </p>
           </div>
         ) : error ? (
           <div className="flex-grow flex flex-col justify-center items-center">
             <AlertTriangle className="h-12 w-12 mb-4" />
             <p className="text-lg font-medium text-muted-foreground text-center">
-              Uh oh! {error} <br />Please try again
+              Uh oh! {error} <br />
+              Please try again
             </p>
           </div>
         ) : (
           <>
+            <div>
+              <span className="font-bold text-xl">{name}</span> -{" "}
+              <span className="text-muted-foreground text-lg">
+                {professionalTitle}
+              </span>
+            </div>
             <div className="flex-grow flex flex-col min-h-0">
               <HeaderAndSubtitle
                 header="Skills"
@@ -300,7 +311,6 @@ export default function CvAnalysis({
                 <div className="space-y-4">{skillGroupsSection}</div>
               </div>
             </div>
-
             <div>{selectedSkillsSection}</div>
           </>
         )}

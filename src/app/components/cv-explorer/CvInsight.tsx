@@ -2,7 +2,8 @@ import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, InfoIcon } from "lucide-react";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, FC } from "react";
+import Markdown from "markdown-to-jsx";
 import WordFadeIn from "@/components/magicui/word-fade-in";
 
 type Insight = {
@@ -42,25 +43,40 @@ export default function CvInsight({
     }
   }, [insights]);
 
-  // const handleShowMore = () => {
-  //   setIsLoadingMoreInsights(true);
-  //   setTimeout(() => {
-  //     const newInsights = [
-  //       "Additionally, the candidate shows potential for leadership roles, given their experience in team management and Scrum practices. Their diverse skill set suggests they could be a valuable asset in cross-functional teams, bridging the gap between technical and managerial roles.",
-  //       "The CV indicates a strong foundation in both front-end and back-end technologies, making the candidate suitable for full-stack development positions. Their experience with TypeScript suggests an attention to code quality and type safety.",
-  //       "With skills in machine learning and data analysis, the candidate could contribute to data-driven decision-making processes. This combination of technical and analytical skills is highly valued in today's data-centric business environment.",
-  //       "The candidate's proficiency in SQL, coupled with their data analysis skills, indicates they could excel in roles involving database management and data warehousing. This skill set is crucial for maintaining and optimizing data infrastructure.",
-  //       "Given their diverse skill set, the candidate appears well-suited for roles in tech consulting or as a technical product manager. Their ability to understand both technical and business aspects could be invaluable in translating between technical and non-technical stakeholders.",
-  //     ];
-  //     const nextStep = insights.length + 1;
-  //     const newInsight = {
-  //       content: newInsights[(nextStep - 2) % newInsights.length],
-  //       step: nextStep,
-  //     };
-  //     setInsights([...insights, newInsight]);
-  //     setIsLoadingMoreInsights(false);
-  //   }, 1500);
-  // };
+  const MarkdownToJsx: FC<{ markdown: string }> = ({ markdown }) => {
+    return (
+      <Markdown
+        options={{
+          overrides: {
+            strong: { component: "strong", props: { className: "font-bold" } },
+            p: { props: { className: "mb-4" } },
+            ul: { props: { className: "list-disc list-inside mb-4" } },
+            ol: { props: { className: "list-decimal list-inside mb-4" } },
+            li: { props: { className: "ml-4 mb-0" } },
+            h1: { props: { className: "text-2xl font-bold mb-4" } },
+            h2: { props: { className: "text-xl font-bold mb-3" } },
+            h3: { props: { className: "text-lg font-bold mb-2" } },
+            a: {
+              component: ({ children, ...props }) => (
+                <a {...props} target="_blank" rel="noopener noreferrer">
+                  {children}
+                </a>
+              ),
+              props: { className: "text-blue-500 hover:underline" },
+            },
+            img: { props: { className: "max-w-full h-auto my-4" } },
+            blockquote: {
+              props: {
+                className: "border-l-4 border-gray-300 pl-4 italic my-4",
+              },
+            },
+          },
+        }}
+      >
+        {markdown}
+      </Markdown>
+    );
+  };
 
   return (
     <>
@@ -118,7 +134,9 @@ export default function CvInsight({
                     {index > 0 && (
                       <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full border-2 border-gray-300 bg-background"></div>
                     )}
-                    <p className="whitespace-pre-line">{insight.content}</p>
+
+                    <MarkdownToJsx markdown={insight.content} />
+                    <p className="whitespace-pre-line"></p>
                   </div>
                 ))}
               </div>

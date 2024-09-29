@@ -23,13 +23,12 @@ import {
 import {
   OPTION_GROUPS,
   capitalizeFirstLetter,
-  generatePrompt,
   isNewOption,
   validateInput,
 } from "../utils";
 import ButtonGroup from "./ButtonGroup";
 
-const CV_TEXT = process.env["NEXT_PUBLIC_CV_TEXT"];
+export const CV_TEXT = process.env["NEXT_PUBLIC_CV_TEXT"];
 
 type Option = {
   id: string;
