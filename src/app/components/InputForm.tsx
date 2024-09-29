@@ -28,7 +28,7 @@ import {
 } from "../utils";
 import ButtonGroup from "./ButtonGroup";
 
-export const CV_TEXT = process.env["NEXT_PUBLIC_CV_TEXT"];
+export const CV_TEXT = process.env["NEXT_PUBLIC_CV_TEXT"] || "";
 
 type Option = {
   id: string;

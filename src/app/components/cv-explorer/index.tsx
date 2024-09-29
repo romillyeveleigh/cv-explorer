@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import CvAnalysis from "./CvAnalysis";
 import CvInsight from "./CvInsight";
@@ -26,19 +26,22 @@ export default function CVExplorer() {
   const [headline, setHeadline] = useState<string>("");
   const [isGeneratingInitialInsight, setIsGeneratingInitialInsight] =
     useState(false);
-  const [isFirstInsightGenerated, setIsFirstInsightGenerated] = useState(false);
   const [isLoadingMoreInsights, setIsLoadingMoreInsights] = useState(false);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [cvText, setCvText] = useState<string | null>(null);
 
+  const isFirstInsightGenerated = useMemo(() => {
+    return insights.length > 0;
+  }, [insights]);
+
   useEffect(() => {
     // Preload default data
     setSkillGroups(SKILL_GROUPS);
     setName("Romilly Eveleigh");
     setProfessionalTitle("Full Stack Developer");
-    setCvText(CV_TEXT || "");
+    setCvText(CV_TEXT);
     setFileName("Romilly_Eveleigh_CV.pdf");
   }, []);
 
@@ -125,32 +128,17 @@ export default function CVExplorer() {
     }
   };
 
-  // const getInitialInsightPrompt = (cvText: string) => {
-  //   return `Generate an initial insight from the CV text: ${cvText} using the following skill groups: ${JSON.stringify(
-  //     skillGroups
-  //   )}`;
-  // };
-
   const generateInsight = async () => {
     if (!cvText) {
       setError("No CV text found");
       return;
     }
+
     setIsGeneratingInitialInsight(true);
-    // Simulate insight generation
-    // setTimeout(() => {
-    // const newInsight = {
-    //   content: `Based on the selected skills (${selectedSkills.join(
-    //     ", "
-    //   )}), the CV shows strong proficiency in web development and data science.
-    //   The candidate has experience with modern JavaScript frameworks and Python-based data analysis tools.
-    //   They also demonstrate project management skills, particularly in Agile methodologies.`,
-    //   step: 1,
-    // };
 
     const { prompt, ...rest } = getInitialInsightMessageParams(
       cvText,
-      selectedSkills,
+      selectedSkills
     );
 
     const newInsight = await getObjectFromPrompt(prompt, {
@@ -158,7 +146,7 @@ export default function CVExplorer() {
       model: Model.HAIKU,
       temperature: 0.8,
     });
-    console.log("🚀 ~ //setTimeout ~ newInsight:", newInsight);
+
     if (!newInsight || !newInsight.memo || !newInsight.tagline) {
       setError("No insight generated");
       return;
@@ -166,13 +154,12 @@ export default function CVExplorer() {
 
     const { memo, tagline } = newInsight;
 
-    setInsights([{ content: memo, step: 1, headline: tagline }]);
+    setInsights([{ content: memo, step: 1 }]);
+    setHeadline(tagline);
     setHeadline(
       "Versatile Tech Professional with Full-Stack and Data Science Expertise"
     );
     setIsGeneratingInitialInsight(false);
-    setIsFirstInsightGenerated(true);
-    // }, 2000);
   };
 
   const handleShowMore = () => {
@@ -197,10 +184,9 @@ export default function CVExplorer() {
 
   const reset = () => {
     setSelectedSkills([]);
-    setInsights([]);
     setHeadline("");
+    setInsights([]);
     setIsGeneratingInitialInsight(false);
-    setIsFirstInsightGenerated(false);
     setName("Romilly Eveleigh");
     setProfessionalTitle("Full Stack Developer");
     setFileName("Romilly_Eveleigh_CV.pdf");
@@ -232,7 +218,7 @@ export default function CVExplorer() {
           <CvInsight
             isGeneratingInitialInsight={isGeneratingInitialInsight}
             insights={insights}
-            headline={insights[0]?.headline ?? ""}
+            headline={headline}
             isFirstInsightGenerated={isFirstInsightGenerated}
             setInsights={setInsights}
             handleShowMore={handleShowMore}
