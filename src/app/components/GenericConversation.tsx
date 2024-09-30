@@ -45,6 +45,18 @@ export default function GenericConversation({
   const renderContent = (content: string | Record<string, any>) => {
     if (typeof content === "string") {
       return content;
+    } else if (Array.isArray(content)) {
+      return content.map((item, index) => {
+        if (item.type === "text") {
+          return item.text;
+        } else if (item.type === "tool_use") {
+          return (
+            <pre className="whitespace-pre-wrap" key={index}>
+              {JSON.stringify(item.input, null, 2)}
+            </pre>
+          );
+        }
+      });
     } else {
       return (
         <pre className="whitespace-pre-wrap">

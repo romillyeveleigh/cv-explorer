@@ -1,14 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
-import {
-  MessageParam,
-} from "@anthropic-ai/sdk/resources/messages.mjs";
-import { useState, useCallback } from "react";
+import { MessageParam } from "@anthropic-ai/sdk/resources/messages.mjs";
+import { useState, useCallback, useMemo } from "react";
 import { convertClaudeResponseToMessageParam } from "../utils/convertClaudeResponseToMessageParam";
-
-// export interface Message {
-//   role: "user" | "assistant" | "system" | "tool";
-//   content: string | Record<string, any>;
-// }
 
 interface UseClaudeConversationProps {
   system: Anthropic.MessageCreateParams["system"];
@@ -25,10 +18,19 @@ export function useClaudeConversation({
   console.log("🚀 ~ messages:", messages);
   const [isLoading, setIsLoading] = useState(false);
 
+  const filteredMessages = useMemo(() => {
+    return messages.map((message) => {
+      return {
+        role: message.role,
+        content: Array.isArray(message.content)
+          ? message.content.filter((content) => content.type !== "tool_result")
+          : message.content,
+      };
+    });
+  }, [messages]);
+
   const sendMessage = useCallback(
     async (content: string) => {
-      console.log("🚀 ~ content:", content);
-
       const lastMessage = messages[messages.length - 1];
       const lastMessageToolCall = Array.isArray(lastMessage?.content)
         ? lastMessage.content.find((content) => content.type === "tool_use")
@@ -51,8 +53,6 @@ export function useClaudeConversation({
           : content,
       };
 
-      console.log("🚀 ~ newMessage:", newMessage);
-
       const newMessages: MessageParam[] = [...messages, newMessage];
       setMessages(newMessages);
       setIsLoading(true);
@@ -72,14 +72,19 @@ export function useClaudeConversation({
         if (!response.ok) throw new Error("Failed to get response");
 
         const data = await response.json();
-        console.log("🚀 ~ data:", data);
         const assistantMessages: Anthropic.Messages.Message = data.response;
 
-        const assistantMessage = convertClaudeResponseToMessageParam(
-          assistantMessages.content
-        );
+        // const assistantMessage = convertClaudeResponseToMessageParam(
+        //   assistantMessages.content
+        // );
 
-        setMessages([...newMessages, assistantMessage]);
+        setMessages([
+          ...newMessages,
+          {
+            role: "assistant",
+            content: assistantMessages.content,
+          },
+        ]);
       } catch (error) {
         console.error("Error:", error);
         setMessages([
@@ -96,5 +101,5 @@ export function useClaudeConversation({
     [messages, system, tools, customParams]
   );
 
-  return { messages, isLoading, sendMessage };
+  return { messages: filteredMessages, isLoading, sendMessage };
 }

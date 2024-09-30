@@ -50,8 +50,6 @@ export async function POST(request: Request) {
     //   }
     // }
 
-    response.content
-
     return NextResponse.json({ response });
   } catch (error) {
     console.error("Error processing request:", error);

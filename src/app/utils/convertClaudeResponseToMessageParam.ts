@@ -1,10 +1,8 @@
 import { Anthropic } from "@anthropic-ai/sdk";
 
-
 export function convertClaudeResponseToMessageParam(
   claudeResponse: Anthropic.Messages.ContentBlock[]
 ): Anthropic.Messages.MessageParam {
-  console.log(":rocket: ~ claudeResponse:", claudeResponse);
   const messageContent: Anthropic.Messages.ContentBlock[] = claudeResponse.map(
     (item) => {
       if (typeof item === "string") {
