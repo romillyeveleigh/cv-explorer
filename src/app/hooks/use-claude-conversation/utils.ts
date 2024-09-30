@@ -4,7 +4,6 @@ import {
 } from "@anthropic-ai/sdk/resources/messages.mjs";
 
 export const removeToolResults = (messages: MessageParam[]) => {
-  console.log("🚀 ~ removeToolResults ~ messages:", messages)
   return messages.map((message) => ({
     role: message.role,
     content: Array.isArray(message.content)
@@ -44,7 +43,7 @@ function getToolUseBlock(
 }
 
 export const getToolUseBlockFromLastMessage = (messages: MessageParam[]) => {
+  if (!messages.length) return;
   const lastMessage = messages[messages.length - 1];
-  if (!lastMessage) return undefined;
   return getToolUseBlock(lastMessage);
 };
