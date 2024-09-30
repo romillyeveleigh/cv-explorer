@@ -1,17 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { useClaudeConversation, Message } from "../hooks/useClaudeConversation";
+import { useClaudeConversation } from "../hooks/use-claude-conversation";
 import Anthropic from "@anthropic-ai/sdk";
-
-interface Tool {
-  type: string;
-  function: {
-    name: string;
-    description: string;
-    parameters: any;
-  };
-}
 
 interface GenericConversationProps {
   placeholder: string;
