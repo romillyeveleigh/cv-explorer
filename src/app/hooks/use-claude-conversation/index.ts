@@ -4,7 +4,11 @@ import {
   MessageParam,
 } from "@anthropic-ai/sdk/resources/messages.mjs";
 import { useState, useCallback, useMemo } from "react";
-import { removeToolResults, createNewMessage, getToolUseBlockFromLastMessage } from "./utils";
+import {
+  removeToolResults,
+  createNewMessage,
+  getToolUseBlockFromLastMessage,
+} from "./utils";
 import { fetchClaudeResponse } from "./api";
 
 interface UseClaudeConversationProps {
@@ -41,10 +45,10 @@ export function useClaudeConversation({
           customParams
         );
 
-        const assistantMessage: Message = data.response;
+        const { content }: Message = data.response;
         setMessages((prevMessages) => [
           ...prevMessages,
-          { role: "assistant", content: assistantMessage.content },
+          { role: "assistant", content },
         ]);
       } catch (error) {
         console.error("Error:", error);
