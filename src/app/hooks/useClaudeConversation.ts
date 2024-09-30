@@ -1,7 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { MessageParam } from "@anthropic-ai/sdk/resources/messages.mjs";
+import {
+  Message,
+  MessageParam,
+} from "@anthropic-ai/sdk/resources/messages.mjs";
 import { useState, useCallback, useMemo } from "react";
-import { convertClaudeResponseToMessageParam } from "../utils/convertClaudeResponseToMessageParam";
 
 interface UseClaudeConversationProps {
   system: Anthropic.MessageCreateParams["system"];
@@ -15,18 +17,19 @@ export function useClaudeConversation({
   customParams,
 }: UseClaudeConversationProps) {
   const [messages, setMessages] = useState<MessageParam[]>([]);
-  console.log("🚀 ~ messages:", messages);
   const [isLoading, setIsLoading] = useState(false);
 
+  const removeToolResults = (messages: MessageParam[]) => {
+    return messages.map((message) => ({
+      role: message.role,
+      content: Array.isArray(message.content)
+        ? message.content.filter((content) => content.type !== "tool_result")
+        : message.content,
+    }));
+  };
+
   const filteredMessages = useMemo(() => {
-    return messages.map((message) => {
-      return {
-        role: message.role,
-        content: Array.isArray(message.content)
-          ? message.content.filter((content) => content.type !== "tool_result")
-          : message.content,
-      };
-    });
+    return removeToolResults(messages);
   }, [messages]);
 
   const sendMessage = useCallback(
@@ -72,18 +75,11 @@ export function useClaudeConversation({
         if (!response.ok) throw new Error("Failed to get response");
 
         const data = await response.json();
-        const assistantMessages: Anthropic.Messages.Message = data.response;
-
-        // const assistantMessage = convertClaudeResponseToMessageParam(
-        //   assistantMessages.content
-        // );
+        const assistantMessage: Message = data.response;
 
         setMessages([
           ...newMessages,
-          {
-            role: "assistant",
-            content: assistantMessages.content,
-          },
+          { role: "assistant", content: assistantMessage.content },
         ]);
       } catch (error) {
         console.error("Error:", error);
