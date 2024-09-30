@@ -16,23 +16,23 @@ interface Tool {
 interface GenericConversationProps {
   placeholder: string;
   title: string;
-  systemMessage: Anthropic.MessageCreateParams["system"];
+  system: Anthropic.MessageCreateParams["system"];
   tools: Anthropic.Tool[];
-  modelParams?: Record<string, any>;
+  customParams?: Partial<Anthropic.MessageCreateParams>;
 }
 
 export default function GenericConversation({
   placeholder,
   title,
-  systemMessage,
+  system,
   tools,
-  modelParams,
+  customParams,
 }: GenericConversationProps) {
   const [input, setInput] = useState("");
   const { messages, isLoading, sendMessage } = useClaudeConversation({
-    systemMessage,
+    system,
     tools,
-    modelParams,
+    customParams,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

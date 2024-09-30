@@ -1,12 +1,11 @@
 "use client";
 import GenericConversation from "../components/GenericConversation";
-import { Message } from "../hooks/useClaudeConversation";
 import Anthropic from "@anthropic-ai/sdk";
 
 const astronomySystemMessage: Anthropic.MessageCreateParams["system"] =
   "You are an AI assistant specialized in astronomy. Provide accurate and engaging information about celestial bodies and space phenomena. Use the provided tool when asked for specific planetary data.";
 
-const planetInfoTool: Anthropic.Tool = {
+const planetInfoTool: Anthropic.Messages.Tool = {
   name: "output_planet_info",
   description: "Outputs structured information about a planet as JSON",
   input_schema: {
@@ -35,7 +34,7 @@ const planetInfoTool: Anthropic.Tool = {
   },
 };
 
-const customModelParams = {
+const customParams = {
   model: "claude-3-sonnet-20240229",
   max_tokens: 500,
   temperature: 0.7,
@@ -46,9 +45,9 @@ export default function AstronomyChat() {
     <GenericConversation
       placeholder="Ask about astronomy..."
       title="Chat with Claude about Astronomy"
-      systemMessage={astronomySystemMessage}
+      system={astronomySystemMessage}
       tools={[planetInfoTool]}
-      modelParams={customModelParams}
+      customParams={customParams}
     />
   );
 }

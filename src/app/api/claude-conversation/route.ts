@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
-import { Anthropic } from '@anthropic-ai/sdk';
+import { NextResponse } from "next/server";
+import { Anthropic } from "@anthropic-ai/sdk";
+import { Model } from "@/app/hooks/useMessageThread";
 
 const anthropic = new Anthropic({
   apiKey: process.env.NEXT_PUBLIC_API_KEY,
@@ -7,44 +8,56 @@ const anthropic = new Anthropic({
 
 export async function POST(request: Request) {
   try {
-    const { messages, systemMessage, tools, modelParams } = await request.json();
+    const { messages, system, tools, customParams } = await request.json();
 
     const defaultParams = {
-      model: 'claude-3-opus-20240229',
+      model: Model.OPUS,
       max_tokens: 1000,
-      messages: [systemMessage, ...messages],
-      system: systemMessage,
-      tools: tools
+      temperature: 0.8,
+      messages,
+      system,
+      tools,
     };
 
     // Merge default params with custom model params
-    const mergedParams = { ...defaultParams, ...modelParams };
+    const mergedParams = { ...defaultParams, ...customParams };
 
     const response = await anthropic.messages.create(mergedParams);
-    console.log("🚀 ~ POST ~ response:", response)
+    // console.log("🚀 ~ POST ~ response:", response);
 
-    // Handle different types of content in the response
-    const content = response.content[0];
-    let processedResponse;
+    // // Handle different types of content in the response
+    // let processedResponses = [];
 
-    if ('text' in content) {
-      processedResponse = { type: 'text', content: content.text };
-    } else if ('image' in content) {
-      processedResponse = { type: 'image', content: content.image };
-    } else if (content.type === 'tool_call') {
-      processedResponse = {
-        type: 'tool_call',
-        tool_call: content.tool_call
-      };
-    } else if ('input' in content && typeof content.input === 'object') {
-      processedResponse = { type: 'structured_data', content: content.input };
-    } else {
-      processedResponse = { type: 'unknown', content: content };
-    }
+    // // const content = response.content[0];
 
-    return NextResponse.json({ response: processedResponse });
+    // for (const content of response.content) {
+    //   if ("text" in content) {
+    //     processedResponses.push({ type: "text", content: content.text });
+    //   } else if ("image" in content) {
+    //     processedResponses.push({ type: "image", content: content.image });
+    //   } else if (content.type === "tool_call") {
+    //     processedResponses.push({
+    //       type: "tool_call",
+    //       tool_call: content.tool_call,
+    //     });
+    //   } else if ("input" in content && typeof content.input === "object") {
+    //     processedResponses.push({
+    //       type: "structured_data",
+    //       content: content.input,
+    //     });
+    //   } else {
+    //     processedResponses.push({ type: "unknown", content: content });
+    //   }
+    // }
+
+    response.content
+
+    return NextResponse.json({ response });
   } catch (error) {
-    console.error('Error processing request:', error);
-    return NextResponse.json({ error: 'Error processing your request' }, { status: 500 });
+    console.error("Error processing request:", error);
+    return NextResponse.json(
+      { error: "Error processing your request" },
+      { status: 500 }
+    );
   }
 }

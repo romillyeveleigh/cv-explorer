@@ -7,6 +7,7 @@ import Anthropic from "@anthropic-ai/sdk";
 export const enum Model {
   SONNET = "claude-3-sonnet-20240229",
   HAIKU = "claude-3-haiku-20240307",
+  OPUS = "claude-3-opus-20240229",
 }
 
 const DEFAULT_GENERATE_RESPONSE_PARAMS = {
