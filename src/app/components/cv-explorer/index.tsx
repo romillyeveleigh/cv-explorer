@@ -60,35 +60,32 @@ export default function CVExplorer() {
   } = useClaudeConversationV2();
   // console.log("🚀 ~ CVExplorer ~ messages:", messages);
 
-  const res2 = getToolUseDataFromMessages<SkillGroupGenerator>(
-    messages,
-    "skill-group-generator",
-    DEFAULT_SKILL_GROUP_GENERATOR
-  )[0];
-  const { name, professionalTitle, skillGroups } = res2;
-  console.log("🚀 ~ CVExplorer ~ res2:", res2);
+  const { name, professionalTitle, skillGroups } =
+    getToolUseDataFromMessages<SkillGroupGenerator>(
+      messages,
+      "skill-group-generator",
+      DEFAULT_SKILL_GROUP_GENERATOR
+    )[0];
 
-  const res1 = getToolUseDataFromMessages<InitialMemoGenerator>(
-    messages,
-    "initial-memo-generator",
-    DEFAULT_INITIAL_MEMO_GENERATOR
-  )[0];
+  const { tagline: headline, memo } =
+    getToolUseDataFromMessages<InitialMemoGenerator>(
+      messages,
+      "initial-memo-generator",
+      DEFAULT_INITIAL_MEMO_GENERATOR
+    )[0];
 
-  const { tagline: headline, memo } = res1;
-  console.log("🚀 ~ CVExplorer ~ res1:", res1);
   // console.log("🚀 ~ CVExplorer ~ memo:", memo);
   // console.log("🚀 ~ CVExplorer ~ headline:", headline);
 
   const insights = getToolUseDataFromMessages<InsightGenerator>(
     messages,
-    "insight-generator",
-    DEFAULT_INSIGHT_GENERATOR
+    "insight-generator"
   );
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setIsGeneratingInitialInsight(true);
+    // setIsGeneratingInitialInsight(true);
     const file = event.target.files?.[0];
     if (!file) return;
     if (!fileIsSupported(file)) {
@@ -120,7 +117,7 @@ export default function CVExplorer() {
         setError(null);
       }, 5000);
     } finally {
-      setIsGeneratingInitialInsight(false);
+      // setIsGeneratingInitialInsight(false);
     }
   };
 

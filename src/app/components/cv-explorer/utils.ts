@@ -34,7 +34,7 @@ export const getCvText: (file: File) => Promise<string> = async (file) => {
 export function getToolUseDataFromMessages<T = any>(
   messages: Anthropic.Messages.MessageParam[],
   toolName: string,
-  defaultToolUseData: T
+  defaultToolUseData?: T
 ) {
   const initialInsightMessages = messages.filter(
     (message) =>
@@ -45,7 +45,7 @@ export function getToolUseDataFromMessages<T = any>(
   );
 
   if (!initialInsightMessages.length) {
-    return [defaultToolUseData];
+    return defaultToolUseData ? [defaultToolUseData] : [];
   }
 
   return initialInsightMessages.map((message) => {
