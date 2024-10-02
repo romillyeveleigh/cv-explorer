@@ -4,31 +4,37 @@ import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import CvAnalysis from "./CvAnalysis";
 import CvInsight from "./CvInsight";
-import { fileIsSupported } from "@/app/utils";
+import { fileIsSupported, SKILL_GROUPS } from "@/app/utils";
 import { Model } from "@/app/hooks/useMessageThread";
 import { CV_TEXT } from "../InputForm";
 import { useClaudeConversationV2 } from "@/app/hooks/use-claude-conversation-v2";
 import {
   getToolUseDataFromMessages,
   SkillGroupGenerator,
-  DEFAULT_SKILL_GROUP_GENERATOR,
   InitialMemoGenerator,
   DEFAULT_INITIAL_MEMO_GENERATOR,
   InsightGenerator,
-  DEFAULT_INSIGHT_GENERATOR,
   getCvText,
   INSIGHT_GENERATOR_SCHEMA,
   INITIAL_MEMO_GENERATOR_SCHEMA,
   SKILL_GROUP_GENERATOR_SCHEMA,
 } from "./utils";
+import { SkillGroup } from "@/app/utils/types";
 
 export default function CVExplorer() {
-  const [isGeneratingInitialInsight, setIsGeneratingInitialInsight] =
-    useState(false);
-  const [isLoadingMoreInsights, setIsLoadingMoreInsights] = useState(false);
   const [fileName, setFileName] = useState("Romilly_Eveleigh_CV.pdf");
   const [cvText, setCvText] = useState<string | null>(CV_TEXT);
+  const [name, setName] = useState<string>("Romilly Eveleigh");
+  const [professionalTitle, setProfessionalTitle] = useState<string>(
+    "Full Stack Developer"
+  );
+  const [skillGroups, setSkillGroups] = useState<SkillGroup[]>(SKILL_GROUPS);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [isLoadingCvText, setIsLoadingCvText] = useState(false);
+  const [isGeneratingSkillGroups, setIsGeneratingSkillGroups] = useState(false);
+  const [isGeneratingInitialMemo, setIsGeneratingInitialMemo] = useState(false);
+  const [isLoadingMoreInsights, setIsLoadingMoreInsights] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
   // const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -58,34 +64,50 @@ export default function CVExplorer() {
     sendMessage,
     reset: resetMessages,
   } = useClaudeConversationV2();
-  // console.log("🚀 ~ CVExplorer ~ messages:", messages);
-
-  const { name, professionalTitle, skillGroups } =
-    getToolUseDataFromMessages<SkillGroupGenerator>(
-      messages,
-      "skill-group-generator",
-      DEFAULT_SKILL_GROUP_GENERATOR
-    )[0];
 
   const { tagline: headline, memo } =
     getToolUseDataFromMessages<InitialMemoGenerator>(
       messages,
-      "initial-memo-generator",
-      DEFAULT_INITIAL_MEMO_GENERATOR
-    )[0];
-
-  // console.log("🚀 ~ CVExplorer ~ memo:", memo);
-  // console.log("🚀 ~ CVExplorer ~ headline:", headline);
+      "initial-memo-generator"
+    )?.[0] ?? DEFAULT_INITIAL_MEMO_GENERATOR;
 
   const insights = getToolUseDataFromMessages<InsightGenerator>(
     messages,
     "insight-generator"
   );
 
+  const handleGenerateSkillGroups = async (cvText: string) => {
+    setIsGeneratingSkillGroups(true);
+    const response = await sendMessage(
+      cvText,
+      {
+        model: Model.HAIKU,
+        temperature: 0.8,
+        system,
+        tools: [SKILL_GROUP_GENERATOR_SCHEMA],
+        tool_choice: { type: "tool", name: "skill-group-generator" },
+      },
+      true
+    );
+
+    if (response?.content[0].type !== "tool_use") {
+      console.error("No tool use found in response");
+      setIsGeneratingSkillGroups(false);
+      throw new Error("No tool use found in response");
+    }
+
+    const { name, professionalTitle, skillGroups } = response.content[0]
+      .input as SkillGroupGenerator;
+    setName(name);
+    setProfessionalTitle(professionalTitle);
+    setSkillGroups(skillGroups);
+    setIsGeneratingSkillGroups(false);
+  };
+
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    // setIsGeneratingInitialInsight(true);
+    setIsLoadingCvText(true);
     const file = event.target.files?.[0];
     if (!file) return;
     if (!fileIsSupported(file)) {
@@ -96,17 +118,7 @@ export default function CVExplorer() {
     try {
       const cvText = await getCvText(file);
       console.log("CV text sample:", `"${cvText.slice(0, 100)}..." `);
-      await sendMessage(
-        cvText,
-        {
-          model: Model.HAIKU,
-          temperature: 0.8,
-          system,
-          tools: [SKILL_GROUP_GENERATOR_SCHEMA],
-          tool_choice: { type: "tool", name: "skill-group-generator" },
-        },
-        true
-      );
+      await handleGenerateSkillGroups(cvText);
       setFileName(file.name);
       setCvText(cvText);
       setSelectedSkills([]);
@@ -117,7 +129,7 @@ export default function CVExplorer() {
         setError(null);
       }, 5000);
     } finally {
-      // setIsGeneratingInitialInsight(false);
+      setIsLoadingCvText(false);
     }
   };
 
@@ -127,7 +139,7 @@ export default function CVExplorer() {
       return;
     }
 
-    setIsGeneratingInitialInsight(true);
+    setIsGeneratingInitialMemo(true);
 
     const system = `
     You are an expert in CV analysis with hipster-level knowledge of trending technologies.
@@ -162,12 +174,12 @@ export default function CVExplorer() {
       true
     );
 
-    setIsGeneratingInitialInsight(false);
+    setIsGeneratingInitialMemo(false);
   };
 
-  const handleShowMore = () => {
+  const handleShowMore = async () => {
     setIsLoadingMoreInsights(true);
-    sendMessage(
+    await sendMessage(
       "Show me more insights.",
       {
         model: Model.HAIKU,
@@ -199,8 +211,8 @@ export default function CVExplorer() {
             setSelectedSkills={setSelectedSkills}
             handleFileUpload={handleFileUpload}
             generateInsight={generateInitialMemo}
-            isGeneratingInitialInsight={isGeneratingInitialInsight}
-            isLoading={isLoading || isGeneratingInitialInsight}
+            isGeneratingInitialInsight={isGeneratingInitialMemo}
+            isLoading={isLoadingCvText || isGeneratingSkillGroups}
             error={error}
             reset={onReset}
           />
@@ -208,7 +220,7 @@ export default function CVExplorer() {
 
         <Card className="lg:h-[calc(100vh-2rem)] flex flex-col">
           <CvInsight
-            isGeneratingInitialInsight={isGeneratingInitialInsight}
+            isGeneratingInitialInsight={isGeneratingInitialMemo}
             headline={headline}
             memo={memo}
             insights={insights}

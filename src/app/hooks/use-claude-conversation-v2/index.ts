@@ -43,6 +43,8 @@ export function useClaudeConversationV2() {
           ...prevMessages,
           { role: "assistant", content },
         ]);
+        setIsLoading(false);
+        return { role: "assistant", content };
       } catch (error) {
         console.error("Error:", error);
         setMessages((prevMessages) => [

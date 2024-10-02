@@ -31,26 +31,30 @@ export const getCvText: (file: File) => Promise<string> = async (file) => {
   }
 };
 
-export function getToolUseDataFromMessages<T = any>(
-  messages: Anthropic.Messages.MessageParam[],
-  toolName: string,
-  defaultToolUseData?: T
+export function getToolUseDataFromMessage<T = any>(
+  message: Anthropic.Messages.MessageParam,
+  toolName: string
 ) {
-  const initialInsightMessages = messages.filter(
-    (message) =>
-      message.role === "assistant" &&
-      Array.isArray(message.content) &&
-      message.content[0].type === "tool_use" &&
-      message.content[0].name === toolName
-  );
+  const isInsightMessage =
+    message.role === "assistant" &&
+    Array.isArray(message.content) &&
+    message.content[0].type === "tool_use" &&
+    message.content[0].name === toolName;
 
-  if (!initialInsightMessages.length) {
-    return defaultToolUseData ? [defaultToolUseData] : [];
+  if (!isInsightMessage) {
+    return undefined;
   }
 
-  return initialInsightMessages.map((message) => {
-    return (message.content[0] as ToolUseBlock).input as T;
-  });
+  return (message.content[0] as ToolUseBlock).input as T;
+}
+
+export function getToolUseDataFromMessages<T = any>(
+  messages: Anthropic.Messages.MessageParam[],
+  toolName: string
+) {
+  return messages
+    .map((message) => getToolUseDataFromMessage<T>(message, toolName))
+    .filter((data): data is T => data !== undefined);
 }
 
 export type InsightGenerator = {
