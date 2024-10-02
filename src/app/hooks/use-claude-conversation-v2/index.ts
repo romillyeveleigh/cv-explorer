@@ -11,15 +11,7 @@ import {
 } from "./utils";
 import { fetchClaudeResponse } from "./api";
 
-interface UseClaudeConversationProps {
-  system: Anthropic.MessageCreateParams["system"];
-  tools: Anthropic.Tool[];
-}
-
-export function useClaudeConversationV2({
-  system,
-  tools,
-}: UseClaudeConversationProps) {
+export function useClaudeConversationV2() {
   const [messages, setMessages] = useState<MessageParam[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -34,18 +26,17 @@ export function useClaudeConversationV2({
       isNewConversation = false
     ) => {
       const toolUseBlock = getToolUseBlockFromLastMessage(messages);
-      const newMessage = createNewMessage(content, toolUseBlock);
+      const newMessage = createNewMessage(
+        content,
+        isNewConversation ? undefined : toolUseBlock
+      );
       const newMessages = [...(isNewConversation ? [] : messages), newMessage];
+      console.log("🚀 ~ useClaudeConversationV2 ~ newMessages:", newMessages);
       setMessages(newMessages);
       setIsLoading(true);
 
       try {
-        const data = await fetchClaudeResponse(
-          newMessages,
-          system,
-          tools,
-          customParams
-        );
+        const data = await fetchClaudeResponse(newMessages, customParams);
 
         const { content }: Message = data.response;
         setMessages((prevMessages) => [
@@ -65,7 +56,7 @@ export function useClaudeConversationV2({
         setIsLoading(false);
       }
     },
-    [messages, system, tools]
+    [messages]
   );
 
   const reset = useCallback(() => {

@@ -8,15 +8,13 @@ const anthropic = new Anthropic({
 
 export async function POST(request: Request) {
   try {
-    const { messages, system, tools, customParams } = await request.json();
+    const { messages, customParams } = await request.json();
 
     const defaultParams = {
       model: Model.OPUS,
       max_tokens: 1000,
       temperature: 0.8,
       messages,
-      system,
-      tools,
     };
 
     // Merge default params with custom model params

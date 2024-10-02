@@ -7,7 +7,7 @@ import Markdown from "markdown-to-jsx";
 import WordFadeIn from "@/components/magicui/word-fade-in";
 
 type Insight = {
-  content: string;
+  insight: string;
   step: number;
 };
 
@@ -15,6 +15,7 @@ type CvInsightProps = {
   isGeneratingInitialInsight: boolean;
   insights: Insight[];
   headline: string;
+  memo: string;
   isFirstInsightGenerated: boolean;
   setInsights: React.Dispatch<React.SetStateAction<Insight[]>>;
   handleShowMore: () => void;
@@ -25,6 +26,7 @@ export default function CvInsight({
   isGeneratingInitialInsight,
   insights,
   headline,
+  memo,
   isFirstInsightGenerated,
   setInsights,
   isLoadingMoreInsights,
