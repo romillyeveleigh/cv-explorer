@@ -40,9 +40,8 @@ export function getToolUseDataFromMessages<T = any>(
     (message) =>
       message.role === "assistant" &&
       Array.isArray(message.content) &&
-      message.content.filter(
-        (content) => content.type === "tool_use" && content.name === toolName
-      )
+      message.content[0].type === "tool_use" &&
+      message.content[0].name === toolName
   );
 
   if (!initialInsightMessages.length) {

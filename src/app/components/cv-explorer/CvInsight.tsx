@@ -13,9 +13,9 @@ type Insight = {
 
 type CvInsightProps = {
   isGeneratingInitialInsight: boolean;
-  insights: Insight[];
   headline: string;
   memo: string;
+  insights: Insight[];
   isFirstInsightGenerated: boolean;
   setInsights: React.Dispatch<React.SetStateAction<Insight[]>>;
   handleShowMore: () => void;
@@ -24,9 +24,9 @@ type CvInsightProps = {
 
 export default function CvInsight({
   isGeneratingInitialInsight,
-  insights,
   headline,
   memo,
+  insights,
   isFirstInsightGenerated,
   setInsights,
   isLoadingMoreInsights,
@@ -103,7 +103,7 @@ export default function CvInsight({
               Analyzing CV superpowers...
             </p>
           </div>
-        ) : insights.length === 0 ? (
+        ) : !memo ? (
           <div className="bg-muted p-4 rounded-lg flex items-start space-x-4">
             <InfoIcon className="h-6 w-6 text-muted-foreground flex-shrink-0 mt-1" />
             <div>
@@ -131,16 +131,18 @@ export default function CvInsight({
 
               <div className="relative">
                 <div className="absolute left-2 top-0 bottom-0 w-px bg-border"></div>
-                {insights.map((insight, index) => (
-                  <div key={index} className="mb-4 last:mb-0 relative pl-6">
-                    {index > 0 && (
-                      <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full border-2 border-gray-300 bg-background"></div>
-                    )}
+                {[{ insight: memo, step: 0 }, ...insights].map(
+                  ({ insight, step }, index) => (
+                    <div key={index} className="mb-4 last:mb-0 relative pl-6">
+                      {index > 0 && (
+                        <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full border-2 border-gray-300 bg-background"></div>
+                      )}
 
-                    <MarkdownToJsx markdown={insight.content} />
-                    <p className="whitespace-pre-line"></p>
-                  </div>
-                ))}
+                      <MarkdownToJsx markdown={insight} />
+                      <p className="whitespace-pre-line"></p>
+                    </div>
+                  )
+                )}
               </div>
             </div>
             {isFirstInsightGenerated && (

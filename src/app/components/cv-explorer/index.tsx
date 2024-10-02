@@ -30,7 +30,6 @@ export default function CVExplorer() {
   const [cvText, setCvText] = useState<string | null>(CV_TEXT);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
-
   // const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const system = `
@@ -53,21 +52,32 @@ export default function CVExplorer() {
   No skills should be repeated across categories in the response.
   `;
 
-  const { messages, isLoading, sendMessage, reset } = useClaudeConversationV2();
+  const {
+    messages,
+    isLoading,
+    sendMessage,
+    reset: resetMessages,
+  } = useClaudeConversationV2();
+  // console.log("🚀 ~ CVExplorer ~ messages:", messages);
 
-  const { name, professionalTitle, skillGroups } =
-    getToolUseDataFromMessages<SkillGroupGenerator>(
-      messages,
-      "skill-group-generator",
-      DEFAULT_SKILL_GROUP_GENERATOR
-    )[0];
+  const res2 = getToolUseDataFromMessages<SkillGroupGenerator>(
+    messages,
+    "skill-group-generator",
+    DEFAULT_SKILL_GROUP_GENERATOR
+  )[0];
+  const { name, professionalTitle, skillGroups } = res2;
+  console.log("🚀 ~ CVExplorer ~ res2:", res2);
 
-  const { tagline: headline, memo } =
-    getToolUseDataFromMessages<InitialMemoGenerator>(
-      messages,
-      "initial-memo-generator",
-      DEFAULT_INITIAL_MEMO_GENERATOR
-    )[0];
+  const res1 = getToolUseDataFromMessages<InitialMemoGenerator>(
+    messages,
+    "initial-memo-generator",
+    DEFAULT_INITIAL_MEMO_GENERATOR
+  )[0];
+
+  const { tagline: headline, memo } = res1;
+  console.log("🚀 ~ CVExplorer ~ res1:", res1);
+  // console.log("🚀 ~ CVExplorer ~ memo:", memo);
+  // console.log("🚀 ~ CVExplorer ~ headline:", headline);
 
   const insights = getToolUseDataFromMessages<InsightGenerator>(
     messages,
@@ -102,6 +112,7 @@ export default function CVExplorer() {
       );
       setFileName(file.name);
       setCvText(cvText);
+      setSelectedSkills([]);
     } catch (error) {
       console.error("Error generating skill groups:", error);
       setError("Error generating skill groups");
@@ -139,16 +150,20 @@ export default function CVExplorer() {
     If your response exceeds 90 words, please retry with a more concise version.
   `;
 
-    const content = `Based on the previously generated skill groups, focus on the skills: 
-    ${selectedSkills.join(", ")}`;
+    const content = `Focus on these skills: ${selectedSkills.join(", ")}
+    Here is the CV: ${cvText}`;
 
-    await sendMessage(content, {
-      model: Model.HAIKU,
-      temperature: 0.8,
-      system,
-      tools: [INITIAL_MEMO_GENERATOR_SCHEMA],
-      tool_choice: { type: "tool", name: "initial-memo-generator" },
-    });
+    await sendMessage(
+      content,
+      {
+        model: Model.HAIKU,
+        temperature: 0.8,
+        system,
+        tools: [INITIAL_MEMO_GENERATOR_SCHEMA],
+        tool_choice: { type: "tool", name: "initial-memo-generator" },
+      },
+      true
+    );
 
     setIsGeneratingInitialInsight(false);
   };
@@ -156,7 +171,7 @@ export default function CVExplorer() {
   const handleShowMore = () => {
     setIsLoadingMoreInsights(true);
     sendMessage(
-      "Show me more insights",
+      "Show me more insights.",
       {
         model: Model.HAIKU,
         temperature: 0.8,
@@ -170,7 +185,8 @@ export default function CVExplorer() {
 
   const onReset = () => {
     setSelectedSkills([]);
-    reset();
+    setFileName("Romilly_Eveleigh_CV.pdf");
+    resetMessages();
   };
 
   return (
@@ -196,9 +212,9 @@ export default function CVExplorer() {
         <Card className="lg:h-[calc(100vh-2rem)] flex flex-col">
           <CvInsight
             isGeneratingInitialInsight={isGeneratingInitialInsight}
-            insights={insights}
             headline={headline}
             memo={memo}
+            insights={insights}
             isFirstInsightGenerated={Boolean(memo && headline)}
             setInsights={() => null}
             handleShowMore={handleShowMore}
