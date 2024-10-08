@@ -1,10 +1,10 @@
+import React, { useRef, useEffect, useState, FC } from "react";
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, InfoIcon } from "lucide-react";
-import React, { useRef, useEffect, useState, FC } from "react";
-import Markdown from "markdown-to-jsx";
 import WordFadeIn from "@/components/magicui/word-fade-in";
+import { MarkdownToJsx } from "../MarkdownToJsx";
 
 type Insight = {
   insight: string;
@@ -17,9 +17,9 @@ type CvInsightProps = {
   memo: string;
   insights: Insight[];
   isFirstInsightGenerated: boolean;
-  setInsights: React.Dispatch<React.SetStateAction<Insight[]>>;
   handleShowMore: () => void;
   isLoadingMoreInsights: boolean;
+  name: string;
 };
 
 export default function CvInsight({
@@ -28,12 +28,11 @@ export default function CvInsight({
   memo,
   insights,
   isFirstInsightGenerated,
-  setInsights,
   isLoadingMoreInsights,
   handleShowMore,
+  name,
 }: CvInsightProps) {
   const insightContentRef = useRef<HTMLDivElement>(null);
-  // const [isLoadingMoreInsights, setIsLoadingMoreInsights] = useState(false);
   const [showHeadline, setShowHeadline] = useState(true);
 
   useEffect(() => {
@@ -44,41 +43,6 @@ export default function CvInsight({
       });
     }
   }, [insights]);
-
-  const MarkdownToJsx: FC<{ markdown: string }> = ({ markdown }) => {
-    return (
-      <Markdown
-        options={{
-          overrides: {
-            strong: { component: "strong", props: { className: "font-bold" } },
-            p: { props: { className: "mb-4" } },
-            ul: { props: { className: "list-disc list-inside mb-4" } },
-            ol: { props: { className: "list-decimal list-inside mb-4" } },
-            li: { props: { className: "ml-4 mb-0" } },
-            h1: { props: { className: "text-2xl font-bold mb-4" } },
-            h2: { props: { className: "text-xl font-bold mb-3" } },
-            h3: { props: { className: "text-lg font-bold mb-2" } },
-            a: {
-              component: ({ children, ...props }) => (
-                <a {...props} target="_blank" rel="noopener noreferrer">
-                  {children}
-                </a>
-              ),
-              props: { className: "text-blue-500 hover:underline" },
-            },
-            img: { props: { className: "max-w-full h-auto my-4" } },
-            blockquote: {
-              props: {
-                className: "border-l-4 border-gray-300 pl-4 italic my-4",
-              },
-            },
-          },
-        }}
-      >
-        {markdown}
-      </Markdown>
-    );
-  };
 
   return (
     <>
@@ -111,7 +75,7 @@ export default function CvInsight({
                 Welcome to the CV Explorer
               </h3>
               <p className="text-muted-foreground">
-                This is a demo insight based on Romilly's default CV. Select
+                This is a demo insight based on {name}&apos;s default CV. Select
                 skills to generate a personalized insight based on the CV
                 content and your selected skills.
               </p>

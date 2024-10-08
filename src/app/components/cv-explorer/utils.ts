@@ -107,6 +107,26 @@ export const DEFAULT_INITIAL_MEMO_GENERATOR: InitialMemoGenerator = {
   memo: "",
 };
 
+export const SKILL_GROUP_GENERATOR_SYSTEM_PROMPT = `
+  You are an expert in CV analysis and have hipster-level knowledge of trending technologies.
+  You always pick newer technologies (for example, typescript over javascript, Next.js over react, aws over azure, etc.)
+  and ignore out-dated or unimpressive technologies (for example, php, html, wordpress, etc.)
+  You are looking for the most impressive technologies and skills that the candidate has to offer.
+
+  You will be given a CV and asked to group the skills into categories.
+
+  1) Decide on 3 most relevant categories that you would like to group the skills into in the response . 
+  The last category should include mainly soft skills but don't name it "soft skills".
+
+  2) In the response, isolate skills from the CV that are trending and would match the categories.
+  If a skill is made by the same company as another skill, group them together in the format "Skill + Skill".
+  Count this as 1 skill and do not repeat those skills individually in the response.
+  
+  The first 2 categories should have between 6 and 8 skills.
+  The last category with mainly soft skills should have a maximum of 3 skills.
+  No skills should be repeated across categories in the response.
+  `;
+
 export type SkillGroupGenerator = {
   name: string;
   professionalTitle: string;
