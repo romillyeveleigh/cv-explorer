@@ -155,8 +155,8 @@ const GeneratedContent: FC<GeneratedContentProps> = ({
               </>
             ) : (
               <p className="text-gray-500 dark:text-gray-400 italic">
-                Click "Generate Description" to create a project description
-                based on your selected technologies.
+                {`Click "Generate Description" to create a project description
+                based on your selected technologies.`}
               </p>
             )}
           </div>
