@@ -74,7 +74,7 @@ export default function CvInsight({
               <h3 className="font-semibold text-lg mb-2">
                 Welcome to the CV Explorer
               </h3>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground text-base" >
                 This is a demo insight based on {name}&apos;s default CV. Select
                 skills to generate a personalized insight based on the CV
                 content and your selected skills.

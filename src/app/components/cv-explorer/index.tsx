@@ -12,13 +12,13 @@ import {
   getToolUseDataFromMessages,
   SkillGroupGenerator,
   InitialMemoGenerator,
-  DEFAULT_INITIAL_MEMO_GENERATOR,
   InsightGenerator,
   getCvText,
   INSIGHT_GENERATOR_SCHEMA,
   INITIAL_MEMO_GENERATOR_SCHEMA,
   SKILL_GROUP_GENERATOR_SCHEMA,
   SKILL_GROUP_GENERATOR_SYSTEM_PROMPT,
+  INSIGHT_GENERATOR_SYSTEM_PROMPT,
 } from "./utils";
 import { SkillGroup } from "@/app/utils/types";
 
@@ -35,22 +35,15 @@ export default function CVExplorer() {
   const [isGeneratingSkillGroups, setIsGeneratingSkillGroups] = useState(false);
   const [isGeneratingInitialMemo, setIsGeneratingInitialMemo] = useState(false);
   const [isLoadingMoreInsights, setIsLoadingMoreInsights] = useState(false);
-
   const [error, setError] = useState<string | null>(null);
-  // const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [headline, setHeadline] = useState<string>("");
+  const [memo, setMemo] = useState<string>("");
 
   const {
     messages,
-    isLoading,
     sendMessage,
     reset: resetMessages,
   } = useClaudeConversationV2();
-
-  const { tagline: headline, memo } =
-    getToolUseDataFromMessages<InitialMemoGenerator>(
-      messages,
-      "initial-memo-generator"
-    )?.[0] ?? DEFAULT_INITIAL_MEMO_GENERATOR;
 
   const insights = getToolUseDataFromMessages<InsightGenerator>(
     messages,
@@ -80,6 +73,7 @@ export default function CVExplorer() {
     const { name, professionalTitle, skillGroups } = response.content[0]
       .input as SkillGroupGenerator;
     setName(name);
+
     setProfessionalTitle(professionalTitle);
     setSkillGroups(skillGroups);
     setIsGeneratingSkillGroups(false);
@@ -89,18 +83,27 @@ export default function CVExplorer() {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setIsLoadingCvText(true);
+
     const file = event.target.files?.[0];
-    if (!file) return;
+
+    if (!file) {
+      setIsLoadingCvText(false);
+      return;
+    }
+
     if (!fileIsSupported(file)) {
       console.log("File is not supported");
       setError("File type not supported");
       setIsLoadingCvText(false);
       return;
     }
+
     try {
       const cvText = await getCvText(file);
       console.log("CV text sample:", `"${cvText.slice(0, 100)}..." `);
+
       await handleGenerateSkillGroups(cvText);
+
       setFileName(file.name);
       setCvText(cvText);
       setSelectedSkills([]);
@@ -123,39 +126,32 @@ export default function CVExplorer() {
 
     setIsGeneratingInitialMemo(true);
 
-    const system = `
-    You are an expert in CV analysis with hipster-level knowledge of trending technologies.
-    Write a short memo (strictly under 90 words) to a tech recruiter about a candidate.
-    Focus on the given list of skills and CV.
-
-    If skills are not tech-related, briefly describe them and ignore the CV.
-    For tech skills, reference specific jobs, companies, and dates from the CV.
-    Explain skills simply and their impact on companies.
-
-    Use 2-3 short paragraphs. No subject, greeting, or sign-off.
-    Bold skill mentions. Use an informal but informative tone.
-    Refer to the person by name.
-
-    End with a bullet list of jobs using those skills and experience duration. 
-    Provide a witty, one-line tagline (don't use the person's name).
-    If your response exceeds 90 words, please retry with a more concise version.
-  `;
-
     const content = `Focus on these skills: ${selectedSkills.join(", ")}
     Here is the CV: ${cvText}`;
 
-    await sendMessage(
+    const response = await sendMessage(
       content,
       {
         model: Model.HAIKU,
         temperature: 0.8,
-        system,
+        system: INSIGHT_GENERATOR_SYSTEM_PROMPT,
         tools: [INITIAL_MEMO_GENERATOR_SCHEMA],
         tool_choice: { type: "tool", name: "initial-memo-generator" },
       },
       true
     );
 
+    if (response?.content[0].type !== "tool_use") {
+      console.error("No tool use found in response");
+      setIsGeneratingSkillGroups(false);
+      throw new Error("No tool use found in response");
+    }
+
+    const { tagline: headline, memo } = response.content[0]
+      .input as InitialMemoGenerator;
+
+    setHeadline(headline);
+    setMemo(memo);
     setIsGeneratingInitialMemo(false);
   };
 
@@ -175,8 +171,14 @@ export default function CVExplorer() {
   };
 
   const onReset = () => {
-    setSelectedSkills([]);
     setFileName("Romilly_Eveleigh_CV.pdf");
+    setName("Romilly Eveleigh");
+    setProfessionalTitle("Full Stack Developer");
+    setCvText(CV_TEXT);
+    setSkillGroups(SKILL_GROUPS);
+    setSelectedSkills([]);
+    setMemo("");
+    setHeadline("");
     resetMessages();
   };
 

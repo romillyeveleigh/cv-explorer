@@ -31,7 +31,6 @@ export function useClaudeConversationV2() {
         isNewConversation ? undefined : toolUseBlock
       );
       const newMessages = [...(isNewConversation ? [] : messages), newMessage];
-      console.log("🚀 ~ useClaudeConversationV2 ~ newMessages:", newMessages);
       setMessages(newMessages);
       setIsLoading(true);
 
