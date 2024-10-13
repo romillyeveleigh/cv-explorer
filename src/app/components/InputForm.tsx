@@ -21,14 +21,13 @@ import {
 } from "@/components/ui/card";
 
 import {
+  CV_TEXT,
   OPTION_GROUPS,
   capitalizeFirstLetter,
   isNewOption,
   validateInput,
 } from "../utils";
 import ButtonGroup from "./ButtonGroup";
-
-export const CV_TEXT = process.env["NEXT_PUBLIC_CV_TEXT"] || "";
 
 const generatePrompt = (cvText: string, selectedOptions: string[]) => {
   return `Generate a project description based on the following CV text and the selected technologies: ${cvText}. Selected technologies: ${selectedOptions.join(", ")}`;
