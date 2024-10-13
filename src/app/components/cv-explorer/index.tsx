@@ -38,6 +38,9 @@ export default function CVExplorer() {
   const [error, setError] = useState<string | null>(null);
   const [headline, setHeadline] = useState<string>("");
   const [memo, setMemo] = useState<string>("");
+  console.log("process.env.NEXT_PUBLIC_CV_TEXT", process.env.NEXT_PUBLIC_CV_TEXT);
+  console.log("cvText", cvText);
+  console.log("process.env", process.env);
 
   const {
     messages,
@@ -132,8 +135,8 @@ export default function CVExplorer() {
     const response = await sendMessage(
       content,
       {
-        model: Model.HAIKU,
-        temperature: 0.8,
+        model: Model.SONNET,
+        temperature: 1,
         system: INSIGHT_GENERATOR_SYSTEM_PROMPT,
         tools: [INITIAL_MEMO_GENERATOR_SCHEMA],
         tool_choice: { type: "tool", name: "initial-memo-generator" },
