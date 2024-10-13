@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from "react";
 
 import Anthropic from "@anthropic-ai/sdk";
+import { ToolUseBlockParam } from "@anthropic-ai/sdk/resources/messages.mjs";
 
 export const enum Model {
   SONNET = "claude-3-sonnet-20240229",
@@ -64,7 +65,7 @@ export const getObjectFromResponse = (
     return;
   }
 
-  const result = response.content[0].input;
+  const result = (response.content[0] as ToolUseBlockParam).input;
 
   if (typeof result !== "object" || result === null) return null;
 
