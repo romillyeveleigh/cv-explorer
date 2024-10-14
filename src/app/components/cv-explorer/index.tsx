@@ -4,9 +4,8 @@ import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import CvAnalysis from "./CvAnalysis";
 import CvInsight from "./CvInsight";
-import { fileIsSupported, SKILL_GROUPS } from "@/app/utils";
+import { CV_TEXT, fileIsSupported, SKILL_GROUPS } from "@/app/utils";
 import { Model } from "@/app/hooks/useMessageThread";
-import { CV_TEXT } from "../InputForm";
 import { useClaudeConversationV2 } from "@/app/hooks/use-claude-conversation-v2";
 import {
   getToolUseDataFromMessages,
@@ -39,7 +38,7 @@ export default function CVExplorer() {
   const [headline, setHeadline] = useState<string>("");
   const [memo, setMemo] = useState<string>("");
   console.log("process.env.NEXT_PUBLIC_CV_TEXT", process.env.NEXT_PUBLIC_CV_TEXT);
-  console.log("cvText", cvText);
+  console.log("cvText ", cvText);
   console.log("process.env", process.env);
 
   const {
