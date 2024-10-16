@@ -37,9 +37,6 @@ export default function CVExplorer() {
   const [error, setError] = useState<string | null>(null);
   const [headline, setHeadline] = useState<string>("");
   const [memo, setMemo] = useState<string>("");
-  console.log("process.env.NEXT_PUBLIC_CV_TEXT", process.env.NEXT_PUBLIC_CV_TEXT);
-  console.log("cvText ", cvText);
-  console.log("process.env", process.env);
 
   const {
     messages,
