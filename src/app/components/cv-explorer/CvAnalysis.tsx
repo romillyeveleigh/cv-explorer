@@ -14,9 +14,11 @@ import {
   RotateCcw,
   Loader2,
   AlertTriangle,
+  User,
 } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { renderIcon } from "@/app/utils";
+import { FadeText } from "@/components/ui/fade-text";
 const MAX_SKILLS = 3;
 
 type SkillGroup = {
@@ -264,7 +266,7 @@ export default function CvAnalysis({
           className="hidden"
         />
       </CardHeader>
-      <CardContent className="flex-grow flex flex-col space-y-6 overflow-hidden pt-6">
+      <CardContent className="flex-grow flex flex-col space-y-6 overflow-hidden pt-4">
         {isLoading ? (
           <div className="flex-grow flex flex-col justify-center items-center">
             <Loader2 className="h-12 w-12 animate-spin mb-4" />
@@ -282,12 +284,15 @@ export default function CvAnalysis({
           </div>
         ) : (
           <>
-            <div>
-              <span className="font-bold text-xl">{name}</span> -{" "}
-              <span className="text-muted-foreground text-lg">
-                {professionalTitle}
-              </span>
+            <div className="flex flex-row gap-2 items-baseline">
+             
+              <FadeText text={`${name}`} className="font-bold text-xl" />
+              <FadeText
+                text={`${professionalTitle}`}
+                className="text-muted-foreground text-sm"
+              />
             </div>
+
             <div className="flex-grow flex flex-col min-h-0">
               <HeaderAndSubtitle
                 header="Skills"

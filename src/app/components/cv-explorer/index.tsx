@@ -71,8 +71,26 @@ export default function CVExplorer() {
 
     const { name, professionalTitle, skillGroups } = response.content[0]
       .input as SkillGroupGenerator;
-    setName(name);
 
+    console.log("Recieved skill groups", response.content[0].input);
+
+    if (
+      typeof name !== "string" ||
+      typeof professionalTitle !== "string" ||
+      !Array.isArray(skillGroups) ||
+      !skillGroups.every(
+        (group) =>
+          typeof group === "object" &&
+          typeof group.name === "string" &&
+          Array.isArray(group.skills)
+      )
+    ) {
+      console.error("Invalid format for skill groups");
+      setIsGeneratingSkillGroups(false);
+      throw new Error("Invalid format for skill groups");
+    }
+
+    setName(name);
     setProfessionalTitle(professionalTitle);
     setSkillGroups(skillGroups);
     setIsGeneratingSkillGroups(false);
