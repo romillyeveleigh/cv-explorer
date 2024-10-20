@@ -58,6 +58,8 @@ type CvAnalysisProps = {
   reset: () => void;
   name: string;
   professionalTitle: string;
+  onClickUpload: () => void;
+  fileInputRef: React.RefObject<HTMLInputElement>;
 };
 
 export default function CvAnalysis({
@@ -73,10 +75,11 @@ export default function CvAnalysis({
   reset,
   name,
   professionalTitle,
+  onClickUpload,
+  fileInputRef,
 }: CvAnalysisProps) {
   const [searchSkill, setSearchSkill] = useState("");
   const [filteredGroups, setFilteredGroups] = useState<SkillGroup[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const filtered = skillGroups
@@ -91,10 +94,6 @@ export default function CvAnalysis({
       .filter((group) => group.skills.length > 0);
     setFilteredGroups(filtered);
   }, [searchSkill, skillGroups, selectedSkills]);
-
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
 
   const handleSkillSelect = (skill: string) => {
     if (selectedSkills.includes(skill)) {
@@ -232,10 +231,13 @@ export default function CvAnalysis({
 
   return (
     <>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle>CV Analysis</CardTitle>
-        <div className="flex items-center space-x-2">
-          <TooltipProvider>
+      {" "}
+      <TooltipProvider>
+        <CardHeader className="flex flex-row justify-between space-y-0 pb-2 ">
+          <CardTitle className="whitespace-nowrap flex-grow flex sm:items-center">
+            CV Analysis
+          </CardTitle>
+          <div className="flex items-center flex-wrap justify-end gap-2 flex-grow-0">
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex items-center space-x-1 text-sm text-muted-foreground">
@@ -247,81 +249,81 @@ export default function CvAnalysis({
                 <p>Current CV: {fileName}</p>
               </TooltipContent>
             </Tooltip>
-          </TooltipProvider>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleUploadClick}
-            className="flex items-center gap-2"
-          >
-            <Upload className="h-4 w-4" />
-            Change CV
-          </Button>
-        </div>
-        <Input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileUpload}
-          accept=".pdf,.doc,.docx"
-          className="hidden"
-        />
-      </CardHeader>
-      <CardContent className="flex-grow flex flex-col space-y-6 overflow-hidden pt-4">
-        {isLoading ? (
-          <div className="flex-grow flex flex-col justify-center items-center">
-            <Loader2 className="h-12 w-12 animate-spin mb-4" />
-            <p className="text-lg font-medium text-muted-foreground">
-              Cooking up your CV magic...
-            </p>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onClickUpload}
+              className="flex items-center gap-2"
+            >
+              <Upload className="h-4 w-4" />
+              Change CV
+            </Button>
           </div>
-        ) : error ? (
-          <div className="flex-grow flex flex-col justify-center items-center">
-            <AlertTriangle className="h-12 w-12 mb-4" />
-            <p className="text-lg font-medium text-muted-foreground text-center">
-              Uh oh! {error} <br />
-              Please try again
-            </p>
-          </div>
-        ) : (
-          <>
-            <div className="flex flex-row gap-2 items-baseline">
-             
-              <FadeText text={`${name}`} className="font-bold text-xl" />
-              <FadeText
-                text={`${professionalTitle}`}
-                className="text-muted-foreground text-sm"
-              />
+          <Input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            accept=".pdf,.doc,.docx,.txt"
+            className="hidden"
+          />
+        </CardHeader>
+        <CardContent className="flex-grow flex flex-col space-y-6 overflow-hidden pt-4">
+          {isLoading ? (
+            <div className="flex-grow flex flex-col justify-center items-center">
+              <Loader2 className="h-12 w-12 animate-spin mb-4" />
+              <p className="text-lg font-medium text-muted-foreground">
+                Cooking up your CV magic...
+              </p>
             </div>
-
-            <div className="flex-grow flex flex-col min-h-0">
-              <HeaderAndSubtitle
-                header="Skills"
-                subtitle="Search, select, or add new skills"
-              />
-              <form onSubmit={handleSearchSkill} className="mb-4">
-                <div className="flex gap-2">
-                  <Input
-                    type="text"
-                    value={searchSkill}
-                    onChange={(e) => setSearchSkill(e.target.value)}
-                    placeholder="Search or enter a new skill"
-                  />
-                  <Button type="submit" disabled={!searchSkill}>
-                    Add
-                  </Button>
-                </div>
-              </form>
-
-              <div className="overflow-y-auto flex-grow">
-                <div className="space-y-4">{skillGroupsSection}</div>
+          ) : error ? (
+            <div className="flex-grow flex flex-col justify-center items-center">
+              <AlertTriangle className="h-12 w-12 mb-4" />
+              <p className="text-lg font-medium text-muted-foreground text-center">
+                Uh oh! {error} <br />
+                Please try again
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-row gap-2 items-baseline">
+                <FadeText text={`${name}`} className="font-bold text-xl" />
+                <FadeText
+                  text={`${professionalTitle}`}
+                  className="text-muted-foreground text-sm"
+                />
               </div>
-            </div>
-            <div>{selectedSkillsSection}</div>
-          </>
-        )}
 
-        <div className="flex gap-2">{ctaRow}</div>
-      </CardContent>
+              <div className="flex-grow flex flex-col min-h-0">
+                <HeaderAndSubtitle
+                  header="Skills"
+                  subtitle="Search, select, or add new skills"
+                />
+                <form onSubmit={handleSearchSkill} className="mb-4">
+                  <div className="flex gap-2">
+                    <Input
+                      type="text"
+                      value={searchSkill}
+                      onChange={(e) => setSearchSkill(e.target.value)}
+                      placeholder="Search or enter a new skill"
+                    />
+                    <Button type="submit" disabled={!searchSkill}>
+                      Add
+                    </Button>
+                  </div>
+                </form>
+
+                <div className="overflow-y-auto flex-grow">
+                  <div className="space-y-4">{skillGroupsSection}</div>
+                </div>
+              </div>
+              <div>{selectedSkillsSection}</div>
+            </>
+          )}
+
+          <div className="flex gap-2">{ctaRow}</div>
+        </CardContent>
+      </TooltipProvider>
     </>
   );
 }

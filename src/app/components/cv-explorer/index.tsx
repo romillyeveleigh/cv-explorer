@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import CvAnalysis from "./CvAnalysis";
 import CvInsight from "./CvInsight";
@@ -36,7 +36,8 @@ export default function CVExplorer() {
   const [isLoadingMoreInsights, setIsLoadingMoreInsights] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [headline, setHeadline] = useState<string>("");
-  const [memo, setMemo] = useState<string>("");
+  const [memo, setMemo] = useState<string>("")
+  const fileInputRef = useRef<HTMLInputElement>(null);;
 
   const {
     messages,
@@ -199,6 +200,10 @@ export default function CVExplorer() {
     resetMessages();
   };
 
+  const onClickUpload = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="container mx-auto p-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-90">
@@ -216,6 +221,8 @@ export default function CVExplorer() {
             isLoading={isLoadingCvText || isGeneratingSkillGroups}
             error={error}
             reset={onReset}
+            onClickUpload={onClickUpload}
+            fileInputRef={fileInputRef}
           />
         </Card>
 
@@ -229,6 +236,7 @@ export default function CVExplorer() {
             handleShowMore={handleShowMore}
             isLoadingMoreInsights={isLoadingMoreInsights}
             name={name}
+            onClickUpload={onClickUpload}
           />
         </Card>
       </div>

@@ -2,9 +2,10 @@ import React, { useRef, useEffect, useState, FC } from "react";
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, InfoIcon } from "lucide-react";
+import { Loader2, InfoIcon, Upload } from "lucide-react";
 import WordFadeIn from "@/components/magicui/word-fade-in";
 import { MarkdownToJsx } from "../MarkdownToJsx";
+import AppSteps from "./AppSteps";
 
 type Insight = {
   insight: string;
@@ -20,6 +21,7 @@ type CvInsightProps = {
   handleShowMore: () => void;
   isLoadingMoreInsights: boolean;
   name: string;
+  onClickUpload: () => void;
 };
 
 export default function CvInsight({
@@ -31,6 +33,7 @@ export default function CvInsight({
   isLoadingMoreInsights,
   handleShowMore,
   name,
+  onClickUpload,
 }: CvInsightProps) {
   const insightContentRef = useRef<HTMLDivElement>(null);
   const [showHeadline, setShowHeadline] = useState(true);
@@ -68,19 +71,19 @@ export default function CvInsight({
             </p>
           </div>
         ) : !memo ? (
-          <div className="bg-muted p-4 rounded-lg flex items-start space-x-4">
+          <>
+            
+              <AppSteps onClickUpload={onClickUpload} />
+            
+            {/* <div className="bg-muted p-4 rounded-lg flex items-start space-x-4 mt-4">
             <InfoIcon className="h-6 w-6 text-muted-foreground flex-shrink-0 mt-1" />
             <div>
-              <h3 className="font-semibold text-lg mb-2">
-                Welcome to the CV Explorer
-              </h3>
               <p className="text-muted-foreground text-base" >
-                This is a demo insight based on {name}&apos;s default CV. Select
-                skills to generate a personalized insight based on the CV
-                content and your selected skills.
+                Click on the Change CV <Upload className="h-4 w-4 inline-block" /> button to upload your own file. You can generate insights on any profile.
               </p>
             </div>
-          </div>
+          </div> */}
+          </>
         ) : (
           <>
             <div
