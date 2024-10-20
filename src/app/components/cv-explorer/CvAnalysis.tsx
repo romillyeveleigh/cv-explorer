@@ -53,7 +53,7 @@ type CvAnalysisProps = {
   ) => Promise<void>;
   generateInsight: () => void;
   isGeneratingInitialInsight: boolean;
-  isLoading: boolean;
+  isLoading: string | boolean;
   error: string | null;
   reset: () => void;
   name: string;
@@ -273,7 +273,11 @@ export default function CvAnalysis({
             <div className="flex-grow flex flex-col justify-center items-center">
               <Loader2 className="h-12 w-12 animate-spin mb-4" />
               <p className="text-lg font-medium text-muted-foreground">
-                Cooking up your CV magic...
+                {isLoading === "cv-text"
+                  ? "Extracting skills and experiences..."
+                  : isLoading === "skill-groups"
+                  ? "Unpacking career insights..."
+                  : "Working on it..."}
               </p>
             </div>
           ) : error ? (
@@ -287,7 +291,7 @@ export default function CvAnalysis({
           ) : (
             <>
               <div className="flex flex-row gap-2 items-baseline">
-                <FadeText text={`${name}`} className="font-bold text-xl" />
+                <FadeText text={`${name}`} className="font-bold text-xl truncate" />
                 <FadeText
                   text={`${professionalTitle}`}
                   className="text-muted-foreground text-sm"

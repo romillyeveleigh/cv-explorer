@@ -24,6 +24,7 @@ import { SkillGroup } from "@/app/utils/types";
 export default function CVExplorer() {
   const [fileName, setFileName] = useState("Romilly_Eveleigh_CV.pdf");
   const [cvText, setCvText] = useState<string | null>(CV_TEXT);
+  // console.log("🚀 ~ CVExplorer ~ cvText:", cvText)
   const [name, setName] = useState<string>("Romilly Eveleigh");
   const [professionalTitle, setProfessionalTitle] = useState<string>(
     "Full Stack Developer"
@@ -36,8 +37,8 @@ export default function CVExplorer() {
   const [isLoadingMoreInsights, setIsLoadingMoreInsights] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [headline, setHeadline] = useState<string>("");
-  const [memo, setMemo] = useState<string>("")
-  const fileInputRef = useRef<HTMLInputElement>(null);;
+  const [memo, setMemo] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     messages,
@@ -218,7 +219,13 @@ export default function CVExplorer() {
             handleFileUpload={handleFileUpload}
             generateInsight={generateInitialMemo}
             isGeneratingInitialInsight={isGeneratingInitialMemo}
-            isLoading={isLoadingCvText || isGeneratingSkillGroups}
+            isLoading={
+              isGeneratingSkillGroups
+                ? "skill-groups"
+                : isLoadingCvText
+                ? "cv-text"
+                : false
+            }
             error={error}
             reset={onReset}
             onClickUpload={onClickUpload}

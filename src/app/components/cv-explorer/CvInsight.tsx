@@ -72,9 +72,7 @@ export default function CvInsight({
           </div>
         ) : !memo ? (
           <>
-            
-              <AppSteps onClickUpload={onClickUpload} />
-            
+            <AppSteps onClickUpload={onClickUpload} name={name} />
             {/* <div className="bg-muted p-4 rounded-lg flex items-start space-x-4 mt-4">
             <InfoIcon className="h-6 w-6 text-muted-foreground flex-shrink-0 mt-1" />
             <div>
