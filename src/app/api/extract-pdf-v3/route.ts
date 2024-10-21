@@ -3,7 +3,7 @@ import fs from "fs";
 import { NextRequest, NextResponse } from "next/server";
 import os from "os";
 import { v4 as uuidv4 } from "uuid";
-import { createWorker } from "tesseract.js";
+import { createWorker, PSM } from "tesseract.js";
 
 const UPLOAD_DIR = path.resolve(process.env.ROOT_PATH ?? "", "public/uploads");
 
@@ -80,6 +80,10 @@ export const POST = async (request: NextRequest) => {
 
     const worker = await createWorker("eng", 1, {
       workerPath: "./node_modules/tesseract.js/src/worker-script/node/index.js",
+    });
+
+    await worker.setParameters({
+      tessedit_pageseg_mode: PSM.AUTO_OSD,
     });
 
     const {
