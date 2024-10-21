@@ -54,7 +54,7 @@ export const OPTION_GROUPS = [
 export const SKILL_GROUPS: SkillGroup[] = [
   {
     name: "Web Development",
-    skills: ["JavaScript", "React", "Node.js", "HTML", "CSS"],
+    skills: ["JavaScript", "TypeScript", "React", "Node.js", "Next.js", "CSS"],
   },
   {
     name: "Backend Development",
@@ -228,8 +228,12 @@ Personal website
 https://www.eveleigh.co
 Built a personal website to showcase my CV.
 Key technologies used: Typescript, Next.js, Tailwind CSS
-Made with
-Projects
+
+CV Explorer
+October 2024 - Present
+With the release of the Anthropic API, I decided to build a SaaS which allows users to 
+get insights from an uploaded CV. This is a great way to show the power of AI in action.
+Key technologies used: Next.js, Typescript, Vercel, CI/CD, Anthropic API, Tailwind CSS, AI
 
 What Visa?
 09/2020 - 07/2023 (2 years 11 months)
