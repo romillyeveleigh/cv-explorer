@@ -71,13 +71,7 @@ export const POST = async (request: NextRequest) => {
       }
     }
 
-    // console.log("🚀 ~ POST ~ convertedImages:", convertedImages);
-
-    // const worker = await createWorker("eng", 1, {
-    //   logger: (m) => console.log(m), // Add logger here
-    // });
-
-    const worker = await createWorker("eng", 1, {
+    const worker = await createWorker(["eng", "osd"], 1, {
       workerPath: "./node_modules/tesseract.js/src/worker-script/node/index.js",
     });
 
