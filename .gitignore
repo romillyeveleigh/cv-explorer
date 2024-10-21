@@ -39,4 +39,4 @@ yarn-error.log*
 next-env.d.ts
 
 # uploads
-/public/uploads
+/public/uploads/

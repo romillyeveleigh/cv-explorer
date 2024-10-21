@@ -3,6 +3,7 @@ import fs from "fs";
 import { NextRequest, NextResponse } from "next/server";
 import os from "os";
 import { v4 as uuidv4 } from "uuid";
+import { createWorker } from "tesseract.js";
 
 const UPLOAD_DIR = path.resolve(process.env.ROOT_PATH ?? "", "public/uploads");
 
@@ -14,7 +15,7 @@ const writeToDir = async (
 ) => {
   try {
     await fs.promises.writeFile(filePath, imageData);
-    console.log(`Image processed and saved successfully: ${filePath}`);
+    // console.log(`Image processed and saved successfully: ${filePath}`);
     return {
       fileName: fileName,
       filePath: filePath,
@@ -27,6 +28,7 @@ const writeToDir = async (
 
 export const POST = async (request: NextRequest) => {
   const pdf2img = await import("pdf-img-convert");
+  // const { createWorker } = await import("tesseract.js");
 
   const formData: FormData = await request.formData();
   const uploadedFile = formData.get("pdf") as Blob | null;
@@ -45,11 +47,17 @@ export const POST = async (request: NextRequest) => {
 
   try {
     const pdfBuffer = Buffer.from(await uploadedFile.arrayBuffer());
-    const imagePages = await pdf2img.convert(pdfBuffer, { base64: true }); // Ensure base64 is true to get Base64 data
+    const imagePages = await pdf2img.convert(pdfBuffer, {
+      base64: true,
+      scale: 2,
+    }); // Ensure base64 is true to get Base64 data
 
     for (let i = 0; i < imagePages.length; i++) {
       const imageData = imagePages[i];
-      const base64Data = imageData.replace(/^data:image\/\w+;base64,/, ""); // Remove Base64 header
+      const base64Data = (imageData as string).replace(
+        /^data:image\/\w+;base64,/,
+        ""
+      ); // Remove Base64 header
       const imageBuffer = Buffer.from(base64Data, "base64"); // Convert Base64 to Buffer
 
       const _fileName = `${path.basename(
@@ -64,10 +72,23 @@ export const POST = async (request: NextRequest) => {
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      message: "Files uploaded successfully",
+    // console.log("🚀 ~ POST ~ convertedImages:", convertedImages);
+
+    // const worker = await createWorker("eng", 1, {
+    //   logger: (m) => console.log(m), // Add logger here
+    // });
+
+    const worker = await createWorker("eng", 1, {
+      workerPath: "./node_modules/tesseract.js/src/worker-script/node/index.js",
     });
+
+    const {
+      data: { text },
+    } = await worker.recognize(convertedImages[0].filePath);
+    console.log(text);
+    await worker.terminate();
+
+    return NextResponse.json({ text: text });
   } catch (error) {
     console.error("Error processing the image:", error);
     return NextResponse.json(
