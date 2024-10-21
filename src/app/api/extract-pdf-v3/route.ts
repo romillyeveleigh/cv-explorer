@@ -3,7 +3,6 @@ import fs from "fs";
 import { NextRequest, NextResponse } from "next/server";
 import os from "os";
 import { v4 as uuidv4 } from "uuid";
-import { createWorker, PSM } from "tesseract.js";
 
 const UPLOAD_DIR = path.resolve(process.env.ROOT_PATH ?? "", "public/uploads");
 
@@ -28,7 +27,7 @@ const writeToDir = async (
 
 export const POST = async (request: NextRequest) => {
   const pdf2img = await import("pdf-img-convert");
-  // const { createWorker } = await import("tesseract.js");
+  const { createWorker, PSM } = await import("tesseract.js");
 
   const formData: FormData = await request.formData();
   const uploadedFile = formData.get("pdf") as Blob | null;
