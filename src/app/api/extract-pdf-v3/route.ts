@@ -6,8 +6,12 @@ import { v4 as uuidv4 } from "uuid";
 
 const UPLOAD_DIR = path.resolve(process.env.ROOT_PATH ?? "", "public/uploads");
 
-/*SHARP ENHANCEMENT*/
-const writeToDir = async (imageData, fileName, filePath) => {
+/*SHARP enhancement*/
+const writeToDir = async (
+  imageData: Buffer,
+  fileName: string,
+  filePath: string
+) => {
   try {
     await fs.promises.writeFile(filePath, imageData);
     console.log(`Image processed and saved successfully: ${filePath}`);
@@ -59,8 +63,6 @@ export const POST = async (request: NextRequest) => {
         convertedImages.push(writeFile);
       }
     }
-
-    // if successfully
 
     return NextResponse.json({
       success: true,
