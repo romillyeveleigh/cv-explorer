@@ -79,13 +79,21 @@ export const POST = async (request: NextRequest) => {
       tessedit_pageseg_mode: PSM.AUTO_OSD,
     });
 
-    const {
-      data: { text },
-    } = await worker.recognize(convertedImages[0].filePath);
-    console.log(text);
+    const textArray = await Promise.all(
+      convertedImages.map(async (image) => {
+        const {
+          data: { text },
+        } = await worker.recognize(image.filePath);
+        return text;
+      })
+    );
+
     await worker.terminate();
 
-    return NextResponse.json({ text: text });
+    const parsedText = textArray.join("\n");
+    console.log("🚀 ~ POST ~ parsedText:", parsedText);
+
+    return NextResponse.json({ text: parsedText });
   } catch (error) {
     console.error("Error processing the image:", error);
     return NextResponse.json(
