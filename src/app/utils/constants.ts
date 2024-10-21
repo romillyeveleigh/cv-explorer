@@ -84,6 +84,7 @@ export const SKILL_GROUPS: SkillGroup[] = [
 
 export const CV_TEXT = `
 Romilly Eveleigh CV
+Gender: Male
 Experienced Front End Developer and Full Stack Developer with a demonstrated history of managing teams and delivering production-ready solutions. 
 Skilled in JavaScript, Typescript, React, Redux, Next.js, GraphQL, Apollo, Node.js, Express, Docker, Postgres, MongoDB, Firebase, AWS
 (S3, DynamoDB, Codecommit, Lambda), HTML, CSS, and full-stack development. Highly-driven IT professional with a Bachelor's
