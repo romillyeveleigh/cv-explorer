@@ -5,7 +5,7 @@ const pdfToText = async (file: File) => {
   formData.append("pdf", file);
 
   try {
-    const response = await fetch("/api/extract-pdf", {
+    const response = await fetch("/api/extract-pdf-v3", {
       method: "POST",
       body: formData,
     });
