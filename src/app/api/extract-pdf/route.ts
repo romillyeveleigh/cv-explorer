@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import PDFParser from "pdf2json";
 import os from "os";
 import path from "path";
+import { File } from "buffer";
 
 export async function POST(request: NextRequest) {
   const formData: FormData = await request.formData();
@@ -25,6 +26,11 @@ export async function POST(request: NextRequest) {
     await fs.writeFile(tempFilePath, fileBuffer);
 
     const parsedText = await parsePDF(tempFilePath);
+
+    if (!isReadableText(parsedText)) {
+      return NextResponse.json({ error: "PDF is encrypted" }, { status: 400 });
+    }
+
     return NextResponse.json({ text: parsedText });
   } catch (error) {
     console.error("Error processing PDF:", error);
