@@ -1,4 +1,4 @@
-function isReadableText(text: string, threshold: number = 0.7): boolean {
+export function isReadableText(text: string, threshold: number = 0.7): boolean {
   // Remove whitespace and newlines
   const cleanedText = text.replace(/\s+/g, "");
 
