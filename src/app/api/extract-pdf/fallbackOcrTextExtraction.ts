@@ -20,7 +20,7 @@ export const fallbackOcrTextExtraction = async (pdfBuffer: Buffer) => {
   });
 
   // Process images sequentially
-  const results = [];
+  const results = []; 
   for (const imageBuffer of imageBuffers) {
     const {
       data: { text },
