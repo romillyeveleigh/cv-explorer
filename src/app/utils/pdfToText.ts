@@ -23,7 +23,6 @@ const pdfToText = async (file: File) => {
     if (!data.text) {
       throw new Error("No text extracted");
     }
-    console.log("🚀 ~ pdfToText ~ data.text:", data.text);
     return data.text;
   } catch (error) {
     console.error("Error extracting PDF text:", error);

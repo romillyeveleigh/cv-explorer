@@ -63,46 +63,49 @@ const leadershipSkills = {
   ],
 };
 
-const perspectivePrompts = [
-  "Imagine you're recruiting for a startup founder. How would the founder apply these skills?",
-  "From the perspective of a client who is senior executive, what's the most crucial aspect of these skills?",
-  "If you were mentoring a junior leader, which of these skills would you emphasize and why?",
-  "As a tech industry analyst, how do you see these skills evolving in the next 5 years?",
-];
+// const perspectivePrompts = [
+//   "Imagine you're recruiting for a startup founder. How would the founder apply these skills?",
+//   "From the perspective of a client who is senior executive, what's the most crucial aspect of these skills?",
+//   "If you were mentoring a junior leader, which of these skills would you emphasize and why?",
+//   "As a tech industry analyst, how do you see these skills evolving in the next 5 years?",
+// ];
 
-const comparisonPrompts = [
-  "Compare and contrast how these skills might be applied differently in a large corporation versus a small startup.",
-  "Discuss how these skills might be valued differently in various tech sectors (e.g., AI, cybersecurity, e-commerce).",
-  "Explore how the importance of these skills might vary between different leadership roles (e.g., CTO, Product Manager, Team Lead).",
-];
+// const comparisonPrompts = [
+//   "Compare and contrast how these skills might be applied differently in a large corporation versus a small startup.",
+//   "Discuss how these skills might be valued differently in various tech sectors (e.g., AI, cybersecurity, e-commerce).",
+//   "Explore how the importance of these skills might vary between different leadership roles (e.g., CTO, Product Manager, Team Lead).",
+// ];
 
 export const getInitialInsightMessageParams = (
   cvText: string = "",
   selectedOptions: string[]
 ) => {
+  // NOTE: THIS FUNCTION IS UNUSED
   const system = `
   You are an expert in CV analysis with hipster-level knowledge of trending technologies.
-Write a short memo (strictly under 90 words) to a tech recruiter about a candidate.
-Focus on the given list of skills and CV.
+  Write a short memo (strictly under 90 words) to a tech recruiter about a candidate.
+  Focus on the given list of skills and CV.
 
-If skills are not tech-related, briefly describe them and ignore the CV.
-For tech skills, reference specific jobs, companies, and dates from the CV.
-Explain skills simply and their impact on companies.
+  If skills are not tech-related, briefly describe them and ignore the CV.
+  For tech skills, reference specific jobs, companies, and dates from the CV.
+  Explain skills simply and their impact on companies.
 
-Use 2-3 short paragraphs. No subject, greeting, or sign-off.
-Bold skill mentions. Use an informal but informative tone.
-Refer to the person by name.
+  Use 2-3 short paragraphs. No subject, greeting, or sign-off.
+  Bold skill mentions. Use an informal but informative tone.
+  Refer to the person by name.
 
-End with a bullet list of jobs using those skills and experience duration. 
+  End with a bullet list of jobs using those skills and experience duration. 
 
-Provide a witty, one-line tagline (don't use the person's name).
+  Provide a witty, one-line tagline (don't use the person's name).
 
-If your response exceeds 90 words, please retry with a more concise version.
+  If your response exceeds 90 words, please retry with a more concise version.
+  Important: If the candidate's name is Romilly, then the candidate is male and
+  should be referred to as "he" and NOT "they" in the response.
   `;
 
   const tools: Anthropic.Messages.Tool[] = [
     {
-      name: "skill-group-v2",
+      name: "memo-v2",
       input_schema: {
         type: "object",
         name: {
@@ -123,7 +126,7 @@ If your response exceeds 90 words, please retry with a more concise version.
 
   const tool_choice: Anthropic.Messages.MessageCreateParams.ToolChoiceTool = {
     type: "tool",
-    name: "skill-group-v2",
+    name: "memo-v2",
   };
 
   const prompt = `
