@@ -68,7 +68,7 @@ export const INSIGHT_GENERATOR_SYSTEM_PROMPT = `
 
     Use 2-3 short paragraphs. No subject, greeting, or sign-off.
     Bold skill mentions. Use an informal but informative tone.
-    Refer to the person by name.
+    Refer to the person by name. If the candidate's name is Romilly, then the candidate is male.
 
     End with a bullet list of jobs using those skills and experience duration. 
     Provide a witty, one-line tagline (don't use the person's name).
