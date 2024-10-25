@@ -7,18 +7,12 @@ import { DEFAULT_CV_TEXT, fileIsSupported, SKILL_GROUPS } from "@/app/utils";
 import { SkillGroup, Model } from "@/app/utils/types";
 import { useClaudeConversation } from "@/app/hooks";
 
+import { getToolUseDataFromMessages, getCvText } from "./utils";
 import {
-  getToolUseDataFromMessages,
-  SkillGroupGenerator,
-  InitialMemoGenerator,
-  InsightGenerator,
-  getCvText,
-  INSIGHT_GENERATOR_SCHEMA,
-  INITIAL_MEMO_GENERATOR_SCHEMA,
-  SKILL_GROUP_GENERATOR_SCHEMA,
-  SKILL_GROUP_GENERATOR_SYSTEM_PROMPT,
-  INSIGHT_GENERATOR_SYSTEM_PROMPT,
-} from "./utils";
+  skillGroupGenerator,
+  initialMemoGenerator,
+  insightGenerator,
+} from "@/app/utils/generators";
 import CvAnalysis from "./CvAnalysis";
 import CvInsight from "./CvInsight";
 
@@ -50,7 +44,10 @@ export default function CVExplorer() {
   const [memo, setMemo] = useState<string>("");
 
   const { messages, sendMessage, reset: resetMessages } = useClaudeConversation();
-  const insights = getToolUseDataFromMessages<InsightGenerator>(messages, "insight-generator");
+  const insights = getToolUseDataFromMessages<typeof insightGenerator.defaultResponse>(
+    messages,
+    "insight-generator"
+  );
 
   const handleGenerateSkillGroups = async (cvText: string) => {
     setIsGeneratingSkillGroups(true);
@@ -59,8 +56,8 @@ export default function CVExplorer() {
       {
         model: Model.HAIKU,
         temperature: 0.8,
-        system: SKILL_GROUP_GENERATOR_SYSTEM_PROMPT,
-        tools: [SKILL_GROUP_GENERATOR_SCHEMA],
+        system: skillGroupGenerator.system,
+        tools: skillGroupGenerator.tools,
         tool_choice: { type: "tool", name: "skill-group-generator" },
       },
       true
@@ -73,7 +70,7 @@ export default function CVExplorer() {
     }
 
     const { name, professionalTitle, skillGroups } = response.content[0]
-      .input as SkillGroupGenerator;
+      .input as typeof skillGroupGenerator.defaultResponse;
 
     console.log("Recieved skill groups", response.content[0].input);
 
@@ -150,9 +147,8 @@ export default function CVExplorer() {
       {
         model: Model.SONNET,
         temperature: 1,
-        system: INSIGHT_GENERATOR_SYSTEM_PROMPT,
-        tools: [INITIAL_MEMO_GENERATOR_SCHEMA],
-
+        system: initialMemoGenerator.system,
+        tools: initialMemoGenerator.tools,
         tool_choice: { type: "tool", name: "initial-memo-generator" },
       },
       true
@@ -164,7 +160,8 @@ export default function CVExplorer() {
       throw new Error("No tool use found in response");
     }
 
-    const { tagline: headline, memo } = response.content[0].input as InitialMemoGenerator;
+    const { tagline: headline, memo } = response.content[0]
+      .input as typeof initialMemoGenerator.defaultResponse;
 
     setHeadline(headline);
     setMemo(memo);
@@ -174,12 +171,12 @@ export default function CVExplorer() {
   const handleShowMore = async () => {
     setIsLoadingMoreInsights(true);
     await sendMessage(
-      "Show me more insights.",
+      insightGenerator.system,
       {
         model: Model.HAIKU,
         temperature: 0.8,
+        tools: insightGenerator.tools,
         tool_choice: { type: "tool", name: "insight-generator" },
-        tools: [INSIGHT_GENERATOR_SCHEMA],
       },
       false
     );
