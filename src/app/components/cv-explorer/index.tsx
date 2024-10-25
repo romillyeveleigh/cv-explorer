@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useRef, useState } from "react";
+
 import { Card } from "@/components/ui/card";
-import CvAnalysis from "./CvAnalysis";
-import CvInsight from "./CvInsight";
 import { CV_TEXT, fileIsSupported, SKILL_GROUPS } from "@/app/utils";
-import { Model } from "@/app/hooks/useMessageThread";
-import { useClaudeConversationV2 } from "@/app/hooks/use-claude-conversation-v2";
+import { SkillGroup, Model } from "@/app/utils/types";
+import { useClaudeConversation } from "@/app/hooks";
+
 import {
   getToolUseDataFromMessages,
   SkillGroupGenerator,
@@ -19,12 +19,12 @@ import {
   SKILL_GROUP_GENERATOR_SYSTEM_PROMPT,
   INSIGHT_GENERATOR_SYSTEM_PROMPT,
 } from "./utils";
-import { SkillGroup } from "@/app/utils/types";
+import CvAnalysis from "./CvAnalysis";
+import CvInsight from "./CvInsight";
 
 export default function CVExplorer() {
   const [fileName, setFileName] = useState("Romilly_Eveleigh_CV.pdf");
   const [cvText, setCvText] = useState<string | null>(CV_TEXT);
-  // console.log("🚀 ~ CVExplorer ~ cvText:", cvText)
   const [name, setName] = useState<string>("Romilly Eveleigh");
   const [professionalTitle, setProfessionalTitle] = useState<string>(
     "Full Stack Developer"
@@ -44,7 +44,7 @@ export default function CVExplorer() {
     messages,
     sendMessage,
     reset: resetMessages,
-  } = useClaudeConversationV2();
+  } = useClaudeConversation();
 
   const insights = getToolUseDataFromMessages<InsightGenerator>(
     messages,

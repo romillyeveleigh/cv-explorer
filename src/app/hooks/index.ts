@@ -1,1 +1,1 @@
-export { useMessageThread } from "./useMessageThread";
+export { useClaudeConversation } from "./use-claude-conversation";

@@ -17,8 +17,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { renderIcon } from "@/app/utils";
 import { FadeText } from "@/components/ui/fade-text";
+import { SimpleIcon } from "../SimpleIcon";
 
 const MAX_SELECTED_SKILLS = 3;
 
@@ -134,7 +134,7 @@ export default function CvAnalysis({
               size="sm"
               onClick={() => handleSkillSelect(skill)}
             >
-              {renderIcon(skill)}
+              <SimpleIcon slug={skill} />
               <span className="max-w-[180px] overflow-hidden text-ellipsis">
                 {skill}
               </span>

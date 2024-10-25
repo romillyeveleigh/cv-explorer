@@ -1,16 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-// Helper function to randomly select items from an array
-const getRandomItems = <T>(array: T[], n: number): T[] => {
-  const shuffled = array.slice().sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, n);
-};
-
-// Helper function to get a random item from an array
-const getRandomItem = <T>(array: T[]): T => {
-  return array[Math.floor(Math.random() * array.length)];
-};
-
 const leadershipSkills = {
   topLeadershipSkills: [
     "Leading teams",
@@ -62,19 +51,6 @@ const leadershipSkills = {
     "Using best ways to work",
   ],
 };
-
-// const perspectivePrompts = [
-//   "Imagine you're recruiting for a startup founder. How would the founder apply these skills?",
-//   "From the perspective of a client who is senior executive, what's the most crucial aspect of these skills?",
-//   "If you were mentoring a junior leader, which of these skills would you emphasize and why?",
-//   "As a tech industry analyst, how do you see these skills evolving in the next 5 years?",
-// ];
-
-// const comparisonPrompts = [
-//   "Compare and contrast how these skills might be applied differently in a large corporation versus a small startup.",
-//   "Discuss how these skills might be valued differently in various tech sectors (e.g., AI, cybersecurity, e-commerce).",
-//   "Explore how the importance of these skills might vary between different leadership roles (e.g., CTO, Product Manager, Team Lead).",
-// ];
 
 export const getInitialInsightMessageParams = (
   cvText: string = "",

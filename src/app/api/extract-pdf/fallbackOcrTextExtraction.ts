@@ -14,9 +14,9 @@ export const fallbackOcrTextExtraction = async (pdfBuffer: Buffer) => {
   });
 
   await worker.setParameters({
-    tessedit_pageseg_mode: PSM.AUTO_OSD,
-    tessjs_create_hocr: "0",
-    tessjs_create_tsv: "0",
+    tessedit_pageseg_mode: PSM.AUTO_OSD, // Automatic page segmentation with OSD
+    tessjs_create_hocr: "0", // Disable HOCR output
+    tessjs_create_tsv: "0", // Disable TSV output
   });
 
   // Process images sequentially

@@ -1,9 +1,10 @@
+import { useState, useCallback, useMemo } from "react";
 import Anthropic from "@anthropic-ai/sdk";
 import {
   Message,
   MessageParam,
 } from "@anthropic-ai/sdk/resources/messages.mjs";
-import { useState, useCallback, useMemo } from "react";
+
 import {
   removeToolResults,
   createNewMessage,
@@ -11,17 +12,7 @@ import {
 } from "./utils";
 import { fetchClaudeResponse } from "./api";
 
-interface UseClaudeConversationProps {
-  system: Anthropic.MessageCreateParams["system"];
-  tools: Anthropic.Tool[];
-  customParams?: Partial<Anthropic.MessageCreateParams>;
-}
-
-export function useClaudeConversation({
-  system,
-  tools,
-  customParams,
-}: UseClaudeConversationProps) {
+export function useClaudeConversation() {
   const [messages, setMessages] = useState<MessageParam[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,26 +21,30 @@ export function useClaudeConversation({
   }, [messages]);
 
   const sendMessage = useCallback(
-    async (content: string) => {
+    async (
+      content: string,
+      customParams?: Partial<Anthropic.MessageCreateParams>,
+      isNewConversation = false
+    ) => {
       const toolUseBlock = getToolUseBlockFromLastMessage(messages);
-      const newMessage = createNewMessage(content, toolUseBlock);
-      const newMessages = [...messages, newMessage];
+      const newMessage = createNewMessage(
+        content,
+        isNewConversation ? undefined : toolUseBlock
+      );
+      const newMessages = [...(isNewConversation ? [] : messages), newMessage];
       setMessages(newMessages);
       setIsLoading(true);
 
       try {
-        const data = await fetchClaudeResponse(
-          newMessages,
-          system,
-          tools,
-          customParams
-        );
+        const data = await fetchClaudeResponse(newMessages, customParams);
 
         const { content }: Message = data.response;
         setMessages((prevMessages) => [
           ...prevMessages,
           { role: "assistant", content },
         ]);
+        setIsLoading(false);
+        return { role: "assistant", content };
       } catch (error: any) {
         console.error("Error:", error);
         setMessages((prevMessages) => [
@@ -63,8 +58,12 @@ export function useClaudeConversation({
         setIsLoading(false);
       }
     },
-    [messages, system, tools, customParams]
+    [messages]
   );
 
-  return { messages: filteredMessages, isLoading, sendMessage };
+  const reset = useCallback(() => {
+    setMessages([]);
+  }, []);
+
+  return { messages: filteredMessages, isLoading, sendMessage, reset };
 }
