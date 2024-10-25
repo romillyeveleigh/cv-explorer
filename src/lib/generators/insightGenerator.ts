@@ -1,9 +1,13 @@
-import { ConversationGenerator } from "@/app/utils/types";
+import { ConversationGenerator } from "@/types";
 import { Tool } from "@anthropic-ai/sdk/resources/messages.mjs";
 
 export type InsightGeneratorResponse = {
   insight: string;
   step: number;
+};
+
+const validateResponse = (response: any) => {
+  return typeof response.insight === "string" && typeof response.step === "number";
 };
 
 const system = "";
@@ -28,4 +32,5 @@ const tools: Tool[] = [
 export const insightGenerator: ConversationGenerator = {
   system,
   tools,
+  validateResponse,
 };

@@ -6,20 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import WordFadeIn from "@/components/magicui/word-fade-in";
 
-import { MarkdownToJsx } from "../MarkdownToJsx";
+import { MarkdownToJsx } from "../components/MarkdownToJsx";
 import AppSteps from "./AppSteps";
-
-type Insight = {
-  insight: string;
-  step: number;
-};
+import { InsightGeneratorResponse } from "@/lib/generators";
 
 type CvInsightProps = {
   isGeneratingInitialInsight: boolean;
   headline: string;
   memo: string;
-  insights: Insight[];
-  isFirstInsightGenerated: boolean;
+  insights: InsightGeneratorResponse[];
   handleShowMore: () => void;
   isLoadingMoreInsights: boolean;
   name: string;
@@ -31,7 +26,6 @@ export default function CvInsight({
   headline,
   memo,
   insights,
-  isFirstInsightGenerated,
   isLoadingMoreInsights,
   handleShowMore,
   name,
@@ -39,6 +33,7 @@ export default function CvInsight({
 }: CvInsightProps) {
   const insightContentRef = useRef<HTMLDivElement>(null);
   const [showHeadline, setShowHeadline] = useState(true);
+  const isFirstInsightGenerated = Boolean(memo && headline);
 
   useEffect(() => {
     if (insightContentRef.current) {
@@ -68,18 +63,13 @@ export default function CvInsight({
         {isGeneratingInitialInsight ? (
           <div className="flex-grow flex flex-col justify-center items-center">
             <Loader2 className="h-12 w-12 animate-spin mb-4" />
-            <p className="text-lg font-medium text-muted-foreground">
-              Analyzing CV superpowers...
-            </p>
+            <p className="text-lg font-medium text-muted-foreground">Analyzing CV superpowers...</p>
           </div>
         ) : !memo ? (
           <AppSteps onClickUpload={onClickUpload} name={name} />
         ) : (
           <>
-            <div
-              ref={insightContentRef}
-              className="flex-grow overflow-y-auto mb-4 mt-4 pr-4"
-            >
+            <div ref={insightContentRef} className="flex-grow overflow-y-auto mb-4 mt-4 pr-4">
               {showHeadline && headline && (
                 <div className="ml-6 mr-6 mb-4">
                   <WordFadeIn words={headline} />
@@ -88,18 +78,16 @@ export default function CvInsight({
 
               <div className="relative">
                 <div className="absolute left-2 top-0 bottom-0 w-px bg-border"></div>
-                {[{ insight: memo, step: 0 }, ...insights].map(
-                  ({ insight, step }, index) => (
-                    <div key={index} className="mb-4 last:mb-0 relative pl-6">
-                      {index > 0 && (
-                        <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full border-2 border-gray-300 bg-background"></div>
-                      )}
+                {[{ insight: memo, step: 0 }, ...insights].map(({ insight, step }, index) => (
+                  <div key={index} className="mb-4 last:mb-0 relative pl-6">
+                    {index > 0 && (
+                      <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full border-2 border-gray-300 bg-background"></div>
+                    )}
 
-                      <MarkdownToJsx markdown={insight} />
-                      <p className="whitespace-pre-line"></p>
-                    </div>
-                  )
-                )}
+                    <MarkdownToJsx markdown={insight} />
+                    <p className="whitespace-pre-line"></p>
+                  </div>
+                ))}
               </div>
             </div>
             {isFirstInsightGenerated && (

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Anthropic } from "@anthropic-ai/sdk";
 
-import { Model } from "@/app/utils/types";
+import { Model } from "@/types";
 
 const DEFAULT_PARAMS = {
   model: Model.OPUS,

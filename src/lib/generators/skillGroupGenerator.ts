@@ -1,11 +1,22 @@
-import { SkillGroup } from "@/app/utils/types";
+import { SkillGroup } from "@/types";
 import { Tool } from "@anthropic-ai/sdk/resources/messages.mjs";
-import { ConversationGenerator } from "@/app/utils/types";
+import { ConversationGenerator } from "@/types";
 
 export type SkillGroupGeneratorResponse = {
   name: string;
   professionalTitle: string;
   skillGroups: SkillGroup[];
+};
+
+const validateResponse = (response: any) => {
+  return (
+    typeof response.name === "string" &&
+    typeof response.professionalTitle === "string" &&
+    Array.isArray(response.skillGroups) &&
+    response.skillGroups.every(
+      (group: any) => typeof group.name === "string" && Array.isArray(group.skills)
+    )
+  );
 };
 
 const system = `
@@ -69,4 +80,5 @@ const tools: Tool[] = [
 export const skillGroupGenerator: ConversationGenerator = {
   system,
   tools,
+  validateResponse,
 };

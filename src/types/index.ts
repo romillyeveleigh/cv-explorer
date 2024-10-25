@@ -1,4 +1,9 @@
 import { Tool } from "@anthropic-ai/sdk/resources/messages.mjs";
+import {
+  Message,
+  MessageParam,
+  MessageCreateParamsBase,
+} from "@anthropic-ai/sdk/resources/messages.mjs";
 
 export type SkillGroup = {
   name: string;
@@ -18,6 +23,7 @@ export const enum Model {
 }
 
 export interface ConversationGenerator {
-  system: string;
+  system: MessageCreateParamsBase["system"];
   tools: Tool[];
+  validateResponse: (response: any) => boolean;
 }

@@ -1,9 +1,13 @@
-import { ConversationGenerator } from "@/app/utils/types";
+import { ConversationGenerator } from "@/types";
 import { Tool } from "@anthropic-ai/sdk/resources/messages.mjs";
 
 export type InitialMemoGeneratorResponse = {
   tagline: string;
   memo: string;
+};
+
+const validateInitialMemoResponse = (response: any) => {
+  return typeof response.tagline === "string" && typeof response.memo === "string";
 };
 
 const system = `
@@ -44,4 +48,5 @@ const tools: Tool[] = [
 export const initialMemoGenerator: ConversationGenerator = {
   system,
   tools,
+  validateResponse: validateInitialMemoResponse,
 };

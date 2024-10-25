@@ -1,37 +1,27 @@
-import { SkillGroup } from "./types";
+// config for the app
+import { SkillGroup } from "../../types";
 
-export const DEFAULT_SKILL_GROUPS: SkillGroup[] = [
+export { DEFAULT_SKILL_GROUPS, DEFAULT_CV_TEXT, DEFAULT_NAME, DEFAULT_PROFESSIONAL_TITLE };
+
+const DEFAULT_NAME = "Romilly Eveleigh";
+const DEFAULT_PROFESSIONAL_TITLE = "Full Stack Developer";
+
+const DEFAULT_SKILL_GROUPS: SkillGroup[] = [
   {
     name: "Web Development",
     skills: ["JavaScript", "TypeScript", "React", "Node.js", "Next.js", "CSS"],
   },
   {
     name: "Backend Development",
-    skills: [
-      "AWS",
-      "Docker",
-      "CI/CD",
-      "Git",
-      "Jest",
-      "Cypress",
-      "Vercel",
-      "Firebase",
-      "Azure",
-    ],
+    skills: ["AWS", "Docker", "CI/CD", "Git", "Jest", "Cypress", "Vercel", "Firebase", "Azure"],
   },
   {
     name: "Project Management",
-    skills: [
-      "Agile",
-      "Scrum",
-      "Kanban",
-      "Risk Management",
-      "Stakeholder Management",
-    ],
+    skills: ["Agile", "Scrum", "Kanban", "Risk Management", "Stakeholder Management"],
   },
 ];
 
-export const DEFAULT_CV_TEXT = `
+const DEFAULT_CV_TEXT = `
 Romilly Eveleigh CV
 Experienced Front End Developer and Full Stack Developer with a demonstrated history of managing teams and delivering production-ready solutions. 
 Skilled in JavaScript, Typescript, React, Redux, Next.js, GraphQL, Apollo, Node.js, Express, Docker, Postgres, MongoDB, Firebase, AWS
@@ -191,53 +181,3 @@ Built a SaaS product to help people check their eligibility for Skilled Worker v
 the UK. Designed and built the product from scratch in association with a London-based
 legal consultancy. Gained accredditation from the Office of the Immigration Services Commissioner.
 SKills used: Next.js, Typescript, Firebase`;
-
-export const LEADERSHIP_SKILLS = [
-  "Leading teams",
-  "Planning projects",
-  "Setting goals",
-  "Teaching others",
-  "Helping team grow",
-  "Checking team progress",
-  "Managing money",
-  "Saving costs",
-  "Showing value",
-  "Planning for success",
-  "Growing income",
-  "Understanding systems",
-  "Designing solutions",
-  "Checking code",
-  "Setting tech rules",
-  "Planning tech future",
-  "Bringing new ideas",
-  "Leading flexible teams",
-  "Organizing work",
-  "Making things simpler",
-  "Talking clearly",
-  "Solving arguments",
-  "Making choices",
-  "Fixing problems",
-  "Understanding feelings",
-  "Helping with changes",
-  "Working with different teams",
-  "Updating old systems",
-  "Seeing future tech needs",
-  "Planning long-term",
-  "Sharing expert ideas",
-  "Finding good workers",
-  "Making teams better",
-  "Creating good workplace",
-  "Including everyone",
-  "Finishing on time",
-  "Staying in budget",
-  "Ensuring good work",
-  "Handling problems",
-  "Improving how we work",
-  "Always getting better",
-  "Keeping customers happy",
-  "Talking to bosses",
-  "Making deals",
-  "Understanding trends",
-  "Knowing competitors",
-  "Using best ways to work",
-];
