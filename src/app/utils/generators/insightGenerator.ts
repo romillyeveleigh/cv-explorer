@@ -1,7 +1,12 @@
 import { ConversationGenerator } from "@/app/utils/types";
 import { Tool } from "@anthropic-ai/sdk/resources/messages.mjs";
 
-const system = `Show me more insights.`;
+type InsightGeneratorResponse = {
+  insight: string;
+  step: number;
+};
+
+const system = "";
 
 const tools: Tool[] = [
   {
@@ -20,10 +25,6 @@ const tools: Tool[] = [
   },
 ];
 
-type InsightGeneratorResponse = {
-  insight: string;
-  step: number;
-};
 
 const defaultResponse: InsightGeneratorResponse = {
   insight: "",

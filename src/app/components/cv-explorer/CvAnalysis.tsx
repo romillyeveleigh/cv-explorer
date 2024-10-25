@@ -1,45 +1,26 @@
 import React, { useState, useEffect } from "react";
-import {
-  Upload,
-  FileText,
-  RotateCcw,
-  Loader2,
-  AlertTriangle,
-} from "lucide-react";
+import { Upload, FileText, RotateCcw, Loader2, AlertTriangle } from "lucide-react";
 
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { FadeText } from "@/components/ui/fade-text";
 import { SimpleIcon } from "../SimpleIcon";
 
-const MAX_SELECTED_SKILLS = 3;
+const MAX_SELECTED_SKILLS_TO_SHOW = 3;
 
 type SkillGroup = {
   name: string;
   skills: string[];
 };
 
-const HeaderAndSubtitle = ({
-  header,
-  subtitle,
-}: {
-  header: string;
-  subtitle?: string;
-}) => {
+const HeaderAndSubtitle = ({ header, subtitle }: { header: string; subtitle?: string }) => {
   return (
     <>
       <h2 className="text-xl font-semibold mb-2">{header}</h2>
-      {subtitle && (
-        <p className="text-sm text-muted-foreground mb-2">{subtitle}</p>
-      )}
+      {subtitle && <p className="text-sm text-muted-foreground mb-2">{subtitle}</p>}
     </>
   );
 };
@@ -49,11 +30,9 @@ type CvAnalysisProps = {
   skillGroups: SkillGroup[];
   selectedSkills: string[];
   setSelectedSkills: React.Dispatch<React.SetStateAction<string[]>>;
-  handleFileUpload: (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => Promise<void>;
-  generateInsight: () => void;
-  isGeneratingInitialInsight: boolean;
+  handleFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
+  generateInitialMemo: () => void;
+  isGeneratingInitialMemo: boolean;
   isLoading: string | boolean;
   error: string | null;
   reset: () => void;
@@ -69,8 +48,8 @@ export default function CvAnalysis({
   selectedSkills,
   setSelectedSkills,
   handleFileUpload,
-  generateInsight,
-  isGeneratingInitialInsight,
+  generateInitialMemo,
+  isGeneratingInitialMemo,
   isLoading,
   error,
   reset,
@@ -122,28 +101,24 @@ export default function CvAnalysis({
     reset();
   };
 
-  const skillGroupsSection = (searchSkill ? filteredGroups : skillGroups).map(
-    (group, index) => (
-      <div key={index}>
-        <h3 className="font-semibold mb-2">{group.name}</h3>
-        <div className="flex flex-wrap gap-2">
-          {group.skills.map((skill) => (
-            <Button
-              key={skill}
-              variant={selectedSkills.includes(skill) ? "default" : "outline"}
-              size="sm"
-              onClick={() => handleSkillSelect(skill)}
-            >
-              <SimpleIcon slug={skill} />
-              <span className="max-w-[180px] overflow-hidden text-ellipsis">
-                {skill}
-              </span>
-            </Button>
-          ))}
-        </div>
+  const skillGroupsSection = (searchSkill ? filteredGroups : skillGroups).map((group, index) => (
+    <div key={index}>
+      <h3 className="font-semibold mb-2">{group.name}</h3>
+      <div className="flex flex-wrap gap-2">
+        {group.skills.map((skill) => (
+          <Button
+            key={skill}
+            variant={selectedSkills.includes(skill) ? "default" : "outline"}
+            size="sm"
+            onClick={() => handleSkillSelect(skill)}
+          >
+            <SimpleIcon slug={skill} />
+            <span className="max-w-[180px] overflow-hidden text-ellipsis">{skill}</span>
+          </Button>
+        ))}
       </div>
-    )
-  );
+    </div>
+  ));
 
   const selectedSkillsSection = selectedSkills.length > 0 && (
     <>
@@ -152,7 +127,7 @@ export default function CvAnalysis({
         subtitle="Skills that will be used for CV analysis"
       />
       <div className="flex flex-wrap gap-2">
-        {selectedSkills.slice(0, MAX_SELECTED_SKILLS).map((skill) => (
+        {selectedSkills.slice(0, MAX_SELECTED_SKILLS_TO_SHOW).map((skill) => (
           <Badge
             key={skill}
             variant="secondary"
@@ -162,19 +137,19 @@ export default function CvAnalysis({
             {skill} ✕
           </Badge>
         ))}
-        {selectedSkills.length > MAX_SELECTED_SKILLS && (
+        {selectedSkills.length > MAX_SELECTED_SKILLS_TO_SHOW && (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <div>
                   <Badge variant="secondary" className="text-sm cursor-pointer">
-                    + {selectedSkills.length - MAX_SELECTED_SKILLS} more
+                    + {selectedSkills.length - MAX_SELECTED_SKILLS_TO_SHOW} more
                   </Badge>
                 </div>
               </TooltipTrigger>
               <TooltipContent>
                 <div className="flex flex-col">
-                  {selectedSkills.slice(MAX_SELECTED_SKILLS).map((skill) => (
+                  {selectedSkills.slice(MAX_SELECTED_SKILLS_TO_SHOW).map((skill) => (
                     <Button
                       key={skill}
                       variant="secondary"
@@ -196,11 +171,11 @@ export default function CvAnalysis({
   const ctaRow = (
     <>
       <Button
-        onClick={generateInsight}
-        disabled={selectedSkills.length === 0 || isGeneratingInitialInsight}
+        onClick={generateInitialMemo}
+        disabled={selectedSkills.length === 0 || isGeneratingInitialMemo}
         className="flex-grow"
       >
-        {isGeneratingInitialInsight ? (
+        {isGeneratingInitialMemo ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             Brewing insights...
@@ -292,21 +267,12 @@ export default function CvAnalysis({
           ) : (
             <>
               <div className="flex flex-row gap-2 items-baseline">
-                <FadeText
-                  text={`${name}`}
-                  className="font-bold text-xl truncate"
-                />
-                <FadeText
-                  text={`${professionalTitle}`}
-                  className="text-muted-foreground text-sm"
-                />
+                <FadeText text={`${name}`} className="font-bold text-xl truncate" />
+                <FadeText text={`${professionalTitle}`} className="text-muted-foreground text-sm" />
               </div>
 
               <div className="flex-grow flex flex-col min-h-0">
-                <HeaderAndSubtitle
-                  header="Skills"
-                  subtitle="Search, select, or add new skills"
-                />
+                <HeaderAndSubtitle header="Skills" subtitle="Search, select, or add new skills" />
                 <form onSubmit={handleSearchSkill} className="mb-4">
                   <div className="flex gap-2">
                     <Input

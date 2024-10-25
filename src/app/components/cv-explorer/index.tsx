@@ -49,6 +49,18 @@ export default function CVExplorer() {
     "insight-generator"
   );
 
+  const onReset = () => {
+    setFileName(DEFAULTS.fileName);
+    setName(DEFAULTS.name);
+    setProfessionalTitle(DEFAULTS.professionalTitle);
+    setCvText(DEFAULTS.cvText);
+    setSkillGroups(DEFAULTS.skillGroups);
+    setSelectedSkills(DEFAULTS.selectedSkills);
+    setMemo("");
+    setHeadline("");
+    resetMessages();
+  };
+
   const handleGenerateSkillGroups = async (cvText: string) => {
     setIsGeneratingSkillGroups(true);
     const response = await sendMessage(
@@ -58,7 +70,7 @@ export default function CVExplorer() {
         temperature: 0.8,
         system: skillGroupGenerator.system,
         tools: skillGroupGenerator.tools,
-        tool_choice: { type: "tool", name: "skill-group-generator" },
+        tool_choice: { type: "tool", name: skillGroupGenerator.tools[0].name },
       },
       true
     );
@@ -149,7 +161,7 @@ export default function CVExplorer() {
         temperature: 1,
         system: initialMemoGenerator.system,
         tools: initialMemoGenerator.tools,
-        tool_choice: { type: "tool", name: "initial-memo-generator" },
+        tool_choice: { type: "tool", name: initialMemoGenerator.tools[0].name },
       },
       true
     );
@@ -168,31 +180,20 @@ export default function CVExplorer() {
     setIsGeneratingInitialMemo(false);
   };
 
-  const handleShowMore = async () => {
+  const generateInsight = async () => {
     setIsLoadingMoreInsights(true);
+    const content = `Show me more insights.`;
     await sendMessage(
-      insightGenerator.system,
+      content,
       {
         model: Model.HAIKU,
         temperature: 0.8,
         tools: insightGenerator.tools,
-        tool_choice: { type: "tool", name: "insight-generator" },
+        tool_choice: { type: "tool", name: insightGenerator.tools[0].name },
       },
       false
     );
     setIsLoadingMoreInsights(false);
-  };
-
-  const onReset = () => {
-    setFileName(DEFAULTS.fileName);
-    setName(DEFAULTS.name);
-    setProfessionalTitle(DEFAULTS.professionalTitle);
-    setCvText(DEFAULTS.cvText);
-    setSkillGroups(DEFAULTS.skillGroups);
-    setSelectedSkills(DEFAULTS.selectedSkills);
-    setMemo("");
-    setHeadline("");
-    resetMessages();
   };
 
   const onClickUpload = () => {
@@ -211,8 +212,8 @@ export default function CVExplorer() {
             selectedSkills={selectedSkills}
             setSelectedSkills={setSelectedSkills}
             handleFileUpload={handleFileUpload}
-            generateInsight={generateInitialMemo}
-            isGeneratingInitialInsight={isGeneratingInitialMemo}
+            generateInitialMemo={generateInitialMemo}
+            isGeneratingInitialMemo={isGeneratingInitialMemo}
             isLoading={
               isGeneratingSkillGroups ? "skill-groups" : isLoadingCvText ? "cv-text" : false
             }
@@ -230,7 +231,7 @@ export default function CVExplorer() {
             memo={memo}
             insights={insights}
             isFirstInsightGenerated={Boolean(memo && headline)}
-            handleShowMore={handleShowMore}
+            handleShowMore={generateInsight}
             isLoadingMoreInsights={isLoadingMoreInsights}
             name={name}
             onClickUpload={onClickUpload}
