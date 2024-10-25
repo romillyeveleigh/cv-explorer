@@ -1,7 +1,12 @@
-import { SKILL_GROUPS } from "@/app/utils";
 import { SkillGroup } from "@/app/utils/types";
 import { Tool } from "@anthropic-ai/sdk/resources/messages.mjs";
 import { ConversationGenerator } from "@/app/utils/types";
+
+export type SkillGroupGeneratorResponse = {
+  name: string;
+  professionalTitle: string;
+  skillGroups: SkillGroup[];
+};
 
 const system = `
   You are an expert in CV analysis and have hipster-level knowledge of trending technologies.
@@ -61,20 +66,7 @@ const tools: Tool[] = [
   },
 ];
 
-type SkillGroupGeneratorResponse = {
-  name: string;
-  professionalTitle: string;
-  skillGroups: SkillGroup[];
-};
-
-const defaultResponse: SkillGroupGeneratorResponse = {
-  name: "Romilly Eveleigh",
-  professionalTitle: "Full Stack Developer",
-  skillGroups: SKILL_GROUPS,
-};
-
 export const skillGroupGenerator: ConversationGenerator = {
   system,
   tools,
-  defaultResponse,
 };

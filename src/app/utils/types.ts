@@ -17,8 +17,7 @@ export const enum Model {
   OPUS = "claude-3-opus-20240229",
 }
 
-export interface ConversationGenerator<T = Record<string, any>> {
+export interface ConversationGenerator {
   system: string;
   tools: Tool[];
-  defaultResponse: T;
 }

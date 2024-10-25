@@ -3,15 +3,18 @@
 import React, { useRef, useState } from "react";
 
 import { Card } from "@/components/ui/card";
-import { DEFAULT_CV_TEXT, fileIsSupported, SKILL_GROUPS } from "@/app/utils";
+import { DEFAULT_CV_TEXT, DEFAULT_SKILL_GROUPS, fileIsSupported } from "@/app/utils";
 import { SkillGroup, Model } from "@/app/utils/types";
 import { useClaudeConversation } from "@/app/hooks";
 
-import { getToolUseDataFromMessages, getCvText } from "./utils";
+import { getToolUseDataByToolName, getCvText } from "./utils";
 import {
   skillGroupGenerator,
   initialMemoGenerator,
   insightGenerator,
+  InsightGeneratorResponse,
+  InitialMemoGeneratorResponse,
+  SkillGroupGeneratorResponse,
 } from "@/app/utils/generators";
 import CvAnalysis from "./CvAnalysis";
 import CvInsight from "./CvInsight";
@@ -20,7 +23,7 @@ const DEFAULTS = {
   fileName: "Romilly_Eveleigh_CV.pdf",
   name: "Romilly Eveleigh",
   professionalTitle: "Full Stack Developer",
-  skillGroups: SKILL_GROUPS,
+  skillGroups: DEFAULT_SKILL_GROUPS,
   selectedSkills: [],
   cvText: DEFAULT_CV_TEXT,
 };
@@ -43,8 +46,8 @@ export default function CVExplorer() {
   const [headline, setHeadline] = useState<string>("");
   const [memo, setMemo] = useState<string>("");
 
-  const { messages, sendMessage, reset: resetMessages } = useClaudeConversation();
-  const insights = getToolUseDataFromMessages<typeof insightGenerator.defaultResponse>(
+  const { messages, sendMessage, resetMessages } = useClaudeConversation();
+  const insights = getToolUseDataByToolName<InsightGeneratorResponse>(
     messages,
     "insight-generator"
   );
@@ -82,7 +85,7 @@ export default function CVExplorer() {
     }
 
     const { name, professionalTitle, skillGroups } = response.content[0]
-      .input as typeof skillGroupGenerator.defaultResponse;
+      .input as SkillGroupGeneratorResponse;
 
     console.log("Recieved skill groups", response.content[0].input);
 
@@ -172,8 +175,7 @@ export default function CVExplorer() {
       throw new Error("No tool use found in response");
     }
 
-    const { tagline: headline, memo } = response.content[0]
-      .input as typeof initialMemoGenerator.defaultResponse;
+    const { tagline: headline, memo } = response.content[0].input as InitialMemoGeneratorResponse;
 
     setHeadline(headline);
     setMemo(memo);

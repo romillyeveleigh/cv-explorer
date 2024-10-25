@@ -1,6 +1,11 @@
 import { ConversationGenerator } from "@/app/utils/types";
 import { Tool } from "@anthropic-ai/sdk/resources/messages.mjs";
 
+export type InitialMemoGeneratorResponse = {
+  tagline: string;
+  memo: string;
+};
+
 const system = `
     You are an expert in CV analysis with hipster-level knowledge of trending technologies.
     Write a short memo (strictly under 90 words) to a tech recruiter about a candidate.
@@ -36,18 +41,7 @@ const tools: Tool[] = [
   },
 ];
 
-type InitialMemoGeneratorResponse = {
-  tagline: string;
-  memo: string;
-};
-
-const defaultResponse: InitialMemoGeneratorResponse = {
-  tagline: "",
-  memo: "",
-};
-
 export const initialMemoGenerator: ConversationGenerator = {
   system,
   tools,
-  defaultResponse,
 };

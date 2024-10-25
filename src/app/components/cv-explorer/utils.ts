@@ -45,7 +45,7 @@ export function getToolUseDataFromMessage<T = any>(
   return (message.content[0] as ToolUseBlock).input as T;
 }
 
-export function getToolUseDataFromMessages<T = any>(
+export function getToolUseDataByToolName<T = any>(
   messages: Anthropic.Messages.MessageParam[],
   toolName: string
 ) {

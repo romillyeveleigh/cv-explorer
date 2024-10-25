@@ -61,9 +61,9 @@ export function useClaudeConversation() {
     [messages]
   );
 
-  const reset = useCallback(() => {
+  const resetMessages = useCallback(() => {
     setMessages([]);
   }, []);
 
-  return { messages: filteredMessages, isLoading, sendMessage, reset };
+  return { messages: filteredMessages, isLoading, sendMessage, resetMessages };
 }

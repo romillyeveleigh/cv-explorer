@@ -1,6 +1,6 @@
 import { SkillGroup } from "./types";
 
-export const SKILL_GROUPS: SkillGroup[] = [
+export const DEFAULT_SKILL_GROUPS: SkillGroup[] = [
   {
     name: "Web Development",
     skills: ["JavaScript", "TypeScript", "React", "Node.js", "Next.js", "CSS"],
