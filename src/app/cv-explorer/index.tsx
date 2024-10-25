@@ -8,7 +8,7 @@ import {
   DEFAULT_CV_TEXT,
   DEFAULT_NAME,
   DEFAULT_PROFESSIONAL_TITLE,
-} from "@/app/config";
+} from "@/config";
 import { Model } from "@/types";
 import { useClaudeConversation } from "@/app/hooks";
 import { getToolUseDataByToolName, getCvText } from "./utils";

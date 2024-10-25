@@ -1,5 +1,5 @@
 // config for the app
-import { SkillGroup } from "../../types";
+import { SkillGroup } from "../types";
 
 export { DEFAULT_SKILL_GROUPS, DEFAULT_CV_TEXT, DEFAULT_NAME, DEFAULT_PROFESSIONAL_TITLE };
 
