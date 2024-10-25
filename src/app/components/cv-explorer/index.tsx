@@ -3,7 +3,7 @@
 import React, { useRef, useState } from "react";
 
 import { Card } from "@/components/ui/card";
-import { CV_TEXT, fileIsSupported, SKILL_GROUPS } from "@/app/utils";
+import { DEFAULT_CV_TEXT, fileIsSupported, SKILL_GROUPS } from "@/app/utils";
 import { SkillGroup, Model } from "@/app/utils/types";
 import { useClaudeConversation } from "@/app/hooks";
 
@@ -22,34 +22,35 @@ import {
 import CvAnalysis from "./CvAnalysis";
 import CvInsight from "./CvInsight";
 
+const DEFAULTS = {
+  fileName: "Romilly_Eveleigh_CV.pdf",
+  name: "Romilly Eveleigh",
+  professionalTitle: "Full Stack Developer",
+  skillGroups: SKILL_GROUPS,
+  selectedSkills: [],
+  cvText: DEFAULT_CV_TEXT,
+};
+
 export default function CVExplorer() {
-  const [fileName, setFileName] = useState("Romilly_Eveleigh_CV.pdf");
-  const [cvText, setCvText] = useState<string | null>(CV_TEXT);
-  const [name, setName] = useState<string>("Romilly Eveleigh");
-  const [professionalTitle, setProfessionalTitle] = useState<string>(
-    "Full Stack Developer"
-  );
-  const [skillGroups, setSkillGroups] = useState<SkillGroup[]>(SKILL_GROUPS);
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fileName, setFileName] = useState(DEFAULTS.fileName);
+  const [cvText, setCvText] = useState<string | null>(DEFAULTS.cvText);
+  const [name, setName] = useState<string>(DEFAULTS.name);
+  const [professionalTitle, setProfessionalTitle] = useState<string>(DEFAULTS.professionalTitle);
+  const [skillGroups, setSkillGroups] = useState<SkillGroup[]>(DEFAULTS.skillGroups);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>(DEFAULTS.selectedSkills);
+
   const [isLoadingCvText, setIsLoadingCvText] = useState(false);
   const [isGeneratingSkillGroups, setIsGeneratingSkillGroups] = useState(false);
   const [isGeneratingInitialMemo, setIsGeneratingInitialMemo] = useState(false);
   const [isLoadingMoreInsights, setIsLoadingMoreInsights] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const [headline, setHeadline] = useState<string>("");
   const [memo, setMemo] = useState<string>("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const {
-    messages,
-    sendMessage,
-    reset: resetMessages,
-  } = useClaudeConversation();
-
-  const insights = getToolUseDataFromMessages<InsightGenerator>(
-    messages,
-    "insight-generator"
-  );
+  const { messages, sendMessage, reset: resetMessages } = useClaudeConversation();
+  const insights = getToolUseDataFromMessages<InsightGenerator>(messages, "insight-generator");
 
   const handleGenerateSkillGroups = async (cvText: string) => {
     setIsGeneratingSkillGroups(true);
@@ -82,9 +83,7 @@ export default function CVExplorer() {
       !Array.isArray(skillGroups) ||
       !skillGroups.every(
         (group) =>
-          typeof group === "object" &&
-          typeof group.name === "string" &&
-          Array.isArray(group.skills)
+          typeof group === "object" && typeof group.name === "string" && Array.isArray(group.skills)
       )
     ) {
       console.error("Invalid format for skill groups");
@@ -98,9 +97,7 @@ export default function CVExplorer() {
     setIsGeneratingSkillGroups(false);
   };
 
-  const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsLoadingCvText(true);
 
     const file = event.target.files?.[0];
@@ -111,7 +108,7 @@ export default function CVExplorer() {
     }
 
     if (!fileIsSupported(file)) {
-      console.log("File is not supported");
+      console.log("File type is not supported");
       setError("File type not supported");
       setIsLoadingCvText(false);
       return;
@@ -155,6 +152,7 @@ export default function CVExplorer() {
         temperature: 1,
         system: INSIGHT_GENERATOR_SYSTEM_PROMPT,
         tools: [INITIAL_MEMO_GENERATOR_SCHEMA],
+
         tool_choice: { type: "tool", name: "initial-memo-generator" },
       },
       true
@@ -166,8 +164,7 @@ export default function CVExplorer() {
       throw new Error("No tool use found in response");
     }
 
-    const { tagline: headline, memo } = response.content[0]
-      .input as InitialMemoGenerator;
+    const { tagline: headline, memo } = response.content[0].input as InitialMemoGenerator;
 
     setHeadline(headline);
     setMemo(memo);
@@ -190,12 +187,12 @@ export default function CVExplorer() {
   };
 
   const onReset = () => {
-    setFileName("Romilly_Eveleigh_CV.pdf");
-    setName("Romilly Eveleigh");
-    setProfessionalTitle("Full Stack Developer");
-    setCvText(CV_TEXT);
-    setSkillGroups(SKILL_GROUPS);
-    setSelectedSkills([]);
+    setFileName(DEFAULTS.fileName);
+    setName(DEFAULTS.name);
+    setProfessionalTitle(DEFAULTS.professionalTitle);
+    setCvText(DEFAULTS.cvText);
+    setSkillGroups(DEFAULTS.skillGroups);
+    setSelectedSkills(DEFAULTS.selectedSkills);
     setMemo("");
     setHeadline("");
     resetMessages();
@@ -220,11 +217,7 @@ export default function CVExplorer() {
             generateInsight={generateInitialMemo}
             isGeneratingInitialInsight={isGeneratingInitialMemo}
             isLoading={
-              isGeneratingSkillGroups
-                ? "skill-groups"
-                : isLoadingCvText
-                ? "cv-text"
-                : false
+              isGeneratingSkillGroups ? "skill-groups" : isLoadingCvText ? "cv-text" : false
             }
             error={error}
             reset={onReset}

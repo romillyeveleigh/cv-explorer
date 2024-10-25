@@ -1,56 +1,5 @@
 import { SkillGroup } from "./types";
 
-export const OPTION_GROUPS = [
-  {
-    name: "Key Tech",
-    options: [
-      { id: "javascript", label: "JavaScript" },
-      { id: "typescript", label: "TypeScript" },
-      { id: "nodedotjs", label: "Node.js" },
-      { id: "amazonwebservices", label: "AWS" },
-    ],
-  },
-  {
-    name: "Front End",
-    options: [
-      { id: "react", label: "React" },
-      { id: "nextdotjs", label: "Next.js" },
-      { id: "tailwindcss", label: "Tailwind CSS" },
-      { id: "redux", label: "Redux" },
-      { id: "html5", label: "HTML" },
-      { id: "css3", label: "CSS" },
-      { id: "bootstrap", label: "Bootstrap" },
-      { id: "material-ui", label: "Material-UI" },
-      { id: "react-testing-library", label: "React Testing Library" },
-      { id: "graphql", label: "GraphQL" },
-      { id: "apollographql", label: "Apollo" },
-    ],
-  },
-  {
-    name: "Full Stack",
-    options: [
-      { id: "Docker", label: "Docker" },
-      { id: "CI", label: "CI/CD" },
-      { id: "Git", label: "Git" },
-      { id: "Jest", label: "Jest" },
-      { id: "Cypress", label: "Cypress" },
-      { id: "vercel", label: "Vercel" },
-      { id: "firebase", label: "Firebase" },
-      { id: "azure", label: "Azure" },
-    ],
-  },
-  {
-    name: "Databases",
-    options: [
-      { id: "postgresql", label: "PostgreSQL" },
-      { id: "mysql", label: "MySQL" },
-      { id: "mongodb", label: "MongoDB" },
-      { id: "redis", label: "Redis" },
-      { id: "DynamoDB", label: "DynamoDB" },
-    ],
-  },
-];
-
 export const SKILL_GROUPS: SkillGroup[] = [
   {
     name: "Web Development",
@@ -82,7 +31,7 @@ export const SKILL_GROUPS: SkillGroup[] = [
   },
 ];
 
-export const CV_TEXT = `
+export const DEFAULT_CV_TEXT = `
 Romilly Eveleigh CV
 Experienced Front End Developer and Full Stack Developer with a demonstrated history of managing teams and delivering production-ready solutions. 
 Skilled in JavaScript, Typescript, React, Redux, Next.js, GraphQL, Apollo, Node.js, Express, Docker, Postgres, MongoDB, Firebase, AWS
@@ -241,4 +190,54 @@ https://whatvisa.com
 Built a SaaS product to help people check their eligibility for Skilled Worker visas in
 the UK. Designed and built the product from scratch in association with a London-based
 legal consultancy. Gained accredditation from the Office of the Immigration Services Commissioner.
-SKills used: Next.js, Typescript, Firebase`
+SKills used: Next.js, Typescript, Firebase`;
+
+export const LEADERSHIP_SKILLS = [
+  "Leading teams",
+  "Planning projects",
+  "Setting goals",
+  "Teaching others",
+  "Helping team grow",
+  "Checking team progress",
+  "Managing money",
+  "Saving costs",
+  "Showing value",
+  "Planning for success",
+  "Growing income",
+  "Understanding systems",
+  "Designing solutions",
+  "Checking code",
+  "Setting tech rules",
+  "Planning tech future",
+  "Bringing new ideas",
+  "Leading flexible teams",
+  "Organizing work",
+  "Making things simpler",
+  "Talking clearly",
+  "Solving arguments",
+  "Making choices",
+  "Fixing problems",
+  "Understanding feelings",
+  "Helping with changes",
+  "Working with different teams",
+  "Updating old systems",
+  "Seeing future tech needs",
+  "Planning long-term",
+  "Sharing expert ideas",
+  "Finding good workers",
+  "Making teams better",
+  "Creating good workplace",
+  "Including everyone",
+  "Finishing on time",
+  "Staying in budget",
+  "Ensuring good work",
+  "Handling problems",
+  "Improving how we work",
+  "Always getting better",
+  "Keeping customers happy",
+  "Talking to bosses",
+  "Making deals",
+  "Understanding trends",
+  "Knowing competitors",
+  "Using best ways to work",
+];
