@@ -3,12 +3,7 @@
 import React, { useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { fileIsSupported } from "@/app/utils";
-import {
-  DEFAULT_SKILL_GROUPS,
-  DEFAULT_CV_TEXT,
-  DEFAULT_NAME,
-  DEFAULT_PROFESSIONAL_TITLE,
-} from "@/config";
+import { SKILL_GROUPS, CV_TEXT, NAME, PROFESSIONAL_TITLE } from "@/config";
 import { Model } from "@/types";
 import { useClaudeConversation } from "@/app/hooks";
 import { getToolUseDataByToolName, getCvText } from "./utils";
@@ -24,12 +19,12 @@ import CvAnalysis from "./CvAnalysis";
 import CvInsight from "./CvInsight";
 
 const DEFAULTS = {
-  name: DEFAULT_NAME,
-  professionalTitle: DEFAULT_PROFESSIONAL_TITLE,
-  skillGroups: DEFAULT_SKILL_GROUPS,
+  name: NAME,
+  professionalTitle: PROFESSIONAL_TITLE,
+  skillGroups: SKILL_GROUPS,
   selectedSkills: [] as string[],
-  cvText: DEFAULT_CV_TEXT,
-  fileName: `${DEFAULT_NAME}_CV.pdf`,
+  cvText: CV_TEXT,
+  fileName: `${NAME}_CV.pdf`,
 };
 
 export default function CVExplorer() {

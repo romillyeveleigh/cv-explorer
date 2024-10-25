@@ -1,12 +1,12 @@
 // config for the app
 import { SkillGroup } from "../types";
 
-export { DEFAULT_SKILL_GROUPS, DEFAULT_CV_TEXT, DEFAULT_NAME, DEFAULT_PROFESSIONAL_TITLE };
+export { SKILL_GROUPS, CV_TEXT, NAME, PROFESSIONAL_TITLE };
 
-const DEFAULT_NAME = "Romilly Eveleigh";
-const DEFAULT_PROFESSIONAL_TITLE = "Full Stack Developer";
+const NAME = "Romilly Eveleigh";
+const PROFESSIONAL_TITLE = "Full Stack Developer";
 
-const DEFAULT_SKILL_GROUPS: SkillGroup[] = [
+const SKILL_GROUPS: SkillGroup[] = [
   {
     name: "Web Development",
     skills: ["JavaScript", "TypeScript", "React", "Node.js", "Next.js", "CSS"],
@@ -21,7 +21,7 @@ const DEFAULT_SKILL_GROUPS: SkillGroup[] = [
   },
 ];
 
-const DEFAULT_CV_TEXT = `
+const CV_TEXT = `
 Romilly Eveleigh CV
 Experienced Front End Developer and Full Stack Developer with a demonstrated history of managing teams and delivering production-ready solutions. 
 Skilled in JavaScript, Typescript, React, Redux, Next.js, GraphQL, Apollo, Node.js, Express, Docker, Postgres, MongoDB, Firebase, AWS
