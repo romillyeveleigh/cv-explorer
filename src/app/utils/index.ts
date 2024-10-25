@@ -1,6 +1,8 @@
-export * from "./pdfToText";
-export * from "./wordFileToText";
+import pdfToText from "./pdfToText";
+import wordFileToText from "./wordFileToText";
 export * from "./isReadableText";
+
+export { pdfToText, wordFileToText };
 
 export const fileIsSupported = (file: File) => {
   return (

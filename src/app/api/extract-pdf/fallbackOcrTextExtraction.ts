@@ -1,6 +1,8 @@
+"use server";
+
 export const fallbackOcrTextExtraction = async (pdfBuffer: Buffer) => {
   const pdf2img = await import("pdf-img-convert");
-  const { createWorker, PSM } = await import("tesseract.js");
+  const { createWorker, createScheduler, PSM } = await import("tesseract.js");
   // Convert PDF to images with optimized settings
   const imageBuffers = await pdf2img.convert(pdfBuffer, {
     base64: false,
@@ -8,28 +10,39 @@ export const fallbackOcrTextExtraction = async (pdfBuffer: Buffer) => {
     width: 1500, // Set a fixed width for consistency and potential speed improvement
   });
 
-  // Create a single worker
-  const worker = await createWorker("eng", 1, {
-    workerPath: "./node_modules/tesseract.js/src/worker-script/node/index.js",
-  });
+  // Create a scheduler and multiple workers
+  const scheduler = createScheduler();
+  const workerCount = 3;
+  const workers = await Promise.all(
+    Array(workerCount)
+      .fill(0)
+      .map(() =>
+        createWorker("eng", 1, {
+          workerPath: "./node_modules/tesseract.js/src/worker-script/node/index.js",
+        })
+      )
+  );
+  workers.forEach((worker) => scheduler.addWorker(worker));
 
-  await worker.setParameters({
-    tessedit_pageseg_mode: PSM.AUTO_OSD, // Automatic page segmentation with OSD
-    tessjs_create_hocr: "0", // Disable HOCR output
-    tessjs_create_tsv: "0", // Disable TSV output
-  });
+  // Set parameters for all workers
+  await Promise.all(
+    workers.map((worker) =>
+      worker.setParameters({
+        tessedit_pageseg_mode: PSM.AUTO_OSD,
+        tessjs_create_hocr: "0",
+        tessjs_create_tsv: "0",
 
-  // Process images sequentially
-  const results = []; 
-  for (const imageBuffer of imageBuffers) {
-    const {
-      data: { text },
-    } = await worker.recognize(imageBuffer as string);
-    results.push(text);
-  }
+      })
+    )
+  );
 
-  // Terminate the worker
-  await worker.terminate();
+  // Process images in parallel
+  const results = await Promise.all(
+    imageBuffers.map((imageBuffer) => scheduler.addJob("recognize", imageBuffer as string))
+  );
 
-  return results.join("\n");
+  // Terminate all workers
+  scheduler.terminate();
+
+  return results.map((result) => result.data.text).join("\n");
 };

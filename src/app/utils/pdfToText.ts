@@ -1,6 +1,6 @@
 "use client";
 
-const pdfToText = async (file: File) => {
+ const pdfToText = async (file: File) => {
   const formData = new FormData();
   formData.append("pdf", file);
 
