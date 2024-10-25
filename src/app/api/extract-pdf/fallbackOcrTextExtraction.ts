@@ -1,12 +1,9 @@
-import * as pdfjs from "pdfjs-dist/build/pdf.min.mjs";
-
 export const fallbackOcrTextExtraction = async (pdfBuffer: Buffer) => {
   await import("pdfjs-dist/build/pdf.worker.min.mjs" as any);
   const pdf2img = await import("pdf-img-convert");
-  pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-    "pdfjs-dist/build/pdf.worker.min.mjs",
-    import.meta.url
-  ).toString();
+
+  const pdfjs = await import("./pdf.worker.min.mjs" as any);
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL("./pdf.worker.min.mjs", import.meta.url).toString();
 
   const { createWorker, createScheduler, PSM } = await import("tesseract.js");
   // Convert PDF to images with optimized settings
