@@ -3,7 +3,7 @@
 import React from "react";
 import * as SimpleIcons from "simple-icons";
 
-export const renderIcon = (slug: string) => {
+export const SimpleIcon = (slug: string) => {
   // parsed slug should capitalize the first letter and precede it with si
   let parsedSlug = slug.toLowerCase();
   // convert "." to "dot"

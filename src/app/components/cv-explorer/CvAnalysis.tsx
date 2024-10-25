@@ -1,3 +1,12 @@
+import React, { useState, useEffect } from "react";
+import {
+  Upload,
+  FileText,
+  RotateCcw,
+  Loader2,
+  AlertTriangle,
+} from "lucide-react";
+
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,18 +17,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  Upload,
-  FileText,
-  RotateCcw,
-  Loader2,
-  AlertTriangle,
-  User,
-} from "lucide-react";
-import React, { useState, useRef, useEffect } from "react";
 import { renderIcon } from "@/app/utils";
 import { FadeText } from "@/components/ui/fade-text";
-const MAX_SKILLS = 3;
+
+const MAX_SELECTED_SKILLS = 3;
 
 type SkillGroup = {
   name: string;
@@ -151,7 +152,7 @@ export default function CvAnalysis({
         subtitle="Skills that will be used for CV analysis"
       />
       <div className="flex flex-wrap gap-2">
-        {selectedSkills.slice(0, MAX_SKILLS).map((skill) => (
+        {selectedSkills.slice(0, MAX_SELECTED_SKILLS).map((skill) => (
           <Badge
             key={skill}
             variant="secondary"
@@ -161,19 +162,19 @@ export default function CvAnalysis({
             {skill} ✕
           </Badge>
         ))}
-        {selectedSkills.length > MAX_SKILLS && (
+        {selectedSkills.length > MAX_SELECTED_SKILLS && (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <div>
                   <Badge variant="secondary" className="text-sm cursor-pointer">
-                    + {selectedSkills.length - MAX_SKILLS} more
+                    + {selectedSkills.length - MAX_SELECTED_SKILLS} more
                   </Badge>
                 </div>
               </TooltipTrigger>
               <TooltipContent>
                 <div className="flex flex-col">
-                  {selectedSkills.slice(MAX_SKILLS).map((skill) => (
+                  {selectedSkills.slice(MAX_SELECTED_SKILLS).map((skill) => (
                     <Button
                       key={skill}
                       variant="secondary"
@@ -291,7 +292,10 @@ export default function CvAnalysis({
           ) : (
             <>
               <div className="flex flex-row gap-2 items-baseline">
-                <FadeText text={`${name}`} className="font-bold text-xl truncate" />
+                <FadeText
+                  text={`${name}`}
+                  className="font-bold text-xl truncate"
+                />
                 <FadeText
                   text={`${professionalTitle}`}
                   className="text-muted-foreground text-sm"

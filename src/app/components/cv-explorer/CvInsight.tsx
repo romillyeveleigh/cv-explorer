@@ -1,9 +1,11 @@
-import React, { useRef, useEffect, useState, FC } from "react";
+import React, { useRef, useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, InfoIcon, Upload } from "lucide-react";
 import WordFadeIn from "@/components/magicui/word-fade-in";
+
 import { MarkdownToJsx } from "../MarkdownToJsx";
 import AppSteps from "./AppSteps";
 
@@ -71,17 +73,7 @@ export default function CvInsight({
             </p>
           </div>
         ) : !memo ? (
-          <>
-            <AppSteps onClickUpload={onClickUpload} name={name} />
-            {/* <div className="bg-muted p-4 rounded-lg flex items-start space-x-4 mt-4">
-            <InfoIcon className="h-6 w-6 text-muted-foreground flex-shrink-0 mt-1" />
-            <div>
-              <p className="text-muted-foreground text-base" >
-                Click on the Change CV <Upload className="h-4 w-4 inline-block" /> button to upload your own file. You can generate insights on any profile.
-              </p>
-            </div>
-          </div> */}
-          </>
+          <AppSteps onClickUpload={onClickUpload} name={name} />
         ) : (
           <>
             <div

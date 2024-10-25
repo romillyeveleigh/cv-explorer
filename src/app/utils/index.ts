@@ -1,8 +1,7 @@
 export * from "./constants";
 export * from "./promptUtils";
-export * from "./renderIcon";
 export * from "./pdfToText";
-export * from "./wordToText";
+export * from "./wordFileToText";
 export * from "./isReadableText";
 
 export const capitalizeFirstLetter = (text: string) => {

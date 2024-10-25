@@ -1,7 +1,7 @@
 import { SKILL_GROUPS } from "@/app/utils";
 import pdfToText from "@/app/utils/pdfToText";
 import { SkillGroup } from "@/app/utils/types";
-import wordToText from "@/app/utils/wordToText";
+import wordFileToText from "@/app/utils/wordFileToText";
 import Anthropic from "@anthropic-ai/sdk";
 import { Tool, ToolUseBlock } from "@anthropic-ai/sdk/resources/messages.mjs";
 
@@ -27,7 +27,7 @@ export const getCvText: (file: File) => Promise<string> = async (file) => {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
   ) {
     console.log("Word file detected");
-    return await wordToText(file);
+    return await wordFileToText(file);
   }
 };
 

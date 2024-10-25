@@ -84,13 +84,12 @@ export const SKILL_GROUPS: SkillGroup[] = [
 
 export const CV_TEXT = `
 Romilly Eveleigh CV
-Gender: Male
 Experienced Front End Developer and Full Stack Developer with a demonstrated history of managing teams and delivering production-ready solutions. 
 Skilled in JavaScript, Typescript, React, Redux, Next.js, GraphQL, Apollo, Node.js, Express, Docker, Postgres, MongoDB, Firebase, AWS
 (S3, DynamoDB, Codecommit, Lambda), HTML, CSS, and full-stack development. Highly-driven IT professional with a Bachelor's
 Degree from the Courtauld Institute, University of London.
 
-I started building my earliest websites whilst I was still a teenager. I’ve always been driven by a desire to figure out how things
+I started building my earliest websites whilst I was still a teenager. I've always been driven by a desire to figure out how things
 work and solve technical problems. So far, coding has been the perfect match for me. My first commercial project was creating a
 custom database-driven e-commerce site for my employer in just a few weeks. Since then, my knowledge-base has steadily
 grown through a combination of self-study, persistence and practical experience.
@@ -99,7 +98,7 @@ Outside of software development, I have extensive experience working as a Projec
 managing budgets and delivering complex projects on time and to a high standard.
 
 Nowadays, I like to use Next.js and React due to its active user community and excellent component libraries, but I can quickly
-learn whatever stack is necessary. With the right tools for the job and my adaptability, I’m confident to tackle any task.
+learn whatever stack is necessary. With the right tools for the job and my adaptability, I'm confident to tackle any task.
 Key skills
 
 Next, React (including hooks, Context and Redux/Redux Toolkit, Query), JavaScript (ES6), Jira, Git, Node.js, HTML and CSS. My
