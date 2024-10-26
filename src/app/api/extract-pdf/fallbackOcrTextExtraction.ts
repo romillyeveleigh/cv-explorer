@@ -8,7 +8,7 @@ export const fallbackOcrTextExtraction = async (pdfBuffer: Buffer) => {
   const pdf2img = await import("pdf-img-convert");
 
   
-  pdfjs.GlobalWorkerOptions.workerSrc = pdfjs;
+  // pdfjs.GlobalWorkerOptions.workerSrc = pdfjs;
 
   const { createWorker, createScheduler, PSM } = await import("tesseract.js");
   // Convert PDF to images with optimized settings
