@@ -1,12 +1,12 @@
 "use server";
 
 // @ts-expect-error This does not exist outside of polyfill which this is doing
-import * as pdfjs from 'pdfjs-dist/build/pdf.min.mjs';
+import * as pdfjs from 'pdfjs-dist/legacy/build/pdf.min.mjs';
 
 export const fallbackOcrTextExtraction = async (pdfBuffer: Buffer) => {
   console.log("fallbackOcrTextExtraction");
   // @ts-expect-error This does not exist outside of polyfill which this is doing
-  await import('pdfjs-dist/build/pdf.worker.min.mjs');
+  await import('pdfjs-dist/legacy/build/pdf.worker.min.mjs');
   const pdf2img = await import("pdf-img-convert");
   const { createWorker, createScheduler, PSM } = await import("tesseract.js");
   // Convert PDF to images with optimized settings
