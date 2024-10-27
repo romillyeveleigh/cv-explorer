@@ -1,5 +1,3 @@
-"use server";
-
 // @ts-expect-error This does not exist outside of polyfill which this is doing
 import * as pdfjs from 'pdfjs-dist/legacy/build/pdf.min.mjs';
 
