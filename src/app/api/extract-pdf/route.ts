@@ -20,7 +20,7 @@ function parsePDF(filePath: string): Promise<string> {
       resolve(pdfParser.getRawTextContent());
     });
 
-    pdfParser.loadPDF(filePath);
+    pdfParser.loadPDF(filePath); 
   });
 }
 
