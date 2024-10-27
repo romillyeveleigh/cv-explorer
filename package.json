@@ -29,6 +29,7 @@
     "marked": "^14.1.2",
     "multer": "^1.4.5-lts.1",
     "next": "14.2.6",
+    "path2d": "^0.2.1",
     "pdf-img-convert": "^2.0.0",
     "pdf-parse": "^1.1.1",
     "pdf2json": "^3.1.4",
