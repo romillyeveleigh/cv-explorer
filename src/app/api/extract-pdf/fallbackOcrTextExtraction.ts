@@ -1,3 +1,5 @@
+"use server";
+
 export const fallbackOcrTextExtraction = async (pdfBuffer: Buffer) => {
   const pdf2img = await import("pdf-img-convert");
   const { createWorker, PSM } = await import("tesseract.js");
