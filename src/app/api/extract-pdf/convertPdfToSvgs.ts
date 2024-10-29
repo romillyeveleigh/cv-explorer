@@ -3,6 +3,7 @@
 export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
   try {
     await import('canvas');
+    await import('pdfjs-dist');
     const pdf2img = await import("pdf-img-convert");
     // Convert PDF to images with optimized settings
     const imageBuffers = await pdf2img.convert(pdfBuffer, {
