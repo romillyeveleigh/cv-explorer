@@ -5,7 +5,7 @@ export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
   const pdfjs = await import("pdfjs-dist");
   const pdf2img = await import("pdf-img-convert");
 
-  pdfjs.GlobalWorkerOptions.workerSrc = await 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.0.279/pdf.worker.min.js';
+//   pdfjs.GlobalWorkerOptions.workerSrc = await 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.0.279/pdf.worker.min.js';
 
   try {
     // Convert PDF to images with optimized settings
