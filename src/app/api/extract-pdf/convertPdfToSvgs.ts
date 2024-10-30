@@ -1,5 +1,7 @@
 "use server";
 
+import * as pdfjs from "pdfjs-dist";
+
 export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
   try {
     // Add proper polyfill for Promise.withResolvers
