@@ -1,5 +1,9 @@
 "use server";
 
+// @ts-ignore
+import * as pdfworker from "pdfjs-dist/legacy/build/pdf.worker.mjs";
+console.log("🚀 ~ pdfworker:", pdfworker)
+
 export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
   try {
     const pdf2img = await import("pdf-img-convert");
