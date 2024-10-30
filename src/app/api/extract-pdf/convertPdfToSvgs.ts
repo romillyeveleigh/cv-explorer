@@ -1,8 +1,8 @@
 "use server";
 
 // import path2d
-import { Path2D } from "path2d";
-console.log("🚀 ~ Path2D:", Path2D)
+// import { Path2D } from "path2d";
+// console.log("🚀 ~ Path2D:", Path2D)
 
 // @ts-ignore
 import * as pdfworker from "pdfjs-dist/legacy/build/pdf.worker.mjs";
@@ -10,8 +10,8 @@ console.log("🚀 ~ pdfworker:", pdfworker)
 
 export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
   try {
-    const path2d = await import("path2d");
-    console.log("🚀 ~ path2d:", path2d)
+    const { Path2D } = await import("path2d");
+    console.log("🚀 ~ Path2D:", Path2D)
     const pdf2img = await import("pdf-img-convert");
     // Convert PDF to images with optimized settings
     const imageBuffers = await pdf2img.convert(pdfBuffer, {
