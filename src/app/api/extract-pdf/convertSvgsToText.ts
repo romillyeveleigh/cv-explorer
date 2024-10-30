@@ -1,10 +1,12 @@
 "use server";
 
+
+import { createWorker, createScheduler, PSM } from "tesseract.js";
+
 export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) => {
 console.log("🚀 ~ convertSvgsToText ~ imageBuffers:", imageBuffers)
 
   try {
-    const { createWorker, createScheduler, PSM } = await import("tesseract.js");
 
   // get worker path
   // const workerPath = require.resolve("tesseract.js/src/worker-script/node/index.js"); 
