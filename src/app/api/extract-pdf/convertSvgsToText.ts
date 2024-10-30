@@ -1,6 +1,7 @@
 "use server";
 
 export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) => {
+console.log("🚀 ~ convertSvgsToText ~ imageBuffers:", imageBuffers)
 
   try {
     const { createWorker, createScheduler, PSM } = await import("tesseract.js");
@@ -8,6 +9,9 @@ export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) =
   // get worker path
   // const workerPath = require.resolve("tesseract.js/src/worker-script/node/index.js"); 
   // console.log("🚀 ~ convertSvgsToText ~ workerPath:", workerPath)
+
+  
+
 
 
   // Create a scheduler and multiple workers
@@ -17,9 +21,7 @@ export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) =
     Array(workerCount)
       .fill(0)
       .map(() =>
-        createWorker("eng", 1, {
-          workerPath: "../../node_modules/tesseract.js/src/worker-script/node/index.js",
-        })
+        createWorker("eng", 1)
       )
   );
   workers.forEach((worker) => scheduler.addWorker(worker));
