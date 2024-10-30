@@ -2,6 +2,7 @@
 
 // import path2d
 import { Path2D } from "path2d";
+console.log("🚀 ~ Path2D:", Path2D)
 
 // @ts-ignore
 import * as pdfworker from "pdfjs-dist/legacy/build/pdf.worker.mjs";
