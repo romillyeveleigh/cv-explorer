@@ -12,7 +12,7 @@ export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
 
     return imageBuffers;
   } catch (error) {
-    console.error("Error during PDF to SVG conversion:", error);
+    console.error("Error during PDF to SVG conversion: ", error);
     throw error;
   }
 };
