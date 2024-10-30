@@ -17,9 +17,7 @@ export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) =
     Array(workerCount)
       .fill(0)
       .map(() =>
-        createWorker("eng", 1, {
-          // workerPath: workerPath,
-        })
+        createWorker()
       )
   );
   workers.forEach((worker) => scheduler.addWorker(worker));
