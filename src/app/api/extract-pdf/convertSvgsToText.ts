@@ -17,7 +17,9 @@ export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) =
     Array(workerCount)
       .fill(0)
       .map(() =>
-        createWorker()
+        createWorker("eng", 1, {
+          workerPath: "../../node_modules/tesseract.js/src/worker-script/node/index.js",
+        })
       )
   );
   workers.forEach((worker) => scheduler.addWorker(worker));
