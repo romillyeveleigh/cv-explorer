@@ -2,6 +2,20 @@
 
 export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
   try {
+    // Add proper polyfill for Promise.withResolvers
+    if (!Promise.withResolvers) {
+      console.log("Adding Promise.withResolvers polyfill");
+      Promise.withResolvers = function <T>() {
+        let resolve!: (value: T | PromiseLike<T>) => void;
+        let reject!: (reason?: any) => void;
+        const promise = new Promise<T>((res, rej) => {
+          resolve = res;
+          reject = rej;
+        });
+        return { promise, resolve, reject };
+      };
+    }
+
     await import("pdfjs-dist");
     const pdf2img = await import("pdf-img-convert");
     // Convert PDF to images with optimized settings
