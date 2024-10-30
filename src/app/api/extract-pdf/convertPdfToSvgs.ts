@@ -1,5 +1,8 @@
 "use server";
 
+// import path2d
+import { Path2D } from "path2d";
+
 // @ts-ignore
 import * as pdfworker from "pdfjs-dist/legacy/build/pdf.worker.mjs";
 console.log("🚀 ~ pdfworker:", pdfworker)
