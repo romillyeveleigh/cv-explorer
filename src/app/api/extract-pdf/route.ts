@@ -1,3 +1,5 @@
+export const maxDuration = 20;
+
 import { NextRequest, NextResponse } from "next/server";
 import PDFParser from "pdf2json";
 import { File } from "buffer";
