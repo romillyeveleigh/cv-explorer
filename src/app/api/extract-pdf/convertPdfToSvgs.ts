@@ -10,6 +10,8 @@ console.log("🚀 ~ pdfworker:", pdfworker)
 
 export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
   try {
+    const path2d = await import("path2d");
+    console.log("🚀 ~ path2d:", path2d)
     const pdf2img = await import("pdf-img-convert");
     // Convert PDF to images with optimized settings
     const imageBuffers = await pdf2img.convert(pdfBuffer, {
