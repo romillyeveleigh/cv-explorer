@@ -1,7 +1,9 @@
 "use server";
 
 export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) => {
-  const { createWorker, createScheduler, PSM } = await import("tesseract.js");
+
+  try {
+    const { createWorker, createScheduler, PSM } = await import("tesseract.js");
 
   // get worker path
   // const workerPath = require.resolve("tesseract.js/src/worker-script/node/index.js"); 
@@ -41,5 +43,9 @@ export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) =
   // Terminate all workers
   scheduler.terminate();
 
-  return results.map((result) => result.data.text).join("\n");
+    return results.map((result) => result.data.text).join("\n");
+  } catch (error) {
+    console.error("Error during OCR text extraction:", error);
+    throw error;
+  }
 };
