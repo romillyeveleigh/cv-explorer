@@ -1,6 +1,7 @@
 "use server";
 
-import * as pdfjs from "pdfjs-dist";
+import pdfjs from "pdfjs-dist";
+console.log("🚀 ~ pdfjs:", pdfjs.version);
 
 // Add proper polyfill for Promise.withResolvers
     if (!Promise.withResolvers) {
