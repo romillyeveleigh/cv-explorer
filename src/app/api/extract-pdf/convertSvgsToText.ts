@@ -29,8 +29,15 @@ export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) =
     // Process images with timeout
     const results = await Promise.race([
       Promise.all(
-        imageBuffers.map((imageBuffer) => 
-          scheduler.addJob("recognize", imageBuffer as string)
+        imageBuffers.map((imageBuffer) =>  {
+
+          const result = scheduler.addJob("recognize", imageBuffer as string).then((result) => {
+            console.log("🚀 ~ convertSvgsToText ~ result:", result)
+            return result;
+          });
+          return result;
+        }
+          
         )
       ),
       new Promise((_, reject) => 
