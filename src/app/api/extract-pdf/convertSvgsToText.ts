@@ -1,4 +1,3 @@
-"use server";
 export const maxDuration = 30;
 
 import { createWorker, createScheduler, PSM } from "tesseract.js";
