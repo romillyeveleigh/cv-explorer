@@ -14,7 +14,8 @@ export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) =
         .map(() =>
           createWorker(
             ["eng", "osd"],
-            1 // OCR Engine Mode: Tesseract only
+             // OCR Engine Mode: Tesseract only
+             3
           )
         )
     );
