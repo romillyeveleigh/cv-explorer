@@ -1,4 +1,4 @@
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 
 import { convertPdfToSvgs } from "./convertPdfToSvgs";
