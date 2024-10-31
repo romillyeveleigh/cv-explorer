@@ -8,7 +8,7 @@ export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) =
   try {
     // Reduce worker count to minimize resource usage
     const workerCount = 2;
-    const TIMEOUT_MS = 25000; // 25 second timeout
+    const TIMEOUT_MS = 60000; // 60 second timeout
 
     const scheduler = createScheduler();
     const workers = await Promise.all(
