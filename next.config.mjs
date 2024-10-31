@@ -8,6 +8,7 @@ const nextConfig = {
       "pdfjs-dist/legacy/build/pdf.worker.min.js",
       "pdfjs-dist/legacy/build/pdf.worker.min.mjs",
       "pdfjs-dist/legacy/build/pdf.worker.min.mjs",
+      "pdfjs-dist/legacy/build/pdf.worker.mjs",
       "path2d",
     ],
     outputFileTracingIncludes: {

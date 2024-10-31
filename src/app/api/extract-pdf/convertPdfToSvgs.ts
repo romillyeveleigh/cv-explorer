@@ -5,11 +5,14 @@
 // console.log("🚀 ~ Path2D:", Path2D)
 
 // @ts-ignore
-import * as pdfworker from "pdfjs-dist/legacy/build/pdf.worker.mjs";
+// import * as pdfworker from "pdfjs-dist/legacy/build/pdf.worker.mjs";
 // console.log("🚀 ~ pdfworker:", pdfworker)
 
 export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
   try {
+    // @ts-ignore
+    await import("pdfjs-dist/legacy/build/pdf.worker.mjs");
+
     const { Path2D } = await import("path2d");
     // make it global
     globalThis.Path2D = Path2D as any;
