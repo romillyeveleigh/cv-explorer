@@ -3,6 +3,8 @@ export const maxDuration = 60;
 import { createWorker, createScheduler, PSM } from "tesseract.js";
 
 export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) => {
+
+  let timeStart = Date.now();
   try {
     // Reduce worker count to minimize resource usage
     const workerCount = 2;
@@ -44,10 +46,13 @@ export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) =
         setTimeout(() => reject(new Error("OCR processing timeout")), TIMEOUT_MS)
       )
     ]);
-    console.log("🚀 ~ convertSvgsToText ~ results:", results)
+    
 
     // Cleanup
     await scheduler.terminate();
+
+    let timeEnd = Date.now();
+    console.log(`OCR processing took ${timeEnd - timeStart}ms`);
 
     // @ts-ignore
     return results.map((result) => result.data.text).join("\n");
