@@ -9,6 +9,7 @@
 // console.log("🚀 ~ pdfworker:", pdfworker)
 
 export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
+  let timeStart = Date.now();
   try {
     // @ts-ignore
     await import("pdfjs-dist/legacy/build/pdf.worker.mjs");
@@ -25,6 +26,9 @@ export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
       scale: 2,
       width: 1500, // Set a fixed width for consistency and potential speed improvement
     });
+
+    let timeEnd = Date.now();
+    console.log(`PDF to SVG conversion took ${timeEnd - timeStart}ms`);
 
     return imageBuffers;
   } catch (error) {
