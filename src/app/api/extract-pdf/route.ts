@@ -1,4 +1,5 @@
-export const maxDuration = 20;
+"use server";
+export const maxDuration = 30;
 
 import { NextRequest, NextResponse } from "next/server";
 import PDFParser from "pdf2json";

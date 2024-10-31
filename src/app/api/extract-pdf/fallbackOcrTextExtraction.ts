@@ -1,4 +1,6 @@
 "use server";
+export const maxDuration = 30;
+
 
 import { convertPdfToSvgs } from "./convertPdfToSvgs";
 import { convertSvgsToText } from "./convertSvgsToText";
