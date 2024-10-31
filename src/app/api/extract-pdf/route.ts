@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     const fileBuffer = Buffer.from(await uploadedFile.arrayBuffer());
 
     let parsedText = await parsePDF(fileBuffer);
-    console.log("🚀 ~ POST ~ parsedText:", parsedText);
+    // console.log("🚀 ~ POST ~ parsedText:", parsedText);
 
     if (!isReadableText(parsedText)) {
       console.log("Text is unreadable, falling back to OCR");

@@ -6,7 +6,7 @@
 
 // @ts-ignore
 import * as pdfworker from "pdfjs-dist/legacy/build/pdf.worker.mjs";
-console.log("🚀 ~ pdfworker:", pdfworker)
+// console.log("🚀 ~ pdfworker:", pdfworker)
 
 export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
   try {
@@ -14,7 +14,7 @@ export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
     // make it global
     globalThis.Path2D = Path2D as any;
 
-    console.log("🚀 ~ Path2D:", Path2D)
+    // console.log("🚀 ~ Path2D:", Path2D)
     const pdf2img = await import("pdf-img-convert");
     // Convert PDF to images with optimized settings
     const imageBuffers = await pdf2img.convert(pdfBuffer, {
