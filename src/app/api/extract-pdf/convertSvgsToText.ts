@@ -38,6 +38,7 @@ export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) =
         setTimeout(() => reject(new Error("OCR processing timeout")), TIMEOUT_MS)
       )
     ]);
+    console.log("🚀 ~ convertSvgsToText ~ results:", results)
 
     // Cleanup
     await scheduler.terminate();
