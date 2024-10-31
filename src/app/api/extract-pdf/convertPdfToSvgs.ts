@@ -14,9 +14,9 @@ export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
     // @ts-ignore
     await import("pdfjs-dist/legacy/build/pdf.worker.mjs");
 
-    const { Path2D } = await import("path2d");
+    await import("path2d");
     // make it global
-    globalThis.Path2D = Path2D as any;
+    // globalThis.Path2D = Path2D as any;
 
     // console.log("🚀 ~ Path2D:", Path2D)
     const pdf2img = await import("pdf-img-convert");

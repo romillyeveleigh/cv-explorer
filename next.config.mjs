@@ -10,6 +10,7 @@ const nextConfig = {
       "pdfjs-dist/legacy/build/pdf.worker.min.mjs",
       "pdfjs-dist/legacy/build/pdf.worker.mjs",
       "path2d",
+      "pdf-img-convert"
     ],
     outputFileTracingIncludes: {
       "/api/**/*": ["./node_modules/**/*.wasm", "./node_modules/**/*.proto"],
