@@ -31,10 +31,11 @@ export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) =
     // Process images with timeout
     const results = await Promise.race([
       Promise.all(
-        imageBuffers.map((imageBuffer) =>  {
+        imageBuffers.map((imageBuffer, index) =>  {
 
           const result = scheduler.addJob("recognize", imageBuffer as string).then((result) => {
-            console.log("🚀 ~ convertSvgsToText ~ result:", result)
+            // log the time it took to process the image
+            console.log(`OCR processing took ${Date.now() - timeStart}ms for image ${index}`);
             return result;
           });
           return result;
