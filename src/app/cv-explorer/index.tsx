@@ -116,7 +116,7 @@ export default function CVExplorer() {
 
     try {
       const cvText = await getCvText(file);
-      console.log("CV text sample:", `"${cvText.slice(0, 100)}..." `);
+      console.log("CV text sample:", `"${cvText.slice(0, 4000)}..." `);
 
       await handleGenerateSkillGroups(cvText);
 
