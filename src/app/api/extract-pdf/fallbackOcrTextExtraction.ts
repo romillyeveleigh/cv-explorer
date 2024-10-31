@@ -1,6 +1,3 @@
-export const maxDuration = 60;
-
-
 import { convertPdfToSvgs } from "./convertPdfToSvgs";
 import { convertSvgsToText } from "./convertSvgsToText";
 

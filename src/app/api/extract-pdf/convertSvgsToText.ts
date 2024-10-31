@@ -1,5 +1,3 @@
-export const maxDuration = 60;
-
 import { createWorker, createScheduler, PSM } from "tesseract.js";
 
 export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) => {
