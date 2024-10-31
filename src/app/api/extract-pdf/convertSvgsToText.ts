@@ -18,7 +18,7 @@ export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) =
     await Promise.all(
       workers.map((worker) =>
         worker.setParameters({
-          tessedit_pageseg_mode: PSM.AUTO,  // Changed from AUTO_OSD for faster processing
+          tessedit_pageseg_mode: PSM.AUTO_OSD,  // Changed from AUTO_OSD for faster processing
           tessjs_create_hocr: "0",
           tessjs_create_tsv: "0",
           tessedit_ocr_engine_mode: 3,  // Speed optimized mode
