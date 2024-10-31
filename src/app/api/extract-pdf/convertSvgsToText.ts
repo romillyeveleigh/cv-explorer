@@ -10,7 +10,7 @@ export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) =
 
     const scheduler = createScheduler();
     const workers = await Promise.all(
-      Array(workerCount).fill(0).map(() => createWorker("eng", 1))
+      Array(workerCount).fill(0).map(() => createWorker(["eng", "osd"], 1))
     );
     workers.forEach((worker) => scheduler.addWorker(worker));
 
