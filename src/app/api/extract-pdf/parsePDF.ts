@@ -16,4 +16,19 @@ function parsePDF(pdfBuffer: Buffer): Promise<string> {
   });
 }
 
-export default parsePDF;
+function parsePDF2(pdfBuffer: Buffer): Promise<string> {
+  // const fs = require('fs')
+  const pdf = require("pdf-parse");
+  // let dataBuffer = fs.readFileSync(pdfBuffer);
+
+  return new Promise((resolve, reject) => {
+    pdf(pdfBuffer).then((data: any) => {
+      console.log("🚀 ~ pdf ~ data.text:", data.text);
+      resolve(data.text);
+    }).catch((err: any) => {
+      reject(err);
+    });
+  });
+}
+
+export { parsePDF, parsePDF2 };

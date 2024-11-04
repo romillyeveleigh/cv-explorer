@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { File } from "buffer";
 import { isReadableText } from "@/app/utils";
 import { fallbackOcrTextExtraction } from "./fallbackOcrTextExtraction";
-import parsePDF from "./parsePDF";
+import { parsePDF, parsePDF2 } from "./parsePDF";
 
 export async function POST(request: NextRequest) {
   const formData: FormData = await request.formData();
@@ -15,8 +15,8 @@ export async function POST(request: NextRequest) {
   try {
     const fileBuffer = Buffer.from(await uploadedFile.arrayBuffer());
 
-    let parsedText = await parsePDF(fileBuffer);
-    // console.log("🚀 ~ POST ~ parsedText:", parsedText);
+    let parsedText = await parsePDF2(fileBuffer);
+    console.log("🚀 ~ POST ~ parsedText:", parsedText);
 
     if (!isReadableText(parsedText)) {
       console.log("Text is unreadable, falling back to OCR");
