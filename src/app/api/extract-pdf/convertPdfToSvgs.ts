@@ -1,7 +1,5 @@
 "use server";
 
-import sharp from "sharp";
-
 export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
   let timeStart = Date.now();
   try {
@@ -17,22 +15,10 @@ export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
       width: 1000, // Set a fixed width for consistency and potential speed improvement
     });
 
-    // Process each image buffer with Sharp
-    const processedBuffers = await Promise.all(
-      imageBuffers.map((buffer: string | Uint8Array) =>
-        sharp(buffer)
-          .grayscale()
-          .normalise() // Enhance contrast
-          .sharpen()
-          // .removeNoise() // Reduce noise
-          .toBuffer()
-      )
-    );
-
     let timeEnd = Date.now();
     console.log(`PDF to SVG conversion took ${timeEnd - timeStart}ms`);
 
-    return processedBuffers;
+    return imageBuffers;
   } catch (error) {
     console.error("Error during PDF to SVG conversion: ", error);
     throw error;
