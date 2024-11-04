@@ -11,16 +11,15 @@ export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
     const pdf2img = await import("pdf-img-convert");
 
     // Convert PDF to images with optimized settings
-    const imageBuffers = await pdf2img.convert(pdfBuffer, {
+    const imageBuffers: string[] | Uint8Array[] = await pdf2img.convert(pdfBuffer, {
       base64: false,
       scale: 1,
       width: 1000, // Set a fixed width for consistency and potential speed improvement
-
     });
 
     // Process each image buffer with Sharp
     const processedBuffers = await Promise.all(
-      imageBuffers.map((buffer: Buffer) =>
+      imageBuffers.map((buffer: string | Uint8Array) =>
         sharp(buffer)
           .grayscale()
           .normalise() // Enhance contrast
