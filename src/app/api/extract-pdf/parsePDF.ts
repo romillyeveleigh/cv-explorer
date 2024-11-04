@@ -17,7 +17,7 @@ function parsePDF(pdfBuffer: Buffer): Promise<string> {
 }
 
 function parsePDF2(pdfBuffer: Buffer): Promise<string> {
-  const pdf = require("pdf-parse");
+  const pdf = require("pdf-parse/lib/pdf-parse");
 
   return new Promise((resolve, reject) => {
     pdf(pdfBuffer)
