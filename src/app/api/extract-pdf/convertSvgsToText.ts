@@ -29,6 +29,11 @@ export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) =
           tessjs_create_hocr: "0", // don't create hocr in the response
           tessjs_create_tsv: "0", // don't create tsv in the response
           log_level: 0,
+          tessedit_do_invert: "0",
+          // tessedit_ocr_engine_mode: "2",
+          tessedit_enable_doc_dict: "0",
+          debug_file: "/dev/null",
+          tessjs_monitor: "0",
         })
       )
     );
