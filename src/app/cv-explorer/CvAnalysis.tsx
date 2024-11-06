@@ -270,7 +270,7 @@ export default function CvAnalysis({
           type="file"
           ref={fileInputRef}
           onChange={handleFileUpload}
-          accept=".pdf,.doc,.docx,.txt"
+          accept=".pdf,.doc,.docx,.txt,.jpg,.png"
           className="hidden"
         />
       </CardHeader>

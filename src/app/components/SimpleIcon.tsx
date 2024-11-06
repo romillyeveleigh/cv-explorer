@@ -10,7 +10,6 @@ interface SimpleIconProps {
 export const SimpleIcon: FC<SimpleIconProps> = ({ slug }) => {
   // parsed slug should capitalize the first letter and precede it with si
   let parsedSlug = slug.toLowerCase();
-  // convert "." to "dot"
   parsedSlug = parsedSlug.replace(/\./g, "dot");
   parsedSlug = `si${parsedSlug.charAt(0).toUpperCase()}${parsedSlug.slice(1)}`;
   const icon = SimpleIcons[parsedSlug as keyof typeof SimpleIcons];

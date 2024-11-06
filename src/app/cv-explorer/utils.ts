@@ -1,5 +1,6 @@
 import pdfToText from "@/app/utils/pdfToText";
 import wordFileToText from "@/app/utils/wordFileToText";
+import imageToText from "@/app/utils/imageToText";
 import Anthropic from "@anthropic-ai/sdk";
 import { ToolUseBlock } from "@anthropic-ai/sdk/resources/messages.mjs";
 
@@ -25,6 +26,9 @@ export const getCvText: (file: File) => Promise<string> = async (file) => {
   ) {
     console.log("Word file detected");
     return await wordFileToText(file);
+  } else if (file.type === "image/jpeg" || file.type === "image/png") {
+    console.log("Image file detected");
+    return await imageToText(file);
   }
 };
 
