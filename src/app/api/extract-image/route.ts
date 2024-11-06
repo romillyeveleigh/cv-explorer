@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { File } from "buffer";
 
 import { isReadableText } from "@/app/utils";
-import { ocrTextExtraction } from "./ocrTextExtraction";
+import { convertImagesToText } from "./convertImagesToText";
 
 export async function POST(request: NextRequest) {
   let timeStart = Date.now();
   const formData: FormData = await request.formData();
-  const imageType = request.headers.get("image-type")
+  const imageType = request.headers.get("image-type");
   if (!imageType) {
     return NextResponse.json({ error: "No image type found" }, { status: 400 });
   }
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
   try {
     const fileBuffer = Buffer.from(await uploadedFile.arrayBuffer());
 
-    let parsedText = await ocrTextExtraction(fileBuffer);
+    let parsedText = await convertImagesToText([fileBuffer]);
 
     if (!isReadableText(parsedText)) {
       throw new Error("Failed to process image using OCR");
