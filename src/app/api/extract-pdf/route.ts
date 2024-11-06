@@ -20,12 +20,12 @@ export async function POST(request: NextRequest) {
 
     if (!isReadableText(parsedText)) {
       console.log("Text is unreadable");
-      throw new Error("Failed to process PDF using fallback OCR");
+      throw new Error("Text is unreadable");
     }
 
     return NextResponse.json({ text: parsedText });
   } catch (error) {
-    console.error("Error processing PDF:", error);
+    console.error("Failed to process PDF:", error);
     return NextResponse.json({ error: "Failed to process PDF" }, { status: 500 });
   } finally {
     console.log(`Total time taken: ${Date.now() - timeStart}ms`);

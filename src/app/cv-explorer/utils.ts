@@ -26,7 +26,11 @@ export const getCvText: (file: File) => Promise<string> = async (file) => {
   ) {
     console.log("Word file detected");
     return await wordFileToText(file);
-  } else if (file.type === "image/jpeg" || file.type === "image/png") {
+  } else if (
+    file.type === "image/jpeg" ||
+    file.type === "image/png" ||
+    file.type === "image/svg+xml"
+  ) {
     console.log("Image file detected");
     return await imageToText(file);
   }

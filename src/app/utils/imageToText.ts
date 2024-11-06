@@ -1,7 +1,18 @@
 "use client";
 
+const imageTypeIndex = {
+  "image/jpeg": "jpg",
+  "image/jpg": "jpg",
+  "image/png": "png",
+  "image/svg+xml": "svg",
+};
+
 const imageToText = async (file: File) => {
-  const imageType = file.type === "image/jpeg" ? "jpg" : "png";
+  const imageType = imageTypeIndex[file.type as keyof typeof imageTypeIndex];
+
+  if (!imageType) {
+    throw new Error("Unsupported image type");
+  }
 
   const formData = new FormData();
   formData.append(imageType, file);
@@ -10,6 +21,9 @@ const imageToText = async (file: File) => {
     const response = await fetch("/api/extract-image", {
       method: "POST",
       body: formData,
+      headers: {
+        "image-type": imageType,
+      },
     });
 
     if (!response.ok) {

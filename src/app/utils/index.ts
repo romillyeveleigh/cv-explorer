@@ -10,6 +10,8 @@ export const fileIsSupported = (file: File) => {
     file.type === "text/plain" ||
     file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
     file.type === "image/jpeg" ||
-    file.type === "image/png"
+    file.type === "image/jpg"  ||
+    file.type === "image/png" ||
+    file.type === "image/svg+xml"
   );
 };
