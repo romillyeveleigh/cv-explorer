@@ -1,33 +1,13 @@
 "use server";
 
-import PDFParser from "pdf2json";
-
-function parsePDF(pdfBuffer: Buffer): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const pdfParser = new (PDFParser as any)(null, 1);
-
-    pdfParser.on("pdfParser_dataError", (errData: any) => reject(errData.parserError));
-
-    pdfParser.on("pdfParser_dataReady", () => {
-      resolve(pdfParser.getRawTextContent());
-    });
-
-    pdfParser.parseBuffer(pdfBuffer);
-  });
-}
-
-function parsePDF2(pdfBuffer: Buffer): Promise<string> {
+export const parsePdf = async (pdfBuffer: Buffer) => {
   const pdf = require("pdf-parse/lib/pdf-parse");
 
-  return new Promise((resolve, reject) => {
-    pdf(pdfBuffer)
-      .then((data: any) => {
-        resolve(data.text);
-      })
-      .catch((err: any) => {
-        reject(err);
-      });
-  });
-}
+  const data = await pdf(pdfBuffer);
 
-export { parsePDF, parsePDF2 };
+  if (!data.text) {
+    throw new Error("No text found in PDF");
+  }
+
+  return data.text;
+};
