@@ -31,6 +31,6 @@ export async function POST(request: NextRequest) {
     console.error("Error processing image:", error);
     return NextResponse.json({ error: "Failed to process image" }, { status: 500 });
   } finally {
-    console.log(`Total time taken: ${Date.now() - timeStart}ms`);
+    console.log(`Total time taken to extract text from image: ${Date.now() - timeStart}ms`);
   }
 }

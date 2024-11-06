@@ -28,6 +28,6 @@ export async function POST(request: NextRequest) {
     console.error("Failed to process PDF:", error);
     return NextResponse.json({ error: "Failed to process PDF" }, { status: 500 });
   } finally {
-    console.log(`Total time taken: ${Date.now() - timeStart}ms`);
+    console.log(`Total time taken to extract text from PDF: ${Date.now() - timeStart}ms`);
   }
 }

@@ -1,6 +1,6 @@
 import { createWorker, createScheduler, PSM } from "tesseract.js";
 
-export const convertSvgsToText = async (imageBuffers: string[] | Uint8Array[]) => {
+export const convertImagesToText = async (imageBuffers: string[] | Uint8Array[]) => {
   let timeStart = Date.now();
   try {
     // Reduce worker count to minimize resource usage
