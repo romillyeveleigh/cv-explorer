@@ -7,7 +7,7 @@ const imageTypeIndex = {
   "image/svg+xml": "svg",
 };
 
-const imageToText = async (file: File) => {
+export const imageToText = async (file: File) => {
   const imageType = imageTypeIndex[file.type as keyof typeof imageTypeIndex];
 
   if (!imageType) {
@@ -45,5 +45,3 @@ const imageToText = async (file: File) => {
     throw error;
   }
 };
-
-export default imageToText;

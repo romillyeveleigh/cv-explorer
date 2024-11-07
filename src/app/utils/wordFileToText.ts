@@ -1,6 +1,6 @@
 "use client";
 
-const wordFileToText = async (file: File): Promise<string> => {
+export const wordFileToText = async (file: File): Promise<string> => {
   const formData = new FormData();
   formData.append("word", file);
 
@@ -30,5 +30,3 @@ const wordFileToText = async (file: File): Promise<string> => {
     throw error;
   }
 };
-
-export default wordFileToText;

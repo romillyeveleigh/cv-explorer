@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useRef, useState } from "react";
+
 import { Card } from "@/components/ui/card";
-import { fileIsSupported } from "@/app/utils";
+import { fileIsSupported, getTextFromFile, getToolUseDataByToolName } from "@/app/utils";
 import { SKILL_GROUPS, CV_TEXT, NAME, PROFESSIONAL_TITLE } from "@/config";
 import { Model } from "@/types";
 import { useClaudeConversation } from "@/app/hooks";
-import { getToolUseDataByToolName, getCvText } from "./utils";
 import {
   skillGroupGenerator,
   initialMemoGenerator,
@@ -18,7 +18,7 @@ import {
 import CvAnalysis from "./CvAnalysis";
 import CvInsight from "./CvInsight";
 
-const DEFAULTS = {
+const CV_DEFAULTS = {
   name: NAME,
   professionalTitle: PROFESSIONAL_TITLE,
   skillGroups: SKILL_GROUPS,
@@ -28,7 +28,7 @@ const DEFAULTS = {
 };
 
 export default function CVExplorer() {
-  const [cvState, setCvState] = useState(DEFAULTS);
+  const [cvState, setCvState] = useState(CV_DEFAULTS);
 
   const [loadingState, setLoadingState] = useState({
     cvText: false,
@@ -57,7 +57,7 @@ export default function CVExplorer() {
   };
 
   const onReset = () => {
-    updateCvState(DEFAULTS);
+    updateCvState(CV_DEFAULTS);
     setMemo("");
     setHeadline("");
     resetMessages();
@@ -115,7 +115,7 @@ export default function CVExplorer() {
     }
 
     try {
-      const cvText = await getCvText(file);
+      const cvText = await getTextFromFile(file);
       console.log("CV text sample:", `"${cvText.slice(0, 3000)}..." `);
 
       await handleGenerateSkillGroups(cvText);

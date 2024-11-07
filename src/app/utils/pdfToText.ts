@@ -1,6 +1,6 @@
 "use client";
 
- const pdfToText = async (file: File) => {
+ export const pdfToText = async (file: File) => {
   const formData = new FormData();
   formData.append("pdf", file);
 
@@ -29,5 +29,3 @@
     throw error;
   }
 };
-
-export default pdfToText;

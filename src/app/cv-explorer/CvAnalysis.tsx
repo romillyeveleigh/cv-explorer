@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Upload, FileText, RotateCcw, Loader2, AlertTriangle } from "lucide-react";
 
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { FadeText } from "@/components/ui/fade-text";
+
 import { SimpleIcon } from "../components/SimpleIcon";
 
 const MAX_SELECTED_SKILLS_TO_SHOW = 3;

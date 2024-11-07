@@ -1,17 +1,13 @@
-import pdfToText from "./pdfToText";
-import wordFileToText from "./wordFileToText";
-export * from "./isReadableText";
+import { SUPPORTED_MIME_TYPES } from "./constants";
 
-export { pdfToText, wordFileToText };
+export { pdfToText } from "./pdfToText";
+export { wordFileToText } from "./wordFileToText";
+export { isReadableText } from "./isReadableText";
+export { readTextFile } from "./readTextFile";
+export { imageToText } from "./imageToText";
+export { getTextFromFile } from "./getTextFromFile";
+export { getToolUseDataByToolName } from "./getToolUseData";
 
 export const fileIsSupported = (file: File) => {
-  return (
-    file.type === "application/pdf" ||
-    file.type === "text/plain" ||
-    file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-    file.type === "image/jpeg" ||
-    file.type === "image/jpg"  ||
-    file.type === "image/png" ||
-    file.type === "image/svg+xml"
-  );
+  return Object.values(SUPPORTED_MIME_TYPES).includes(file.type);
 };

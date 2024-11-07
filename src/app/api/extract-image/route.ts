@@ -3,6 +3,7 @@ import { File } from "buffer";
 
 import { isReadableText } from "@/app/utils";
 import { convertImagesToText } from "./convertImagesToText";
+export const maxDuration = 60;
 
 export async function POST(request: NextRequest) {
   let timeStart = Date.now();

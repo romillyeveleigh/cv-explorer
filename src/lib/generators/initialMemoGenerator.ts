@@ -6,10 +6,6 @@ export type InitialMemoGeneratorResponse = {
   memo: string;
 };
 
-const validateInitialMemoResponse = (response: any) => {
-  return typeof response.tagline === "string" && typeof response.memo === "string";
-};
-
 const system = `
     You are an expert in CV analysis with hipster-level knowledge of trending technologies.
     Write a short memo (strictly under 90 words) to a tech recruiter about a candidate.
@@ -44,6 +40,10 @@ const tools: Tool[] = [
     },
   },
 ];
+
+const validateInitialMemoResponse = (response: any) => {
+  return typeof response.tagline === "string" && typeof response.memo === "string";
+};
 
 export const initialMemoGenerator: ConversationGenerator = {
   system,
