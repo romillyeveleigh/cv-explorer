@@ -1,8 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { ToolUseBlock } from "@anthropic-ai/sdk/resources/messages.mjs";
 
-export * from "./getCvText";
-
 export function getToolUseDataFromMessage<T = any>(
   message: Anthropic.Messages.MessageParam,
   toolName: string

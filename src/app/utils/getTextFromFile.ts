@@ -1,7 +1,5 @@
-import pdfToText from "@/app/utils/pdfToText";
-import wordFileToText from "@/app/utils/wordFileToText";
-import imageToText from "@/app/utils/imageToText";
-import { readTextFile, SUPPORTED_MIME_TYPES } from "@/app/utils";
+import { SUPPORTED_MIME_TYPES } from "./constants";
+import { pdfToText, wordFileToText, imageToText, readTextFile } from "@/app/utils";
 
 const fileHandlers = new Map<string, (file: File) => Promise<string>>([
   [SUPPORTED_MIME_TYPES.PDF, pdfToText],
@@ -12,7 +10,7 @@ const fileHandlers = new Map<string, (file: File) => Promise<string>>([
   [SUPPORTED_MIME_TYPES.SVG, imageToText],
 ]);
 
-export const getCvText = async (file: File): Promise<string> => {
+export const getTextFromFile = async (file: File): Promise<string> => {
   const handler = fileHandlers.get(file.type);
   if (!handler) {
     throw new Error(`Unsupported file type: ${file.type}`);

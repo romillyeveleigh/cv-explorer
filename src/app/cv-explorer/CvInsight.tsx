@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import WordFadeIn from "@/components/magicui/word-fade-in";
 
 import { MarkdownToJsx } from "../components/MarkdownToJsx";
-import AppSteps from "./AppSteps";
+import WelcomeCard from "./WelcomeCard";
 import { InsightGeneratorResponse } from "@/lib/generators";
 
 type CvInsightProps = {
@@ -66,7 +66,7 @@ export default function CvInsight({
             <p className="text-lg font-medium text-muted-foreground">Analyzing CV superpowers...</p>
           </div>
         ) : !memo ? (
-          <AppSteps onClickUpload={onClickUpload} name={name} />
+          <WelcomeCard onClickUpload={onClickUpload} name={name} />
         ) : (
           <>
             <div ref={insightContentRef} className="flex-grow overflow-y-auto mb-4 mt-4 pr-4">
