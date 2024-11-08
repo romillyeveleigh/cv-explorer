@@ -31,9 +31,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ text });
   } catch (error) {
-    console.error("API route error:", error);
+    console.error("Failed to process Word file:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Failed to process Word file" },
       { status: 500 }
     );
   }
