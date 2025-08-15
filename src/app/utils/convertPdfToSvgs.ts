@@ -5,7 +5,6 @@ export const convertPdfToSvgs = async (pdfBuffer: Buffer) => {
   try {
     // @ts-ignore
     await import("pdfjs-dist/legacy/build/pdf.worker.mjs");
-    await import("path2d");
     const pdf2img = await import("pdf-img-convert");
 
     // Convert PDF to images with optimized settings
