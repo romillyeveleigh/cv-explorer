@@ -17,9 +17,9 @@ export type Insight = {
 };
 
 export const enum Model {
-  SONNET = "claude-3-sonnet-20240229",
-  HAIKU = "claude-3-haiku-20240307",
-  OPUS = "claude-3-opus-20240229",
+  SONNET = "claude-sonnet-4-20250514",
+  HAIKU = "claude-3-5-haiku-latest",
+  OPUS = "claude-3-5-opus-latest",
 }
 
 export interface ConversationGenerator {
