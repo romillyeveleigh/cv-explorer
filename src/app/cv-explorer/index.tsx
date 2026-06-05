@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { fileIsSupported, getTextFromFile, getToolUseDataByToolName } from "@/app/utils";
 import { SKILL_GROUPS, CV_TEXT, NAME, PROFESSIONAL_TITLE } from "@/config";
 import { Model } from "@/types";
-import { useClaudeConversation } from "@/app/hooks";
+import { useClaudeConversation, forceToolChoice } from "@/app/hooks";
 import {
   skillGroupGenerator,
   initialMemoGenerator,
@@ -73,7 +73,7 @@ export default function CVExplorer() {
           temperature: 0.8,
           system: skillGroupGenerator.system,
           tools: skillGroupGenerator.tools,
-          tool_choice: { type: "tool", name: skillGroupGenerator.tools[0].name },
+          tool_choice: forceToolChoice(skillGroupGenerator.tools[0].name),
         },
         true
       );
@@ -152,7 +152,7 @@ export default function CVExplorer() {
           temperature: 1,
           system: initialMemoGenerator.system,
           tools: initialMemoGenerator.tools,
-          tool_choice: { type: "tool", name: initialMemoGenerator.tools[0].name },
+          tool_choice: forceToolChoice(initialMemoGenerator.tools[0].name),
         },
         true
       );
@@ -185,7 +185,7 @@ export default function CVExplorer() {
           model: Model.HAIKU,
           temperature: 0.8,
           tools: insightGenerator.tools,
-          tool_choice: { type: "tool", name: insightGenerator.tools[0].name },
+          tool_choice: forceToolChoice(insightGenerator.tools[0].name),
         },
         false
       );

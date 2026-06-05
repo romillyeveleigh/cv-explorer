@@ -17,9 +17,9 @@ const tools: Tool[] = [
     name: "insight-generator",
     input_schema: {
       type: "object",
-      insght: {
+      insight: {
         type: "string",
-        description: "The memo for the recruiter in markdown format",
+        description: "The insight for the recruiter in markdown format",
       },
       step: {
         type: "number",

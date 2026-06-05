@@ -8,7 +8,7 @@ import {
 import {
   removeToolResults,
   createNewMessage,
-  getToolUseBlockFromLastMessage,
+  getToolUseBlocksFromLastMessage,
 } from "./utils";
 import { fetchClaudeResponse } from "./api";
 
@@ -26,10 +26,10 @@ export function useClaudeConversation() {
       customParams?: Partial<Anthropic.MessageCreateParams>,
       isNewConversation = false
     ) => {
-      const toolUseBlock = getToolUseBlockFromLastMessage(messages);
+      const toolUseBlocks = getToolUseBlocksFromLastMessage(messages);
       const newMessage = createNewMessage(
         content,
-        isNewConversation ? undefined : toolUseBlock
+        isNewConversation ? [] : toolUseBlocks
       );
       const newMessages = [...(isNewConversation ? [] : messages), newMessage];
       setMessages(newMessages);
