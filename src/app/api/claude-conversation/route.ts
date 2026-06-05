@@ -6,11 +6,10 @@ import { Model } from "@/types";
 const DEFAULT_PARAMS = {
   model: Model.OPUS,
   max_tokens: 1000,
-  temperature: 0.8,
 };
 
 const anthropic = new Anthropic({
-  apiKey: process.env.NEXT_PUBLIC_API_KEY,
+  apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
 export async function POST(request: Request) {
